@@ -1,0 +1,801 @@
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { motion, useInView, useAnimation } from "framer-motion";
+import { api, useApiData } from "@/lib/api";
+
+/**
+ * ArchitectingExcellence - Feature showcase section
+ *
+ * Features:
+ * - Poppins font throughout
+ * - Animated counter for percentages
+ * - Glassmorphism team card
+ * - Interactive 4-step carousel
+ * - Design system with CSS variables
+ */
+
+// Design System - CSS Variables
+const designSystem = {
+  fonts: {
+    primary: "'Poppins',  ",
+  },
+  colors: {
+    flowBlue: "#0066ff",
+    growthGreen: "#2ecc71",
+    clarityYellow: "#FFC107",
+    creativePink: "#ff4fcb",
+    deepNavy: "#1a1a2e",
+  },
+  typography: {
+    h1: { size: "text-5xl lg:text-6xl", weight: "font-semibold" },
+    h2: { size: "text-4xl lg:text-5xl", weight: "font-semibold" },
+    h3: { size: "text-2xl lg:text-3xl", weight: "font-semibold" },
+    h4: { size: "text-xl lg:text-2xl", weight: "font-semibold" },
+    p: { size: "text-base", weight: "font-normal" },
+    small: { size: "text-sm", weight: "font-normal" },
+  },
+};
+
+// Counter Animation Hook
+function useCounter(
+  end: number,
+  duration: number = 2000,
+  shouldStart: boolean = false
+) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!shouldStart) return;
+
+    let startTime: number | null = null;
+    let animationFrame: number;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+
+      setCount(Math.floor(progress * end));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [end, duration, shouldStart]);
+
+  return count;
+}
+
+// This will be moved inside the component to use API data
+
+// Dark Gradient Card Component with Animated Counters
+function DarkGradientCard({
+  isInView,
+  counter1Value,
+  counter1Label,
+  counter2Value,
+  counter2Label,
+}: {
+  isInView: boolean;
+  counter1Value: number;
+  counter1Label: string;
+  counter2Value: number;
+  counter2Label: string;
+}) {
+  const count1 = useCounter(counter1Value, 2000, isInView);
+  const count2 = useCounter(counter2Value, 2500, isInView);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+      className="bg-gradient-to-br from-[#0a1f1f] via-[#0d3d3d] to-[#2ecc71] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group"
+    >
+      {/* Animated decorative circles with floating effect */}
+      <motion.div
+        animate={{
+          y: [0, -20, 0],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute top-8 left-8 w-20 h-20 bg-white/30 rounded-full blur-xl"
+      />
+      <motion.div
+        animate={{
+          y: [0, 20, 0],
+          scale: [1, 1.15, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+        className="absolute top-1/3 right-12 w-32 h-32 bg-[#2ecc71]/50 rounded-full blur-2xl"
+      />
+      <motion.div
+        animate={{
+          y: [0, -15, 0],
+          x: [0, 10, 0],
+          scale: [1, 1.05, 1],
+        }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
+        }}
+        className="absolute bottom-12 left-1/4 w-24 h-24 bg-white/20 rounded-full blur-xl"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.4, 0.2],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute bottom-1/4 right-1/4 w-16 h-16 bg-white/10 rounded-full blur-lg"
+      />
+
+      {/* Percentage badges with enhanced glow and hover effects */}
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: 0.3,
+          type: "spring",
+          stiffness: 200,
+        }}
+        whileHover={{ scale: 1.1 }}
+        className="absolute top-10 right-10 bg-[#0066ff]/80 backdrop-blur-md rounded-full px-7 py-5 border border-[#0066ff]/50 cursor-pointer"
+        style={{
+          boxShadow:
+            "0 0 30px rgba(0, 102, 255, 0.6), 0 0 60px rgba(0, 102, 255, 0.3), inset 0 0 20px rgba(0, 102, 255, 0.2)",
+        }}
+      >
+        <span className="text-white font-semibold text-2xl">{count1}%</span>
+      </motion.div>
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: 0.5,
+          type: "spring",
+          stiffness: 200,
+        }}
+        whileHover={{ scale: 1.05 }}
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#2ecc71]/40 backdrop-blur-md rounded-full border border-[#2ecc71]/60 cursor-pointer flex items-center justify-center"
+        style={{
+          width: "280px",
+          height: "280px",
+          boxShadow:
+            "0 0 40px rgba(46, 204, 113, 0.7), 0 0 80px rgba(46, 204, 113, 0.3), inset 0 0 25px rgba(46, 204, 113, 0.3)",
+        }}
+      >
+        <span className="text-white font-semibold text-5xl">{count2}%</span>
+      </motion.div>
+
+      {/* Decorative white circles around the main circle */}
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: 0.6,
+          type: "spring",
+          stiffness: 200,
+        }}
+        className="absolute top-[15%] left-[30%] bg-white/90 rounded-full"
+        style={{
+          width: "80px",
+          height: "80px",
+          boxShadow:
+            "0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)",
+        }}
+      />
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: 0.65,
+          type: "spring",
+          stiffness: 200,
+        }}
+        className="absolute bottom-[25%] right-[20%] bg-white/90 rounded-full"
+        style={{
+          width: "100px",
+          height: "100px",
+          boxShadow:
+            "0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)",
+        }}
+      />
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: 0.7,
+          type: "spring",
+          stiffness: 200,
+        }}
+        className="absolute bottom-[30%] right-[15%] bg-white/70 rounded-full"
+        style={{
+          width: "40px",
+          height: "40px",
+          boxShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.8, delay: 0.7 }}
+        className="relative z-10 mt-auto"
+      >
+        <h3 className="text-4xl md:text-5xl lg:text-6xl font-normal text-white mb-2">
+          Faster
+        </h3>
+        <h3 className="text-4xl md:text-5xl lg:text-6xl font-normal text-[#FFC107]">
+          Process Cycles
+        </h3>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Phone Mockup Card Component with Glassmorphism Team Card
+function PhoneMockupCard({
+  isInView,
+  teamName,
+  teamRole,
+  teamImage,
+}: {
+  isInView: boolean;
+  teamName: string;
+  teamRole: string;
+  teamImage: string | null;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+      className="bg-gradient-to-br from-[#1a1a2e] via-[#2d2d44] to-[#16213e] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[760px] lg:min-h-[900px] relative overflow-hidden group"
+    >
+      {/* Animated background gradient overlay */}
+      <motion.div
+        animate={{
+          opacity: [0.3, 0.5, 0.3],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 bg-gradient-to-br from-[#0066ff]/20 to-transparent rounded-3xl"
+      />
+
+      {/* Mobile Holding Background */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={
+          isInView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }
+        }
+        transition={{
+          duration: 0.8,
+          delay: 0.4,
+          type: "spring",
+          stiffness: 100,
+        }}
+        whileHover={{ scale: 1.02 }}
+        className="flex-1 relative z-10 rounded-3xl overflow-hidden"
+        style={{
+          backgroundImage: "url('/mobile-holding.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundRepeat: "no-repeat",
+          minHeight: "500px",
+          filter:
+            "drop-shadow(0 20px 60px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 40px rgba(0, 102, 255, 0.2))",
+        }}
+      >
+        {/* Optional overlay for better text readability if needed */}
+        <div className="absolute inset-0 bg-black/10 rounded-3xl" />
+
+        {/* Enhanced Glassmorphism Team Card Overlay */}
+        <motion.div
+          initial={{ opacity: 0, y: 30, scale: 0.9 }}
+          animate={
+            isInView
+              ? { opacity: 1, y: 0, scale: 1 }
+              : { opacity: 0, y: 30, scale: 0.9 }
+          }
+          transition={{
+            duration: 0.8,
+            delay: 0.8,
+            type: "spring",
+            stiffness: 100,
+          }}
+          whileHover={{ scale: 1.02, y: -5 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-[85%] max-w-[320px] rounded-3xl p-6 border border-white/20"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(36, 36, 36, 0.8), rgba(36, 36, 36, 0.6))",
+            backdropFilter: "blur(40px) saturate(180%)",
+            WebkitBackdropFilter: "blur(40px) saturate(180%)",
+            boxShadow:
+              "0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 16px 64px 0 rgba(0, 0, 0, 0.3), 0 0 40px rgba(36, 36, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(255, 255, 255, 0.05)",
+          }}
+        >
+          {/* Top section - Description */}
+          <p
+            className="text-white text-sm font-normal mb-5 leading-relaxed drop-shadow-lg"
+            style={{ textShadow: "0 2px 8px rgba(0, 0, 0, 0.5)" }}
+          >
+            floneo is co-created on the front lines with ops, business, delivery
+            leaders who live with these bottlenecks, ensuring our{" "}
+            <span
+              className="text-[#FFC107] font-semibold drop-shadow-lg"
+              style={{ textShadow: "0 2px 10px rgba(255, 193, 7, 0.6)" }}
+            >
+              tools launch in weeks, not months
+            </span>
+            .
+          </p>
+
+          {/* Bottom section - Team info */}
+          <div className="flex items-center justify-between">
+            {/* Team icon */}
+            <div className="flex items-center gap-3">
+              <motion.div
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.6 }}
+                className="w-12 h-12 bg-gradient-to-br from-[#242424] to-[#242424] rounded-full flex items-center justify-center shadow-lg"
+                style={{
+                  boxShadow:
+                    "0 4px 20px rgba(0, 0, 0, 0.6), 0 8px 40px rgba(255, 0, 183, 0.4)",
+                }}
+              >
+                <img
+                  src="/logo.png"
+                  alt="Team  floneo Logo"
+                  className="w-10 h-10 object-contain"
+                />
+              </motion.div>
+              <div>
+                <span
+                  className="text-white text-sm font-semibold block drop-shadow-lg"
+                  style={{ textShadow: "0 2px 8px rgba(0, 0, 0, 0.5)" }}
+                >
+                  {teamName}
+                </span>
+                <span
+                  className="text-white/80 text-xs font-normal drop-shadow-md"
+                  style={{ textShadow: "0 1px 4px rgba(0, 0, 0, 0.4)" }}
+                >
+                  {teamRole}
+                </span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Interactive Step Carousel Component
+function StepCarousel({
+  currentStep,
+  onStepClick,
+  isInView,
+  steps,
+}: {
+  currentStep: number;
+  onStepClick: (index: number) => void;
+  isInView: boolean;
+  steps: Array<{
+    number: string;
+    title: string;
+    subtitle: string;
+    description: string;
+  }>;
+}) {
+  const step = steps[currentStep];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      className="bg-[#0066ff] rounded-3xl p-10 md:p-12 lg:p-16 relative overflow-hidden group"
+    >
+      {/* Animated background gradient overlay */}
+      <motion.div
+        animate={{
+          opacity: [0.1, 0.2, 0.1],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"
+      />
+
+      {/* Step indicators with enhanced animations */}
+      <div className="flex gap-3 mb-10 justify-center md:justify-start relative z-10">
+        {steps.map((_, index) => (
+          <motion.button
+            key={index}
+            onClick={() => onStepClick(index)}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            className={`h-4 rounded-full transition-all duration-500 ${
+              index === currentStep
+                ? "bg-[#FFC107] w-10"
+                : "bg-white/30 hover:bg-white/50 w-4"
+            }`}
+            style={{
+              boxShadow:
+                index === currentStep
+                  ? "0 0 20px rgba(255, 193, 7, 0.6)"
+                  : "none",
+            }}
+            aria-label={`Go to step ${index + 1}`}
+          />
+        ))}
+      </div>
+
+      <motion.div
+        key={currentStep}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative z-10"
+      >
+        {/* Left side - Number and details */}
+        <div className="flex items-start gap-8">
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
+            className="text-[#FFC107] font-semibold text-7xl md:text-8xl lg:text-9xl"
+            style={{
+              textShadow: "0 0 30px rgba(255, 193, 7, 0.5)",
+            }}
+          >
+            {step.number}
+          </motion.div>
+          <div className="flex-1">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-white/80 text-base uppercase tracking-wider mb-3 font-normal"
+            >
+              STEP {step.number}
+            </motion.div>
+            <motion.h3
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-white font-semibold text-2xl md:text-3xl mb-5"
+            >
+              {step.title}
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-white/90 text-base md:text-lg leading-relaxed font-normal"
+            >
+              {step.description}
+            </motion.p>
+          </div>
+        </div>
+
+        {/* Right side - Subtitle and CTA */}
+        <div className="text-left md:text-right">
+          <motion.h3
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="text-white font-semibold text-4xl md:text-5xl lg:text-6xl mb-8 leading-tight"
+          >
+            {step.subtitle}
+          </motion.h3>
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            onClick={() => onStepClick((currentStep + 1) % steps.length)}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0 10px 30px rgba(255,255,255,0.3)",
+            }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white text-[#0066ff] px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-100 transition-colors"
+          >
+            Operational Freedom Starts Here →
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Animated decorative element */}
+      <motion.div
+        animate={{
+          rotate: [0, 360],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none"
+      >
+        <svg width="200" height="200" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="40" stroke="white" strokeWidth="2" />
+          <circle cx="50" cy="50" r="30" stroke="white" strokeWidth="1" />
+          <circle cx="50" cy="50" r="20" stroke="white" strokeWidth="1" />
+        </svg>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export default function ArchitectingExcellence() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+
+  // Fetch section data from API
+  const {
+    data: sectionData,
+    loading,
+    error,
+  } = useApiData(api.getArchitectingExcellenceSection);
+
+  // Fallback data
+  const fallbackData = {
+    badge_text: "ABOUT US",
+    main_title_line1: "Architecting",
+    main_title_line2: "Excellence",
+    subtitle:
+      "Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks.",
+    philosophy_title:
+      "OUR philosophy is simple: workflow creation must be visual, instant, and effortlessly scalable, empowering you to build the future of your operations—fast.",
+    philosophy_button_text: "View Services",
+    philosophy_button_url: "#",
+    counter_1_value: 70,
+    counter_1_label: "Process Efficiency",
+    counter_2_value: 85,
+    counter_2_label: "Automation Success",
+    team_name: "Team floneo",
+    team_role: "CCO & Co-Founder",
+    team_image: null,
+    step_1_title: "Drag & Drop",
+    step_1_description:
+      "Build workflows visually with our intuitive drag-and-drop interface",
+    step_2_title: "Connect",
+    step_2_description:
+      "Seamlessly integrate with your existing tools and systems",
+    step_3_title: "Automate",
+    step_3_description: "Deploy and scale your automated workflows instantly",
+    step_4_title: "Scale",
+    step_4_description: "Grow your operations without technical limitations",
+    background_color: "#FFFFFF",
+  };
+
+  // Use API data or fallback
+  const data = sectionData || fallbackData;
+
+  // Step data for the carousel using API data
+  const steps = [
+    {
+      number: "01",
+      title: data.step_1_title,
+      subtitle: "Step 1",
+      description: data.step_1_description,
+    },
+    {
+      number: "02",
+      title: data.step_2_title,
+      subtitle: "Step 2",
+      description: data.step_2_description,
+    },
+    {
+      number: "03",
+      title: data.step_3_title,
+      subtitle: "Step 3",
+      description: data.step_3_description,
+    },
+    {
+      number: "04",
+      title: data.step_4_title,
+      subtitle: "Step 4",
+      description: data.step_4_description,
+    },
+  ];
+
+  // Auto-advance carousel every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % steps.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleStepClick = (index: number) => {
+    setCurrentStep(index);
+  };
+
+  return (
+    <section
+      ref={sectionRef}
+      className="py-20 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8 bg-white"
+      style={{ fontFamily: "'Poppins',  " }}
+    >
+      <div className="container mx-auto max-w-[1400px]">
+        {/* Header with Staggered Animations */}
+        <div className="text-center mb-16 lg:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-center gap-2 mb-4"
+          >
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                boxShadow: [
+                  "0 0 0 0 rgba(255, 193, 7, 0.4)",
+                  "0 0 0 10px rgba(255, 193, 7, 0)",
+                  "0 0 0 0 rgba(255, 193, 7, 0)",
+                ],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="w-3 h-3 bg-[#FFC107] rounded-full"
+            />
+            <span className="text-base font-normal text-gray-600 uppercase tracking-wider">
+              {data.badge_text}
+            </span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6"
+          >
+            {data.main_title_line1}
+            <br />
+            {data.main_title_line2}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-normal"
+          >
+            {data.subtitle}
+          </motion.p>
+        </div>
+
+        {/* Main Grid - 3 Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Left Column - 2 Stacked Cards */}
+          <div className="flex flex-col gap-6">
+            {/* Yellow Philosophy Card with Enhanced Animations */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+              whileHover={{ scale: 1.02 }}
+              className="bg-[#FFC107] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group"
+            >
+              {/* Animated background gradient */}
+              <motion.div
+                animate={{
+                  opacity: [0.1, 0.2, 0.1],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
+              />
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={
+                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="relative z-10"
+              >
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-white mb-8 leading-tight">
+                  {data.philosophy_title.split("\n").map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line}
+                      {index < data.philosophy_title.split("\n").length - 1 && (
+                        <br />
+                      )}
+                    </React.Fragment>
+                  ))}
+                </h3>
+              </motion.div>
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={
+                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={{ duration: 0.8, delay: 0.4 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-black text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-900 transition-colors self-start relative z-10"
+                onClick={() =>
+                  window.open(data.philosophy_button_url, "_blank")
+                }
+              >
+                {data.philosophy_button_text}
+              </motion.button>
+            </motion.div>
+
+            {/* Dark Gradient Card - Faster Process Cycles */}
+            <DarkGradientCard
+              isInView={isInView}
+              counter1Value={data.counter_1_value}
+              counter1Label={data.counter_1_label}
+              counter2Value={data.counter_2_value}
+              counter2Label={data.counter_2_label}
+            />
+          </div>
+
+          {/* Right Column - Tall Phone Mockup Card */}
+          <PhoneMockupCard
+            isInView={isInView}
+            teamName={data.team_name}
+            teamRole={data.team_role}
+            teamImage={data.team_image}
+          />
+        </div>
+
+        {/* Bottom Blue Card - Interactive Step Carousel */}
+        <StepCarousel
+          currentStep={currentStep}
+          onStepClick={handleStepClick}
+          isInView={isInView}
+          steps={steps}
+        />
+      </div>
+    </section>
+  );
+}
