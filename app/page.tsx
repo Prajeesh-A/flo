@@ -36,6 +36,18 @@ export default function HomePage() {
     error: heroError,
   } = useApiData(api.getHeroSection);
 
+  // Debug logging
+  useEffect(() => {
+    console.log("API Debug Info:");
+    console.log(
+      "- API URL:",
+      process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api"
+    );
+    console.log("- Hero Loading:", heroLoading);
+    console.log("- Hero Error:", heroError);
+    console.log("- Hero Data:", heroData);
+  }, [heroLoading, heroError, heroData]);
+
   // Fetch Navigation Items from Django API
   const {
     data: navigationItems,
