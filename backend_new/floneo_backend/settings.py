@@ -133,7 +133,18 @@ USE_TZ = True
 # Static files (Whitenoise)
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Use WhiteNoise for static files
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Additional static files settings for admin
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# WhiteNoise settings
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
 
 # Media files (User uploaded content)
 MEDIA_URL = '/media/'
