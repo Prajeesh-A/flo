@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api";
 
 // Types for API responses
 export interface HeroSection {
