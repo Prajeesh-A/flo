@@ -3,6 +3,9 @@
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useEffect } from "react";
+import { useApiData } from "../lib/api";
+import { api } from "../lib/api";
+import { RichTextRenderer } from "./SafeHTMLRenderer";
 
 // Circular Metric Card Component
 const CircularMetric = ({
@@ -41,6 +44,79 @@ export default function AIPoweredAnalytics() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
+  // Fetch AI-Powered Analytics section data from API
+  const {
+    data: sectionData,
+    loading,
+    error,
+  } = useApiData(api.getAIPoweredAnalyticsSection);
+
+  // Fallback data
+  const fallbackData = {
+    title: "AI-Powered Analytics",
+    subtitle: "Intelligent Insights",
+    description:
+      "floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork.",
+    metric_1_value: "85%",
+    metric_1_description: "gain budget control in 2 weeks.",
+    metric_1_color: "#EC4899", // pink-400
+    metric_2_value: "90%",
+    metric_2_description:
+      "of leaders use floneo to cut hours and speed decisions.",
+    metric_2_color: "#4ADE80", // green-400
+    metric_3_value: "70%",
+    metric_3_description:
+      "of teams accelerate process adoption in under 6 weeks.",
+    metric_3_color: "#FACC15", // yellow-400
+    metric_4_value: "84%",
+    metric_4_description: "of users improve savings in 3 months.",
+    metric_4_color: "#60A5FA", // blue-400
+    feature_1_title: "Predict Financial Trends",
+    feature_1_description:
+      "Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth.",
+    feature_2_title: "Enhance Operational Strategy",
+    feature_2_description:
+      "floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter.",
+    is_visible: true,
+  };
+
+  // Use API data or fallback
+  const data = sectionData || fallbackData;
+
+  // Don't render if not visible
+  if (!data.is_visible) {
+    return null;
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <section id="ai-analytics" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section id="ai-analytics" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="text-center text-red-600">
+            <p>Failed to load AI Analytics section. Using default content.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="ai-analytics" ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
@@ -60,10 +136,12 @@ export default function AIPoweredAnalytics() {
               letterSpacing: "0.5px",
             }}
           >
-            AI-Powered Analytics
+            {loading ? "Loading..." : data.title}
           </h2>
 
-          <p
+          <RichTextRenderer
+            content={loading ? "Loading description..." : data.description}
+            fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
             className="text-sm md:text-base leading-relaxed max-w-2xl mx-auto"
             style={{
               fontFamily: "'Poppins', sans-serif",
@@ -71,11 +149,7 @@ export default function AIPoweredAnalytics() {
               color: "#444444",
               lineHeight: "1.5",
             }}
-          >
-            floneo's AI engine identifies inefficiencies, predicts risks, and
-            surfaces real-time insights empowering teams to make faster,
-            smarter, and data-driven decisions without the guesswork.
-          </p>
+          />
         </motion.div>
 
         {/* 2x2 Grid Layout for Circles */}
@@ -93,8 +167,8 @@ export default function AIPoweredAnalytics() {
             }}
           >
             <CircularMetric
-              percentage="85%"
-              description="gain budget control in 2 weeks."
+              percentage={data.metric_1_value}
+              description={data.metric_1_description}
               color="bg-pink-400"
             />
           </motion.div>
@@ -112,8 +186,8 @@ export default function AIPoweredAnalytics() {
             }}
           >
             <CircularMetric
-              percentage="90%"
-              description="of leaders use floneo to cut hours and speed decisions."
+              percentage={data.metric_2_value}
+              description={data.metric_2_description}
               color="bg-green-400"
             />
           </motion.div>
@@ -131,8 +205,8 @@ export default function AIPoweredAnalytics() {
             }}
           >
             <CircularMetric
-              percentage="70%"
-              description="of teams accelerate process adoption in under 6 weeks."
+              percentage={data.metric_3_value}
+              description={data.metric_3_description}
               color="bg-yellow-400"
             />
           </motion.div>
@@ -150,8 +224,8 @@ export default function AIPoweredAnalytics() {
             }}
           >
             <CircularMetric
-              percentage="84%"
-              description="of users improve savings in 3 months."
+              percentage={data.metric_4_value}
+              description={data.metric_4_description}
               color="bg-blue-400"
             />
           </motion.div>
@@ -173,9 +247,11 @@ export default function AIPoweredAnalytics() {
               color: "#333333",
             }}
           >
-            Predict Financial Trends
+            {data.feature_1_title}
           </h3>
-          <p
+          <RichTextRenderer
+            content={data.feature_1_description}
+            fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
             className="text-sm md:text-base leading-relaxed"
             style={{
               fontFamily: "'Poppins', sans-serif",
@@ -183,11 +259,7 @@ export default function AIPoweredAnalytics() {
               color: "#555555",
               lineHeight: "1.5",
             }}
-          >
-            Utilize advanced AI analytics to predict upcoming financial trends,
-            helping you stay ahead of the curve and make proactive decisions
-            that safeguard and grow your wealth.
-          </p>
+          />
         </motion.div>
 
         {/* Bottom Content - Enhance Operational Strategy */}
@@ -206,9 +278,11 @@ export default function AIPoweredAnalytics() {
               color: "#3AAFFF",
             }}
           >
-            Enhance Operational Strategy
+            {data.feature_2_title}
           </h3>
-          <p
+          <RichTextRenderer
+            content={data.feature_2_description}
+            fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
             className="text-sm md:text-base leading-relaxed"
             style={{
               fontFamily: "'Poppins', sans-serif",
@@ -216,11 +290,7 @@ export default function AIPoweredAnalytics() {
               color: "#555555",
               lineHeight: "1.5",
             }}
-          >
-            floneo empowers enterprises to design, deploy, and scale workflows
-            without IT bottlenecks. With drag-and-drop simplicity and AI
-            insights, teams automate faster and smarter.
-          </p>
+          />
         </motion.div>
       </div>
     </section>

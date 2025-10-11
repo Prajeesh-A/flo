@@ -156,13 +156,27 @@ export default function FAQSection() {
     },
   ];
 
-  // Use API data or fallback
-  const sectionData = faqSectionData || defaultFaqSection;
-  const faqs = faqItems || defaultFaqItems;
+  // Use API data with better error handling
+  const sectionData =
+    faqSectionData && !faqSectionError ? faqSectionData : defaultFaqSection;
+  const faqs = faqItems && !faqItemsError ? faqItems : defaultFaqItems;
+
+  // Show if we're using fallback data
+  const usingFallbackSection = !faqSectionData || faqSectionError;
+  const usingFallbackItems = !faqItems || faqItemsError;
 
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+        {/* Debug indicator for fallback data */}
+        {(usingFallbackSection || usingFallbackItems) && (
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6 text-sm">
+            <strong>Debug:</strong> Using fallback data -
+            {usingFallbackSection && " FAQ section"}
+            {usingFallbackSection && usingFallbackItems && ","}
+            {usingFallbackItems && " FAQ items"} not loaded from API
+          </div>
+        )}
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
