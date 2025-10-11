@@ -1,0 +1,13 @@
+FORCE VERCEL DEPLOYMENT - FAQ FIXES NOT DEPLOYING
+==============================================
+
+This file is created to force Vercel to deploy our FAQ fixes.
+
+Current issue: Vercel is stuck on commit 5535a03 and not deploying our FAQ fixes from commits:
+- 32b9174: Add detailed debugging for FAQ API data to identify the issue  
+- 5b991c9: Fix FAQ section to properly display API data instead of showing error message
+- fc5d09a: Force deployment trigger
+
+The FAQ section should show Django admin data instead of hardcoded questions.
+
+Timestamp: 2025-01-11 (deadline day)
