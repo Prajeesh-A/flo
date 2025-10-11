@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 LIVE API TEST - Deadline Today</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .urgent {
+            background: #fee;
+            border: 2px solid #f00;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #c00;
+            font-weight: bold;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #dfd;
+            border: 1px solid #0a0;
+            color: #060;
+        }
+        .error {
+            background: #fdd;
+            border: 1px solid #a00;
+            color: #600;
+        }
+        .loading {
+            background: #ffd;
+            border: 1px solid #aa0;
+            color: #660;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="urgent">
+            🚨 URGENT: Testing API from LIVE Vercel deployment
+        </div>
+        
+        <h1>Live API Test from Vercel</h1>
+        <p><strong>Testing from:</strong> <span id="current-url">Loading...</span></p>
+        <p><strong>API Base URL:</strong> <span id="api-url">Loading...</span></p>
+        
+        <button onclick="testAPIs()">🚨 Test APIs Now</button>
+        <button onclick="clearResults()">Clear Results</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Get the current environment
+        const currentUrl = window.location.href;
+        document.getElementById('current-url').textContent = currentUrl;
+        
+        // Check if we're on Vercel or local
+        const isVercel = currentUrl.includes('vercel.app');
+        const API_BASE_URL = 'https://flo-do2v.onrender.com/api';
+        document.getElementById('api-url').textContent = API_BASE_URL;
+        
+        function addResult(name, status, message, data = null) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            
+            let content = `${name}: ${message}`;
+            if (data) {
+                content += `\nData preview: ${JSON.stringify(data, null, 2).substring(0, 300)}...`;
+            }
+            
+            div.textContent = content;
+            results.appendChild(div);
+        }
+        
+        async function testAPIs() {
+            clearResults();
+            
+            addResult('🚨 ENVIRONMENT', 'loading', `Testing from: ${isVercel ? 'VERCEL DEPLOYMENT' : 'LOCAL'}`);
+            
+            // Test FAQ Items
+            try {
+                addResult('FAQ Items', 'loading', 'Testing /api/faq-items/...');
+                const faqResponse = await fetch(API_BASE_URL + '/faq-items/');
+                
+                if (!faqResponse.ok) {
+                    throw new Error(`HTTP ${faqResponse.status}: ${faqResponse.statusText}`);
+                }
+                
+                const faqData = await faqResponse.json();
+                addResult('FAQ Items', 'success', `✅ SUCCESS! Found ${faqData.count} FAQ items`, faqData.results.slice(0, 2));
+                
+            } catch (error) {
+                addResult('FAQ Items', 'error', `❌ FAILED: ${error.message}`);
+            }
+            
+            // Test Metrics
+            try {
+                addResult('Metrics', 'loading', 'Testing /api/metrics/...');
+                const metricsResponse = await fetch(API_BASE_URL + '/metrics/');
+                
+                if (!metricsResponse.ok) {
+                    throw new Error(`HTTP ${metricsResponse.status}: ${metricsResponse.statusText}`);
+                }
+                
+                const metricsData = await metricsResponse.json();
+                addResult('Metrics', 'success', `✅ SUCCESS! Found ${metricsData.count} metrics`, metricsData.results.slice(0, 2));
+                
+            } catch (error) {
+                addResult('Metrics', 'error', `❌ FAILED: ${error.message}`);
+            }
+            
+            // Test CORS
+            try {
+                addResult('CORS Test', 'loading', 'Testing CORS headers...');
+                const corsResponse = await fetch(API_BASE_URL + '/faq-items/', {
+                    method: 'OPTIONS'
+                });
+                addResult('CORS Test', 'success', `✅ CORS OK: ${corsResponse.status}`);
+            } catch (error) {
+                addResult('CORS Test', 'error', `❌ CORS FAILED: ${error.message}`);
+            }
+            
+            // Summary
+            setTimeout(() => {
+                const results = document.getElementById('results');
+                const successCount = results.querySelectorAll('.success').length;
+                const errorCount = results.querySelectorAll('.error').length;
+                
+                if (errorCount === 0) {
+                    addResult('🎉 SUMMARY', 'success', `All APIs working! If website still shows old data, it's a caching issue.`);
+                } else {
+                    addResult('🚨 SUMMARY', 'error', `${errorCount} APIs broken! This explains why Django admin changes don't appear.`);
+                }
+            }, 1000);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(testAPIs, 1000);
+        });
+    </script>
+</body>
+</html>
