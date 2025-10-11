@@ -1,4 +1,4 @@
-# FloNeo Website - URGENT DEPLOYMENT FIX
+# FloNeo Website - URGENT DEPLOYMENT FIX - FAQ CACHE ISSUE
 
 A modern business automation website built with Next.js (frontend) and Django (backend).
 
