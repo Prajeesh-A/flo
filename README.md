@@ -1,4 +1,4 @@
-# FloNeo Website
+# FloNeo Website - URGENT DEPLOYMENT FIX
 
 A modern business automation website built with Next.js (frontend) and Django (backend).
 
@@ -24,10 +24,12 @@ repo/
 ### Backend (Render - Django + PostgreSQL)
 
 1. **Create PostgreSQL Database**
+
    - Go to Render Dashboard → "New" → "PostgreSQL"
    - Copy the External Connection string
 
 2. **Create Web Service**
+
    - "New" → "Web Service" → Connect GitHub repo
    - **Root Directory**: `backend_new/`
    - **Environment**: Python
@@ -35,6 +37,7 @@ repo/
    - **Start Command**: `gunicorn floneo_backend.wsgi:application`
 
 3. **Environment Variables** (Render → Web Service → Environment):
+
    ```
    SECRET_KEY=<generate-random-string>
    DEBUG=False
@@ -53,11 +56,13 @@ repo/
 ### Frontend (Vercel - Next.js)
 
 1. **Connect Repository**
+
    - Vercel Dashboard → "New Project" → Import repo
    - **Framework**: Next.js (auto-detected)
    - **Root Directory**: repo root
 
 2. **Environment Variables** (Project → Settings → Environment Variables):
+
    ```
    NEXT_PUBLIC_API_URL=https://<your-backend-slug>.onrender.com/api
    ```
@@ -69,6 +74,7 @@ repo/
 ## 🔧 Local Development
 
 ### Backend Setup
+
 ```bash
 cd backend_new
 pip install -r requirements.txt
@@ -77,12 +83,14 @@ python manage.py runserver
 ```
 
 ### Frontend Setup
+
 ```bash
 npm install
 npm run dev
 ```
 
 ### Environment Files
+
 - Frontend: Create `.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:8000/api`
 - Backend: Create `.env` based on `.env.example`
 
@@ -97,6 +105,7 @@ npm run dev
 ## 🛠️ Tech Stack
 
 **Frontend:**
+
 - Next.js 15.2.4
 - React 19
 - TypeScript
@@ -105,6 +114,7 @@ npm run dev
 - shadcn/ui
 
 **Backend:**
+
 - Django 5.0.1
 - Django REST Framework
 - PostgreSQL (production)
