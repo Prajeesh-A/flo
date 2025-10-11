@@ -2,10 +2,26 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useApiData } from "../lib/api-swr";
+import { api } from "../lib/api";
+import { RichTextRenderer } from "./SafeHTMLRenderer";
 
 interface FAQItem {
+  id: number;
   question: string;
   answer: string;
+  order: number;
+  is_active: boolean;
+}
+
+interface FAQSection {
+  id: number;
+  is_visible: boolean;
+  order: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  background_color: string;
 }
 
 const PlusIcon = ({
@@ -79,7 +95,10 @@ const FAQCard = ({ faq, index }: { faq: FAQItem; index: number }) => {
         className="overflow-hidden"
       >
         <div className="px-8 py-5 text-[#666666] text-base leading-relaxed">
-          {faq.answer}
+          <RichTextRenderer
+            content={faq.answer}
+            fallback="Answer not available"
+          />
         </div>
       </motion.div>
     </motion.div>
@@ -87,38 +106,59 @@ const FAQCard = ({ faq, index }: { faq: FAQItem; index: number }) => {
 };
 
 export default function FAQSection() {
-  const faqs: FAQItem[] = [
+  // Fetch FAQ section data from API
+  const {
+    data: faqSectionData,
+    loading: faqSectionLoading,
+    error: faqSectionError,
+  } = useApiData(api.getFAQSection);
+
+  // Fetch FAQ items from API
+  const {
+    data: faqItems,
+    loading: faqItemsLoading,
+    error: faqItemsError,
+  } = useApiData(api.getFAQItems);
+
+  // Fallback data for FAQ section
+  const defaultFaqSection = {
+    title: "Frequently Asked Questions",
+    subtitle: "Help Center",
+    description: "Find answers to common questions",
+    is_visible: true,
+  };
+
+  // Fallback data for FAQ items
+  const defaultFaqItems: FAQItem[] = [
     {
-      question: "What is  floneo?",
+      id: 1,
+      question: "What is FloNeo?",
       answer:
-        " floneo is a comprehensive financial analytics platform that helps businesses track, analyze, and optimize their financial performance with AI-powered insights and real-time data visualization.",
+        "FloNeo is a comprehensive Low-Code/No-Code platform that helps businesses turn manual processes into instant, powerful applications.",
+      order: 1,
+      is_active: true,
     },
     {
-      question: "How do I track my expenses?",
+      id: 2,
+      question: "How do I get started?",
       answer:
-        "You can track expenses through our intuitive dashboard by connecting your bank accounts, uploading receipts, or manually entering transactions. Our AI automatically categorizes expenses for better organization.",
+        "Getting started is simple! Click the 'Get Started' button, create your account, and you'll be ready to start building applications in minutes.",
+      order: 2,
+      is_active: true,
     },
     {
-      question: "How do I create an account?",
+      id: 3,
+      question: "Is my data secure?",
       answer:
-        "Creating an account is simple! Click the 'Get Started' button, enter your email and basic information, verify your email address, and you'll be ready to start using  floneo's powerful features.",
-    },
-    {
-      question: "How do I set up a budget?",
-      answer:
-        "Navigate to the Budget section in your dashboard, set spending limits for different categories, and our system will automatically track your progress and send alerts when you're approaching your limits.",
-    },
-    {
-      question: "Is my data safe?",
-      answer:
-        "Absolutely! We use bank-level encryption, secure data centers, and comply with industry standards like SOC 2 and GDPR. Your financial data is protected with multiple layers of security.",
-    },
-    {
-      question: "Can I set up bill reminders?",
-      answer:
-        "Yes! You can set up automated bill reminders for recurring payments. Our system will notify you before due dates and can even help you schedule automatic payments for better financial management.",
+        "Absolutely! We use enterprise-grade security, encryption, and comply with industry standards to keep your data safe and secure.",
+      order: 3,
+      is_active: true,
     },
   ];
+
+  // Use API data or fallback
+  const sectionData = faqSectionData || defaultFaqSection;
+  const faqs = faqItems || defaultFaqItems;
 
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
@@ -139,31 +179,51 @@ export default function FAQSection() {
               className="text-gray-600 text-sm font-medium tracking-wider uppercase"
               style={{ fontFamily: "'Poppins', sans-serif" }}
             >
-              HELP CENTER
+              {faqSectionLoading ? "LOADING..." : sectionData.subtitle}
             </span>
           </div>
-          <h2
-            className="text-[#1E1E1E] text-5xl  mb-6"
-            style={{ fontFamily: "'Poppins', semibold" }}
-          >
-            Architecting
-            <br />
-            Excellence
+          <h2 className="text-[#1E1E1E] text-5xl mb-6 font-surgena font-semibold">
+            {faqSectionLoading ? "Loading..." : sectionData.title}
           </h2>
-          <p
-            className="text-gray-600 text-lg max-w-[500px] mx-auto leading-relaxed"
-            style={{ fontFamily: "'Poppins'," }}
-          >
-            Together, we're creating a seamless experience that puts you in
-            charge of your operations without bottlenecks.
-          </p>
+          <div className="text-gray-600 text-lg max-w-[500px] mx-auto leading-relaxed">
+            <RichTextRenderer
+              content={
+                faqSectionLoading
+                  ? "Loading description..."
+                  : sectionData.description
+              }
+              fallback="Find answers to common questions"
+            />
+          </div>
         </motion.div>
 
         {/* FAQ Grid */}
         <div className="grid md:grid-cols-2 gap-6 max-w-[900px] mx-auto">
-          {faqs.map((faq, index) => (
-            <FAQCard key={index} faq={faq} index={index} />
-          ))}
+          {faqItemsLoading ? (
+            // Loading state
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-600 text-lg">Loading FAQ items...</div>
+            </div>
+          ) : faqItemsError ? (
+            // Error state
+            <div className="col-span-full text-center py-12">
+              <div className="text-red-600 text-lg">
+                Failed to load FAQ items. Using default content.
+              </div>
+            </div>
+          ) : faqs.length === 0 ? (
+            // Empty state
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-600 text-lg">
+                No FAQ items available.
+              </div>
+            </div>
+          ) : (
+            // FAQ items
+            faqs.map((faq, index) => (
+              <FAQCard key={faq.id || index} faq={faq} index={index} />
+            ))
+          )}
         </div>
       </div>
     </section>
