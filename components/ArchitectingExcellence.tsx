@@ -38,7 +38,8 @@ const useIsMobile = () => {
 // Design System - CSS Variables
 const designSystem = {
   fonts: {
-    primary: "'Poppins',  ",
+    primary: "'Poppins', sans-serif",
+    heading: "var(--font-surgena), sans-serif",
   },
   colors: {
     flowBlue: "#0066ff",
@@ -897,7 +898,7 @@ export default function ArchitectingExcellence() {
           )}
           {isMobile ? (
             <>
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6">
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6 font-surgena">
                 {data.main_title_line1}
                 <br />
                 {data.main_title_line2}
@@ -917,7 +918,7 @@ export default function ArchitectingExcellence() {
                   isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
                 }
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6"
+                className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6 font-surgena"
               >
                 {data.main_title_line1}
                 <br />

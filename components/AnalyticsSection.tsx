@@ -292,17 +292,11 @@ export default function AnalyticsSection() {
       id="analytics"
       ref={sectionRef}
       className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden"
-      style={{ fontFamily: "'Surgena','semibold', " }}
+      className="font-surgena"
     >
       <div className="container mx-auto max-w-6xl">
         {/* Top - Centered Animated Heading */}
-        <div
-          className="text-center mb-20"
-          style={{
-            fontFamily: "'Surgena','semibold'",
-            fontWeight: 600,
-          }}
-        >
+        <div className="text-center mb-20 font-surgena font-semibold">
           <motion.h2
             initial={{ x: 100, opacity: 0 }}
             animate={leftTextControls}

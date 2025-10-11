@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter, Poppins, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
 import "./globals.css";
@@ -14,6 +14,12 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-surgena",
 });
 
 export const metadata: Metadata = {
@@ -64,7 +70,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`font-sans ${inter.variable} ${poppins.variable} antialiased`}
+        className={`font-sans ${inter.variable} ${poppins.variable} ${outfit.variable} antialiased`}
       >
         <Suspense fallback={null}>{children}</Suspense>
         <Analytics />

@@ -253,8 +253,7 @@ export default function BenefitsSection() {
             delay: getMobileDuration(0.2, isMobile),
             ease: "easeOut",
           }}
-          className="text-5xl md:text-6xl lg:text-7xl  text-white mb-4 leading-tight"
-          style={{ fontFamily: "'Poppins', sans-serif" }}
+          className="text-5xl md:text-6xl lg:text-7xl text-white mb-4 leading-tight font-surgena"
         >
           {data.title}
         </motion.h2>
@@ -268,8 +267,7 @@ export default function BenefitsSection() {
             delay: getMobileDuration(0.3, isMobile),
             ease: "easeOut",
           }}
-          className="text-5xl md:text-6xl lg:text-7xl  text-white mb-8 leading-tight"
-          style={{ fontFamily: "'Poppins', sans-serif" }}
+          className="text-5xl md:text-6xl lg:text-7xl text-white mb-8 leading-tight font-surgena"
         >
           {data.subtitle}
         </motion.h3>

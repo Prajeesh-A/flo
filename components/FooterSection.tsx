@@ -39,10 +39,7 @@ export default function FooterSection() {
           transition={{ duration: 0.6, ease: [0.2, 0.6, 0.2, 1] }}
           className="text-center mb-16 sm:mb-32"
         >
-          <h1
-            className="text-[22rem] sm:text-[14rem] md:text-[22rem] lg:text-[28rem]  text-[#0D1B2A] leading-none"
-            style={{ fontFamily: "'Surgena semibold', sans-serif" }}
-          >
+          <h1 className="text-[22rem] sm:text-[14rem] md:text-[22rem] lg:text-[28rem] text-[#0D1B2A] leading-none font-surgena font-semibold">
             {data.company_name}
           </h1>
         </motion.div>

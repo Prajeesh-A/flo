@@ -83,6 +83,11 @@ body {
   font-family: var(--font-poppins), system-ui, sans-serif;
 }
 
+/* Surgena Font Family (using Outfit as substitute) */
+.font-surgena {
+  font-family: var(--font-surgena), system-ui, sans-serif;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -120,6 +125,7 @@ body {
 
 @theme inline {
   --font-sans: var(--font-inter);
+  --font-surgena: var(--font-surgena);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

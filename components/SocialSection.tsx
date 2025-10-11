@@ -196,11 +196,10 @@ export default function SocialSection() {
                 className="text-2xl  text-black mb-8"
                 style={{ fontFamily: "'Poppins'" }}
               >
-                Services
+                Features
               </h3>
               <div className="flex flex-col space-y-5">
-                <motion.a
-                  href="#"
+                <motion.div
                   className="text-lg transition-colors duration-200 hover:opacity-80 block"
                   style={{
                     color: "#FF4FCB",
@@ -210,11 +209,10 @@ export default function SocialSection() {
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  Seamless Workflow Integr
-                </motion.a>
+                  Low-Code Development
+                </motion.div>
 
-                <motion.a
-                  href="#"
+                <motion.div
                   className="text-lg transition-colors duration-200 hover:opacity-80 block"
                   style={{
                     color: "#FF4FCB",
@@ -224,11 +222,10 @@ export default function SocialSection() {
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  Expense & Income Trackin
-                </motion.a>
+                  No-Code Automation
+                </motion.div>
 
-                <motion.a
-                  href="#"
+                <motion.div
                   className="text-lg transition-colors duration-200 hover:opacity-80 block"
                   style={{
                     color: "#FF4FCB",
@@ -238,11 +235,10 @@ export default function SocialSection() {
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  Investment Tracking
-                </motion.a>
+                  AI-Powered Operations
+                </motion.div>
 
-                <motion.a
-                  href="#"
+                <motion.div
                   className="text-lg transition-colors duration-200 hover:opacity-80 block"
                   style={{
                     color: "#FF4FCB",
@@ -252,8 +248,8 @@ export default function SocialSection() {
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  Financial Goal Setting
-                </motion.a>
+                  Financial Operations Digitization
+                </motion.div>
               </div>
             </div>
           </motion.div>
