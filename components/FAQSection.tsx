@@ -1,9 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { useApiData } from "../lib/api-swr";
-import { api } from "../lib/api";
+import { useState, useEffect } from "react";
 import { RichTextRenderer } from "./SafeHTMLRenderer";
 
 interface FAQItem {
@@ -117,12 +115,35 @@ export default function FAQSection() {
   };
   const faqSectionError = null;
 
-  // Fetch FAQ items from API (this endpoint works!)
-  const {
-    data: faqItems,
-    loading: faqItemsLoading,
-    error: faqItemsError,
-  } = useApiData(api.getFAQItems);
+  // DIRECT API FETCH - Simple solution that works
+  const [faqItems, setFaqItems] = useState<any[]>([]);
+  const [faqItemsLoading, setFaqItemsLoading] = useState(true);
+  const [faqItemsError, setFaqItemsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFAQs = async () => {
+      try {
+        setFaqItemsLoading(true);
+        const response = await fetch(
+          "https://flo-do2v.onrender.com/api/faq-items/"
+        );
+        const data = await response.json();
+        console.log("🎯 DIRECT API RESPONSE:", data);
+        setFaqItems(data.results || []);
+        setFaqItemsError(null);
+      } catch (error) {
+        console.error("❌ FAQ API Error:", error);
+        setFaqItemsError(
+          error instanceof Error ? error.message : "Unknown error"
+        );
+        setFaqItems([]);
+      } finally {
+        setFaqItemsLoading(false);
+      }
+    };
+
+    fetchFAQs();
+  }, []);
 
   // Fallback data for FAQ section
   const defaultFaqSection = {
@@ -160,58 +181,47 @@ export default function FAQSection() {
     },
   ];
 
-  // Use API data or fallback data
-  const sectionData = faqSectionData; // This is now hardcoded since endpoint doesn't exist
-  const faqs = faqItems && faqItems.length > 0 ? faqItems : defaultFaqItems; // Use API data if available, otherwise fallback
-
-  // Show if we're using fallback data
-  const usingFallbackItems =
-    !faqItems || faqItemsError || faqItems.length === 0;
-
-  // Always render the FAQ section (don't block on API)
-  console.log("🔍 FAQ Debug - Detailed:", {
-    faqItems,
-    faqItemsType: typeof faqItems,
-    faqItemsArray: Array.isArray(faqItems),
-    faqItemsLength: faqItems?.length,
-    faqItemsLoading,
-    faqItemsError,
-    usingFallbackItems,
-    finalFaqs: faqs,
-    finalFaqsLength: faqs?.length,
-    firstFaqItem: faqItems?.[0],
-  });
-
-  // Force use API data if it exists and has items
-  const shouldUseApiData =
-    faqItems && Array.isArray(faqItems) && faqItems.length > 0;
+  // SIMPLE LOGIC - Use API data if available, otherwise fallback
+  const sectionData = faqSectionData;
+  const shouldUseApiData = faqItems && faqItems.length > 0;
   const finalFaqItems = shouldUseApiData ? faqItems : defaultFaqItems;
 
-  console.log("🎯 Final FAQ Decision:", {
+  console.log("🎯 SIMPLE FAQ DEBUG:", {
+    apiItemsCount: faqItems?.length || 0,
     shouldUseApiData,
-    finalFaqItemsLength: finalFaqItems.length,
-    source: shouldUseApiData ? "API" : "FALLBACK",
+    finalItemsCount: finalFaqItems.length,
+    source: shouldUseApiData ? "✅ API" : "⚠️ FALLBACK",
+    firstApiItem: faqItems?.[0]?.question,
+    loading: faqItemsLoading,
+    error: faqItemsError,
   });
 
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-        {/* Debug indicator for data source */}
+        {/* SIMPLE DEBUG BANNER */}
         <div
-          className={`px-4 py-3 rounded mb-6 text-sm ${
+          className={`px-4 py-3 rounded mb-6 text-sm font-bold ${
             shouldUseApiData
               ? "bg-green-100 border border-green-400 text-green-700"
-              : "bg-yellow-100 border border-yellow-400 text-yellow-700"
+              : "bg-red-100 border border-red-400 text-red-700"
           }`}
         >
-          <strong>Data Source:</strong>{" "}
-          {shouldUseApiData
-            ? `✅ Using API data (${finalFaqItems.length} items from Django admin)`
-            : `⚠️ Using fallback data (${finalFaqItems.length} default items)`}
-          {faqItemsError && (
+          {shouldUseApiData ? (
             <>
+              ✅ <strong>SUCCESS!</strong> Showing {finalFaqItems.length} FAQ
+              items from Django admin
               <br />
-              <strong>Error:</strong> {faqItemsError}
+              <small>First item: "{faqItems[0]?.question}"</small>
+            </>
+          ) : (
+            <>
+              ❌ <strong>USING FALLBACK DATA</strong> - API not working
+              <br />
+              <small>
+                Loading: {faqItemsLoading ? "Yes" : "No"} | Error:{" "}
+                {faqItemsError || "None"} | Items: {faqItems?.length || 0}
+              </small>
             </>
           )}
         </div>
