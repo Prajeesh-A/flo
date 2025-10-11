@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Connectivity Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin: 10px 5px;
+        }
+        
+        .status.testing {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status.success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status.error {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+            background: #f8f9fa;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .api-test {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .api-test:hover {
+            background: #34495e;
+        }
+        
+        .result {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .result.success {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+        
+        .result.error {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+        }
+        
+        .test-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #2980b9;
+        }
+        
+        .test-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .checklist li:before {
+            content: "🔍 ";
+            color: #3498db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 API Connectivity Diagnostic</h1>
+            <div class="status testing" id="overall-status">TESTING</div>
+            <p>Diagnosing why Django admin changes aren't appearing on the website</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Issue Identified</h2>
+            <p><strong>Root Cause:</strong> Frontend is likely connecting to localhost instead of the production Render backend</p>
+            <p><strong>Expected Backend URL:</strong> <code>https://flo-do2v.onrender.com/api</code></p>
+            <p><strong>Current Environment:</strong> <span id="current-env">Checking...</span></p>
+        </div>
+
+        <div class="section">
+            <h2>🧪 API Endpoint Tests</h2>
+            <p>Click the buttons below to test different API endpoints:</p>
+            
+            <button class="test-button" onclick="testEndpoint('/hero/', 'hero-result')">Test Hero Section</button>
+            <button class="test-button" onclick="testEndpoint('/faq/', 'faq-result')">Test FAQ Section</button>
+            <button class="test-button" onclick="testEndpoint('/faq-items/', 'faq-items-result')">Test FAQ Items</button>
+            <button class="test-button" onclick="testEndpoint('/metrics/', 'metrics-result')">Test Metrics Section</button>
+            <button class="test-button" onclick="testAllEndpoints()">Test All Endpoints</button>
+            
+            <div id="hero-result" class="result" style="display: none;"></div>
+            <div id="faq-result" class="result" style="display: none;"></div>
+            <div id="faq-items-result" class="result" style="display: none;"></div>
+            <div id="metrics-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Diagnostic Checklist</h2>
+            <ul class="checklist">
+                <li>Check if NEXT_PUBLIC_API_URL environment variable is set in Vercel</li>
+                <li>Verify Render backend is running and accessible</li>
+                <li>Test direct API calls to Render backend</li>
+                <li>Check for CORS issues between frontend and backend</li>
+                <li>Verify Django admin changes are saved in the database</li>
+                <li>Test API caching and ensure fresh data is returned</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Fix Implementation</h2>
+            <p><strong>Solution:</strong> Set the correct environment variable in Vercel deployment</p>
+            <div class="api-test">
+                NEXT_PUBLIC_API_URL=https://flo-do2v.onrender.com/api
+            </div>
+            <p>This should be configured in Vercel Project Settings → Environment Variables</p>
+        </div>
+
+        <div class="section">
+            <h2>📊 Test Results Summary</h2>
+            <div id="test-summary">
+                <p>Run tests above to see results...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API base URL - this will help us test the connectivity
+        const API_BASE_URL = 'https://flo-do2v.onrender.com/api';
+        
+        // Update current environment display
+        document.getElementById('current-env').textContent = 
+            typeof window !== 'undefined' && window.location.hostname.includes('vercel') 
+                ? 'Production (Vercel)' 
+                : 'Local/Other';
+
+        async function testEndpoint(endpoint, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            const button = event.target;
+            
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<div class="loading"></div>Testing...';
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = 'Testing endpoint: ' + endpoint + '...';
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(API_BASE_URL + endpoint);
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Success
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    <strong>✅ SUCCESS (${responseTime}ms)</strong><br>
+                    <strong>Status:</strong> ${response.status}<br>
+                    <strong>URL:</strong> ${API_BASE_URL + endpoint}<br>
+                    <strong>Response:</strong><br>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                updateOverallStatus('success');
+                
+            } catch (error) {
+                // Error
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ ERROR</strong><br>
+                    <strong>URL:</strong> ${API_BASE_URL + endpoint}<br>
+                    <strong>Error:</strong> ${error.message}<br>
+                    <strong>Possible Causes:</strong><br>
+                    • Backend server is down<br>
+                    • CORS issues<br>
+                    • Network connectivity problems<br>
+                    • Incorrect API URL
+                `;
+                
+                updateOverallStatus('error');
+            } finally {
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = button.textContent.replace('Testing...', '').trim();
+            }
+        }
+
+        async function testAllEndpoints() {
+            const endpoints = ['/hero/', '/faq/', '/faq-items/', '/metrics/'];
+            const results = [];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(API_BASE_URL + endpoint);
+                    results.push({
+                        endpoint,
+                        status: response.status,
+                        success: response.ok
+                    });
+                } catch (error) {
+                    results.push({
+                        endpoint,
+                        status: 'ERROR',
+                        success: false,
+                        error: error.message
+                    });
+                }
+            }
+            
+            // Update summary
+            const summaryDiv = document.getElementById('test-summary');
+            const successCount = results.filter(r => r.success).length;
+            const totalCount = results.length;
+            
+            summaryDiv.innerHTML = `
+                <h3>Test Results: ${successCount}/${totalCount} endpoints working</h3>
+                ${results.map(r => `
+                    <div style="margin: 10px 0; padding: 10px; border-radius: 5px; background: ${r.success ? '#d5f4e6' : '#fdf2f2'};">
+                        <strong>${r.endpoint}:</strong> ${r.success ? '✅ Working' : '❌ Failed'} (${r.status})
+                        ${r.error ? `<br><em>Error: ${r.error}</em>` : ''}
+                    </div>
+                `).join('')}
+            `;
+            
+            if (successCount === totalCount) {
+                updateOverallStatus('success');
+            } else if (successCount > 0) {
+                updateOverallStatus('partial');
+            } else {
+                updateOverallStatus('error');
+            }
+        }
+
+        function updateOverallStatus(status) {
+            const statusDiv = document.getElementById('overall-status');
+            
+            switch (status) {
+                case 'success':
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = 'API WORKING';
+                    break;
+                case 'error':
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = 'API ISSUES';
+                    break;
+                case 'partial':
+                    statusDiv.className = 'status testing';
+                    statusDiv.textContent = 'PARTIAL SUCCESS';
+                    break;
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testAllEndpoints();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
