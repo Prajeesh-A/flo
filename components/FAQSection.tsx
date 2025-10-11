@@ -160,32 +160,22 @@ export default function FAQSection() {
     },
   ];
 
-  // URGENT FIX: Use working API data
+  // Use API data or fallback data
   const sectionData = faqSectionData; // This is now hardcoded since endpoint doesn't exist
-  const faqs = faqItems; // This comes from working API
+  const faqs = faqItems && faqItems.length > 0 ? faqItems : defaultFaqItems; // Use API data if available, otherwise fallback
 
   // Show if we're using fallback data
-  const usingFallbackItems = !faqItems || faqItemsError;
+  const usingFallbackItems =
+    !faqItems || faqItemsError || faqItems.length === 0;
 
-  // URGENT: Don't render if no FAQ items from API
-  if (!faqs) {
-    return (
-      <section
-        id="help"
-        className="relative bg-white py-[100px] overflow-hidden"
-      >
-        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <strong>🚨 URGENT:</strong> FAQ Items API not working!
-            <br />
-            Items Error: {faqItemsError || "No data from /api/faq-items/"}
-            <br />
-            Check Django admin FAQ Items and API connectivity immediately!
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Always render the FAQ section (don't block on API)
+  console.log("FAQ Debug:", {
+    faqItems,
+    faqItemsLoading,
+    faqItemsError,
+    usingFallbackItems,
+    finalFaqs: faqs,
+  });
 
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
@@ -213,16 +203,16 @@ export default function FAQSection() {
               className="text-gray-600 text-sm font-medium tracking-wider uppercase"
               style={{ fontFamily: "'Poppins', sans-serif" }}
             >
-              {faqSectionLoading ? "LOADING..." : sectionData.subtitle}
+              {faqItemsLoading ? "LOADING..." : sectionData.subtitle}
             </span>
           </div>
           <h2 className="text-[#1E1E1E] text-5xl mb-6 font-surgena font-semibold">
-            {faqSectionLoading ? "Loading..." : sectionData.title}
+            {faqItemsLoading ? "Loading..." : sectionData.title}
           </h2>
           <div className="text-gray-600 text-lg max-w-[500px] mx-auto leading-relaxed">
             <RichTextRenderer
               content={
-                faqSectionLoading
+                faqItemsLoading
                   ? "Loading description..."
                   : sectionData.description
               }
@@ -254,7 +244,7 @@ export default function FAQSection() {
             </div>
           ) : (
             // FAQ items
-            faqs.map((faq, index) => (
+            faqs.map((faq: any, index: number) => (
               <FAQCard key={faq.id || index} faq={faq} index={index} />
             ))
           )}
