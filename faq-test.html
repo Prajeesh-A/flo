@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Test - Django API Working</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .banner { padding: 15px; margin: 20px 0; border-radius: 8px; font-weight: bold; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .faq-item { margin: 10px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .question { font-weight: bold; color: #333; }
+        .answer { margin-top: 8px; color: #666; }
+        .loading { text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🚨 FAQ API Test - Proving Django Admin Works</h1>
+    
+    <div id="status" class="banner">
+        <div class="loading">⏳ Loading FAQ items from Django admin...</div>
+    </div>
+    
+    <div id="faq-container"></div>
+
+    <script>
+        async function loadFAQs() {
+            const statusDiv = document.getElementById('status');
+            const containerDiv = document.getElementById('faq-container');
+            
+            try {
+                console.log('🔄 Fetching FAQ items...');
+                const response = await fetch('https://flo-do2v.onrender.com/api/faq-items/');
+                const data = await response.json();
+                
+                console.log('✅ API Response:', data);
+                
+                if (data.results && data.results.length > 0) {
+                    // SUCCESS!
+                    statusDiv.innerHTML = `
+                        <div class="success">
+                            ✅ <strong>SUCCESS!</strong> Loaded ${data.results.length} FAQ items from Django admin!
+                            <br><small>API URL: https://flo-do2v.onrender.com/api/faq-items/</small>
+                        </div>
+                    `;
+                    
+                    // Display FAQ items
+                    containerDiv.innerHTML = data.results.map(faq => `
+                        <div class="faq-item">
+                            <div class="question">Q: ${faq.question}</div>
+                            <div class="answer">A: ${faq.answer.replace(/<[^>]*>/g, '')}</div>
+                        </div>
+                    `).join('');
+                    
+                } else {
+                    throw new Error('No FAQ items found in response');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ <strong>ERROR:</strong> ${error.message}
+                        <br><small>Check console for details</small>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load FAQs when page loads
+        loadFAQs();
+    </script>
+</body>
+</html>
