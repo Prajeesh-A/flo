@@ -579,6 +579,10 @@ export const api = {
   getMetricsDisplaySection: (): Promise<MetricsDisplaySection> =>
     apiFetch<MetricsDisplaySection>("/metrics-display/"),
 
+  // URGENT FIX: Add metrics endpoint that actually exists
+  getMetrics: (): Promise<{ count: number; results: MetricBox[] }> =>
+    apiFetch<{ count: number; results: MetricBox[] }>("/metrics/"),
+
   getPricingFeaturesSection: (): Promise<PricingFeaturesSection> =>
     apiFetch<PricingFeaturesSection>("/pricing-features/"),
 

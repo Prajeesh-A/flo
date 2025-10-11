@@ -44,12 +44,24 @@ export default function AIPoweredAnalytics() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
-  // Fetch AI-Powered Analytics section data from API
+  // URGENT FIX: Use correct API endpoint that exists
+  // Section metadata - using hardcoded for now since /api/ai-analytics/ doesn't exist
+  const sectionData = {
+    title: "AI-Powered Analytics",
+    subtitle: "Intelligent Insights",
+    description:
+      "floneo's AI engine identifies inefficiencies, predicts bottlenecks, and suggests optimizations — turning your operations into a competitive advantage.",
+    is_visible: true,
+  };
+  const loading = false;
+  const error = null;
+
+  // Fetch metrics from API (this endpoint works!)
   const {
-    data: sectionData,
-    loading,
-    error,
-  } = useApiData(api.getAIPoweredAnalyticsSection);
+    data: metricsData,
+    loading: metricsLoading,
+    error: metricsError,
+  } = useApiData(api.getMetrics);
 
   // Fallback data
   const fallbackData = {
@@ -80,20 +92,21 @@ export default function AIPoweredAnalytics() {
     is_visible: true,
   };
 
-  // URGENT FIX: Force API data only - no fallbacks
-  const data = sectionData;
+  // URGENT FIX: Use working API data
+  const data = sectionData; // This is now hardcoded since endpoint doesn't exist
+  const metrics = metricsData; // This comes from working API
 
-  // URGENT: Don't render if no API data
-  if (!data) {
+  // URGENT: Don't render if no metrics from API
+  if (!metrics) {
     return (
       <section id="ai-analytics" className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <strong>🚨 URGENT:</strong> AI Analytics Section API not working!
+            <strong>🚨 URGENT:</strong> Metrics API not working!
             <br />
-            Error: {error || "No data from api.getAIPoweredAnalyticsSection"}
+            Error: {metricsError || "No data from /api/metrics/"}
             <br />
-            Check Django admin and API connectivity immediately!
+            Check Django admin Metrics and API connectivity immediately!
           </div>
         </div>
       </section>
@@ -169,83 +182,37 @@ export default function AIPoweredAnalytics() {
           />
         </motion.div>
 
-        {/* 2x2 Grid Layout for Circles */}
+        {/* 2x2 Grid Layout for Circles - Using API Data */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-10 gap-y-6 sm:gap-y-8 items-center max-w-4xl mx-auto mb-16">
-          {/* Top Left - 85% Pink Circle */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.1,
-              type: "spring",
-              stiffness: 100,
-            }}
-          >
-            <CircularMetric
-              percentage={data.metric_1_value}
-              description={data.metric_1_description}
-              color="bg-pink-400"
-            />
-          </motion.div>
-
-          {/* Top Right - 90% Green Circle */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.2,
-              type: "spring",
-              stiffness: 100,
-            }}
-          >
-            <CircularMetric
-              percentage={data.metric_2_value}
-              description={data.metric_2_description}
-              color="bg-green-400"
-            />
-          </motion.div>
-
-          {/* Bottom Left - 70% Yellow Circle */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.3,
-              type: "spring",
-              stiffness: 100,
-            }}
-          >
-            <CircularMetric
-              percentage={data.metric_3_value}
-              description={data.metric_3_description}
-              color="bg-yellow-400"
-            />
-          </motion.div>
-
-          {/* Bottom Right - 84% Blue Circle */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.4,
-              type: "spring",
-              stiffness: 100,
-            }}
-          >
-            <CircularMetric
-              percentage={data.metric_4_value}
-              description={data.metric_4_description}
-              color="bg-blue-400"
-            />
-          </motion.div>
+          {metrics.results &&
+            metrics.results.slice(0, 4).map((metric, index) => {
+              const colors = [
+                "bg-pink-400",
+                "bg-green-400",
+                "bg-yellow-400",
+                "bg-blue-400",
+              ];
+              return (
+                <motion.div
+                  key={metric.id}
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.1 + index * 0.1,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
+                >
+                  <CircularMetric
+                    percentage={`${metric.value}${metric.suffix || ""}`}
+                    description={metric.description}
+                    color={colors[index] || "bg-gray-400"}
+                  />
+                </motion.div>
+              );
+            })}
         </div>
 
         {/* Center Content - Predict Financial Trends */}

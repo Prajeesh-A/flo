@@ -106,14 +106,18 @@ const FAQCard = ({ faq, index }: { faq: FAQItem; index: number }) => {
 };
 
 export default function FAQSection() {
-  // Fetch FAQ section data from API
-  const {
-    data: faqSectionData,
-    loading: faqSectionLoading,
-    error: faqSectionError,
-  } = useApiData(api.getFAQSection);
+  // URGENT FIX: Use correct API endpoint that exists
+  // FAQ Section metadata - using hardcoded for now since /api/faq/ doesn't exist
+  const faqSectionData = {
+    title: "Architecting Excellence",
+    subtitle: "HELP CENTER",
+    description:
+      "Together, we're creating a seamless experience that puts you in charge of your operations without bottlenecks.",
+    is_visible: true,
+  };
+  const faqSectionError = null;
 
-  // Fetch FAQ items from API
+  // Fetch FAQ items from API (this endpoint works!)
   const {
     data: faqItems,
     loading: faqItemsLoading,
@@ -156,16 +160,15 @@ export default function FAQSection() {
     },
   ];
 
-  // URGENT FIX: Force API data only - no fallbacks
-  const sectionData = faqSectionData;
-  const faqs = faqItems;
+  // URGENT FIX: Use working API data
+  const sectionData = faqSectionData; // This is now hardcoded since endpoint doesn't exist
+  const faqs = faqItems; // This comes from working API
 
   // Show if we're using fallback data
-  const usingFallbackSection = !faqSectionData || faqSectionError;
   const usingFallbackItems = !faqItems || faqItemsError;
 
-  // URGENT: Don't render if no API data
-  if (!sectionData || !faqs) {
+  // URGENT: Don't render if no FAQ items from API
+  if (!faqs) {
     return (
       <section
         id="help"
@@ -173,13 +176,11 @@ export default function FAQSection() {
       >
         <div className="max-w-[1200px] mx-auto px-6 relative z-10">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <strong>🚨 URGENT:</strong> FAQ Section API not working!
+            <strong>🚨 URGENT:</strong> FAQ Items API not working!
             <br />
-            Section Error: {faqSectionError || "No data"}
+            Items Error: {faqItemsError || "No data from /api/faq-items/"}
             <br />
-            Items Error: {faqItemsError || "No data"}
-            <br />
-            Check Django admin and API connectivity immediately!
+            Check Django admin FAQ Items and API connectivity immediately!
           </div>
         </div>
       </section>
@@ -190,12 +191,10 @@ export default function FAQSection() {
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         {/* Debug indicator for fallback data */}
-        {(usingFallbackSection || usingFallbackItems) && (
+        {usingFallbackItems && (
           <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6 text-sm">
-            <strong>Debug:</strong> Using fallback data -
-            {usingFallbackSection && " FAQ section"}
-            {usingFallbackSection && usingFallbackItems && ","}
-            {usingFallbackItems && " FAQ items"} not loaded from API
+            <strong>Debug:</strong> Using fallback data - FAQ items not loaded
+            from API
           </div>
         )}
         {/* Header */}
