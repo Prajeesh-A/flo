@@ -152,13 +152,15 @@ const ChatBubble = React.memo(
         style={{ willChange: isVisible ? "transform, opacity" : "auto" }}
       >
         <div
-          className={`px-4 py-3 max-w-[75%] ${
+          className={`max-w-[75%] ${isMobile ? "px-3 py-2" : "px-4 py-3"} ${
             isUser
               ? "bg-gradient-to-r from-[#0066FF] to-[#0099FF] text-white rounded-2xl rounded-br-sm"
               : "bg-gradient-to-r from-[#2ecc71] to-[#27ae60] text-white rounded-2xl rounded-bl-sm"
           }`}
         >
-          <p className="text-sm leading-relaxed">{message.text}</p>
+          <p className={`leading-relaxed ${isMobile ? "text-xs" : "text-sm"}`}>
+            {message.text}
+          </p>
         </div>
       </motion.div>
     );
@@ -358,20 +360,40 @@ function PhoneMockup({
             delay: getMobileDuration(2.5, isMobile),
           },
         }}
-        className="relative w-full max-w-[220px] md:max-w-[340px] mx-auto"
+        className={`relative mx-auto ${
+          isMobile ? "phone-mockup-container" : "w-full max-w-[340px]"
+        }`}
         style={{
           filter: "drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15))",
           willChange: isInView ? "transform, opacity" : "auto",
         }}
       >
         {/* Phone frame - iPhone style */}
-        <div className="relative w-full aspect-[9.5/19] bg-black rounded-[3rem] p-2">
+        <div
+          className={`relative bg-black rounded-[3rem] p-2 ${
+            isMobile ? "w-[180px] h-[360px]" : "w-full aspect-[9.5/19]"
+          }`}
+        >
           {/* Dynamic Island */}
-          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-full z-20" />
+          <div
+            className={`absolute top-2 left-1/2 transform -translate-x-1/2 bg-black rounded-full z-20 ${
+              isMobile ? "w-20 h-4" : "w-32 h-6"
+            }`}
+          />
 
           {/* Status bar elements */}
-          <div className="absolute top-3 left-6 right-6 flex justify-between items-center z-10">
-            <span className="text-white text-sm font-medium">9:41</span>
+          <div
+            className={`absolute top-3 flex justify-between items-center z-10 ${
+              isMobile ? "left-4 right-4" : "left-6 right-6"
+            }`}
+          >
+            <span
+              className={`text-white font-medium ${
+                isMobile ? "text-xs" : "text-sm"
+              }`}
+            >
+              9:41
+            </span>
             <div className="flex items-center gap-1">
               <div className="flex gap-1">
                 <div className="w-1 h-1 bg-white rounded-full"></div>
@@ -390,7 +412,9 @@ function PhoneMockup({
             {/* Chat messages */}
             <div
               ref={chatContainerRef}
-              className="chat-container p-4 h-full overflow-y-auto space-y-3"
+              className={`chat-container h-full overflow-y-auto space-y-3 ${
+                isMobile ? "p-3 space-y-2" : "p-4 space-y-3"
+              }`}
               style={{
                 scrollbarWidth: "none" /* Firefox */,
                 msOverflowStyle: "none" /* Internet Explorer 10+ */,
@@ -614,14 +638,12 @@ export default function HumanTouchSection() {
               {data.title}
             </motion.h2>
 
-            {/* Phone Mockup - Smaller for mobile */}
-            <div className="w-full max-w-[200px] mx-auto">
-              <PhoneMockup
-                isInView={isInView}
-                chatMessages={chatMessages}
-                isMobile={isMobile}
-              />
-            </div>
+            {/* Phone Mockup - Fixed size for mobile */}
+            <PhoneMockup
+              isInView={isInView}
+              chatMessages={chatMessages}
+              isMobile={isMobile}
+            />
 
             {/* Bottom Text - "Touch" */}
             <motion.h2

@@ -978,15 +978,34 @@ html {
     margin-bottom: 3rem !important; /* More space below CTA buttons */
   }
 
-  /* Mobile phone mockup sizing in Human Touch section */
-  #features .relative.w-full.max-w-\\[220px\\] {
-    max-width: 180px !important; /* Even smaller on mobile */
+  /* Mobile phone mockup sizing in Human Touch section - Fixed dimensions */
+  #features .phone-mockup-container {
+    width: 180px !important; /* Fixed width based on reference image */
+    max-width: 180px !important;
+    min-width: 180px !important;
+    margin: 0 auto !important;
+  }
+
+  #features .phone-mockup-container > div {
+    width: 180px !important; /* Fixed phone frame width */
+    height: 360px !important; /* Fixed height maintaining aspect ratio */
+    max-width: none !important;
   }
 
   /* Adjust Human Touch section mobile text sizing */
   #features .md\\:hidden .text-5xl {
     font-size: 3rem !important; /* Smaller text on mobile */
     line-height: 1.1 !important;
+  }
+
+  /* Ensure phone content doesn't overflow */
+  #features .phone-mockup-container .chat-container {
+    font-size: 0.75rem !important; /* Smaller text inside phone */
+  }
+
+  #features .phone-mockup-container .chat-container .px-4 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
 
   /* CTA buttons mobile */
