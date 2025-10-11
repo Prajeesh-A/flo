@@ -80,8 +80,25 @@ export default function AIPoweredAnalytics() {
     is_visible: true,
   };
 
-  // Use API data or fallback
-  const data = sectionData || fallbackData;
+  // URGENT FIX: Force API data only - no fallbacks
+  const data = sectionData;
+
+  // URGENT: Don't render if no API data
+  if (!data) {
+    return (
+      <section id="ai-analytics" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <strong>🚨 URGENT:</strong> AI Analytics Section API not working!
+            <br />
+            Error: {error || "No data from api.getAIPoweredAnalyticsSection"}
+            <br />
+            Check Django admin and API connectivity immediately!
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   // Don't render if not visible
   if (!data.is_visible) {

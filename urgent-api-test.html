@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 URGENT API Test - Deadline Today</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .urgent {
+            background: #fee;
+            border: 2px solid #f00;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #c00;
+            font-weight: bold;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success {
+            background: #dfd;
+            border: 1px solid #0a0;
+            color: #060;
+        }
+        .error {
+            background: #fdd;
+            border: 1px solid #a00;
+            color: #600;
+        }
+        .loading {
+            background: #ffd;
+            border: 1px solid #aa0;
+            color: #660;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        .endpoint {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007cba;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="urgent">
+            🚨 URGENT: Project Deadline Today - API Diagnostic Test
+        </div>
+        
+        <h1>Critical API Endpoints Test</h1>
+        <p><strong>API Base URL:</strong> <span id="api-url">Loading...</span></p>
+        
+        <button onclick="testAllCritical()">🚨 Test All Critical Endpoints</button>
+        <button onclick="clearResults()">Clear Results</button>
+        
+        <div id="results"></div>
+        
+        <div class="urgent">
+            <h3>🎯 What This Test Will Show:</h3>
+            <ul>
+                <li>✅ <strong>Green</strong> = API working, Django admin changes will appear</li>
+                <li>❌ <strong>Red</strong> = API broken, explains why changes don't appear</li>
+                <li>⚠️ <strong>Yellow</strong> = Testing in progress</li>
+            </ul>
+        </div>
+        
+        <div class="endpoint">
+            <h3>Critical Endpoints Being Tested:</h3>
+            <ul>
+                <li><code>/api/ai-analytics/</code> - AI-Powered Analytics Section</li>
+                <li><code>/api/faq/</code> - FAQ Section Metadata</li>
+                <li><code>/api/faq-items/</code> - FAQ Items</li>
+                <li><code>/api/social/</code> - Social Media Section</li>
+                <li><code>/api/social-links/</code> - Social Media Links</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://flo-do2v.onrender.com/api';
+        document.getElementById('api-url').textContent = API_BASE_URL;
+        
+        const criticalEndpoints = [
+            { name: 'AI Analytics Section', url: '/ai-analytics/' },
+            { name: 'FAQ Section', url: '/faq/' },
+            { name: 'FAQ Items', url: '/faq-items/' },
+            { name: 'Social Media Section', url: '/social/' },
+            { name: 'Social Media Links', url: '/social-links/' }
+        ];
+        
+        function addResult(name, status, message, data = null) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            
+            let content = `<strong>${name}:</strong> ${message}`;
+            if (data) {
+                content += `<br><small>Data: ${JSON.stringify(data, null, 2).substring(0, 200)}...</small>`;
+            }
+            
+            div.innerHTML = content;
+            results.appendChild(div);
+        }
+        
+        async function testEndpoint(endpoint) {
+            const { name, url } = endpoint;
+            
+            addResult(name, 'loading', 'Testing...');
+            
+            try {
+                const fullUrl = API_BASE_URL + url;
+                const response = await fetch(fullUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Remove loading message
+                const results = document.getElementById('results');
+                const loadingDiv = results.lastElementChild;
+                if (loadingDiv && loadingDiv.textContent.includes('Testing...')) {
+                    results.removeChild(loadingDiv);
+                }
+                
+                addResult(name, 'success', `✅ Working! Status: ${response.status}`, data);
+                
+            } catch (error) {
+                // Remove loading message
+                const results = document.getElementById('results');
+                const loadingDiv = results.lastElementChild;
+                if (loadingDiv && loadingDiv.textContent.includes('Testing...')) {
+                    results.removeChild(loadingDiv);
+                }
+                
+                addResult(name, 'error', `❌ FAILED: ${error.message}`);
+            }
+        }
+        
+        async function testAllCritical() {
+            clearResults();
+            
+            addResult('🚨 URGENT TEST', 'loading', 'Testing all critical endpoints for deadline project...');
+            
+            for (const endpoint of criticalEndpoints) {
+                await testEndpoint(endpoint);
+                // Small delay to avoid overwhelming the server
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            // Summary
+            setTimeout(() => {
+                const results = document.getElementById('results');
+                const successCount = results.querySelectorAll('.success').length;
+                const errorCount = results.querySelectorAll('.error').length;
+                
+                if (errorCount === 0) {
+                    addResult('🎉 SUMMARY', 'success', `All ${successCount} endpoints working! Django admin changes should appear on website.`);
+                } else {
+                    addResult('🚨 SUMMARY', 'error', `${errorCount} endpoints BROKEN! This is why Django admin changes don't appear. Fix these immediately!`);
+                }
+            }, 1000);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(testAllCritical, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -78,9 +78,28 @@ export default function SocialSection() {
     },
   ];
 
-  // Use API data or fallback
-  const section = sectionData || fallbackSection;
-  const links = socialLinks || fallbackLinks;
+  // URGENT FIX: Force API data only - no fallbacks
+  const section = sectionData;
+  const links = socialLinks;
+
+  // URGENT: Don't render if no API data
+  if (!section || !links) {
+    return (
+      <section className="bg-white py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <strong>🚨 URGENT:</strong> Social Media Section API not working!
+            <br />
+            Section Error: {sectionError || "No section data"}
+            <br />
+            Links Error: {linksError || "No links data"}
+            <br />
+            Check Django admin and API connectivity immediately!
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   // Don't render if not visible
   if (!section.is_visible) {
@@ -232,64 +251,12 @@ export default function SocialSection() {
             </div>
 
             <div>
-              <h3
-                className="text-2xl  text-black mb-8"
-                style={{ fontFamily: "'Poppins'" }}
-              >
-                Features
-              </h3>
-              <div className="flex flex-col space-y-5">
-                <motion.div
-                  className="text-lg transition-colors duration-200 hover:opacity-80 block"
-                  style={{
-                    color: "#FF4FCB",
-                    fontFamily: "'Poppins',  ",
-                    fontWeight: 300,
-                  }}
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Low-Code Development
-                </motion.div>
-
-                <motion.div
-                  className="text-lg transition-colors duration-200 hover:opacity-80 block"
-                  style={{
-                    color: "#FF4FCB",
-                    fontFamily: "'Poppins',  ",
-                    fontWeight: 300,
-                  }}
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  No-Code Automation
-                </motion.div>
-
-                <motion.div
-                  className="text-lg transition-colors duration-200 hover:opacity-80 block"
-                  style={{
-                    color: "#FF4FCB",
-                    fontFamily: "'Poppins',  ",
-                    fontWeight: 300,
-                  }}
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  AI-Powered Operations
-                </motion.div>
-
-                <motion.div
-                  className="text-lg transition-colors duration-200 hover:opacity-80 block"
-                  style={{
-                    color: "#FF4FCB",
-                    fontFamily: "'Poppins',  ",
-                    fontWeight: 300,
-                  }}
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Financial Operations Digitization
-                </motion.div>
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <strong>🚨 URGENT:</strong> Features section is hardcoded!
+                <br />
+                This should be managed through Django admin.
+                <br />
+                Create a Features model in Django admin to manage this content.
               </div>
             </div>
           </motion.div>

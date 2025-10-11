@@ -156,14 +156,35 @@ export default function FAQSection() {
     },
   ];
 
-  // Use API data with better error handling
-  const sectionData =
-    faqSectionData && !faqSectionError ? faqSectionData : defaultFaqSection;
-  const faqs = faqItems && !faqItemsError ? faqItems : defaultFaqItems;
+  // URGENT FIX: Force API data only - no fallbacks
+  const sectionData = faqSectionData;
+  const faqs = faqItems;
 
   // Show if we're using fallback data
   const usingFallbackSection = !faqSectionData || faqSectionError;
   const usingFallbackItems = !faqItems || faqItemsError;
+
+  // URGENT: Don't render if no API data
+  if (!sectionData || !faqs) {
+    return (
+      <section
+        id="help"
+        className="relative bg-white py-[100px] overflow-hidden"
+      >
+        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <strong>🚨 URGENT:</strong> FAQ Section API not working!
+            <br />
+            Section Error: {faqSectionError || "No data"}
+            <br />
+            Items Error: {faqItemsError || "No data"}
+            <br />
+            Check Django admin and API connectivity immediately!
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
