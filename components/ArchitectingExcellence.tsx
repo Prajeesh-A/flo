@@ -128,120 +128,90 @@ function DarkGradientCard({
       {...(isMobile ? mobileStaticProps : desktopAnimatedProps)}
       className="bg-gradient-to-br from-[#0a1f1f] via-[#0d3d3d] to-[#2ecc71] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[420px] sm:min-h-[450px] lg:min-h-[450px] relative overflow-hidden group"
     >
-      {/* Animated decorative circles with floating effect - Static on mobile */}
-      <motion.div
-        animate={
-          isMobile
-            ? {}
-            : {
-                y: [0, -20, 0],
-                scale: [1, 1.1, 1],
-              }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-        }
-        className="absolute top-8 left-8 w-20 h-20 bg-white/30 rounded-full blur-xl"
-      />
-      <motion.div
-        animate={
-          isMobile
-            ? {}
-            : {
-                y: [0, 20, 0],
-                scale: [1, 1.15, 1],
-              }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1,
-              }
-        }
-        className="absolute top-1/3 right-12 w-32 h-32 bg-[#2ecc71]/50 rounded-full blur-2xl"
-      />
-      <motion.div
-        animate={
-          isMobile
-            ? {}
-            : {
-                y: [0, -15, 0],
-                x: [0, 10, 0],
-                scale: [1, 1.05, 1],
-              }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 7,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2,
-              }
-        }
-        className="absolute bottom-12 left-1/4 w-24 h-24 bg-white/20 rounded-full blur-xl"
-      />
-      <motion.div
-        animate={
-          isMobile
-            ? {}
-            : {
-                scale: [1, 1.2, 1],
-                opacity: [0.2, 0.4, 0.2],
-              }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-        }
-        className="absolute bottom-1/4 right-1/4 w-16 h-16 bg-white/10 rounded-full blur-lg"
-      />
+      {/* Animated decorative circles with floating effect - Hidden on mobile */}
+      {!isMobile && (
+        <motion.div
+          animate={{
+            y: [0, -20, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute top-8 left-8 w-20 h-20 bg-white/30 rounded-full blur-xl"
+        />
+      )}
+      {!isMobile && (
+        <motion.div
+          animate={{
+            y: [0, 20, 0],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+          className="absolute top-1/3 right-12 w-32 h-32 bg-[#2ecc71]/50 rounded-full blur-2xl"
+        />
+      )}
+      {!isMobile && (
+        <motion.div
+          animate={{
+            y: [0, -15, 0],
+            x: [0, 10, 0],
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+          className="absolute bottom-12 left-1/4 w-24 h-24 bg-white/20 rounded-full blur-xl"
+        />
+      )}
+      {!isMobile && (
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute bottom-1/4 right-1/4 w-16 h-16 bg-white/10 rounded-full blur-lg"
+        />
+      )}
 
-      {/* Percentage badges with enhanced glow and hover effects - Static on mobile */}
-      <motion.div
-        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        animate={
-          isMobile
-            ? { scale: 1, opacity: 1 }
-            : isInView
-            ? { scale: 1, opacity: 1 }
-            : { scale: 0, opacity: 0 }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 0.6,
-                delay: 0.3,
-                type: "spring",
-                stiffness: 200,
-              }
-        }
-        whileHover={isMobile ? {} : { scale: 1.1 }}
-        className="absolute top-10 right-10 bg-[#0066ff]/80 backdrop-blur-md rounded-full px-7 py-5 border border-[#0066ff]/50 cursor-pointer"
-        style={{
-          boxShadow:
-            "0 0 30px rgba(0, 102, 255, 0.6), 0 0 60px rgba(0, 102, 255, 0.3), inset 0 0 20px rgba(0, 102, 255, 0.2)",
-        }}
-      >
-        <span className="text-white font-semibold text-2xl">{count1}%</span>
-      </motion.div>
+      {/* Blue percentage badge - Hidden on mobile */}
+      {!isMobile && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={
+            isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }
+          }
+          transition={{
+            duration: 0.6,
+            delay: 0.3,
+            type: "spring",
+            stiffness: 200,
+          }}
+          whileHover={{ scale: 1.1 }}
+          className="absolute top-10 right-10 bg-[#0066ff]/80 backdrop-blur-md rounded-full px-7 py-5 border border-[#0066ff]/50 cursor-pointer"
+          style={{
+            boxShadow:
+              "0 0 30px rgba(0, 102, 255, 0.6), 0 0 60px rgba(0, 102, 255, 0.3), inset 0 0 20px rgba(0, 102, 255, 0.2)",
+          }}
+        >
+          <span className="text-white font-semibold text-2xl">{count1}%</span>
+        </motion.div>
+      )}
       <motion.div
         initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
         animate={
@@ -273,87 +243,69 @@ function DarkGradientCard({
         <span className="text-white font-semibold text-5xl">{count2}%</span>
       </motion.div>
 
-      {/* Decorative white circles around the main circle - Static on mobile */}
-      <motion.div
-        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        animate={
-          isMobile
-            ? { scale: 1, opacity: 1 }
-            : isInView
-            ? { scale: 1, opacity: 1 }
-            : { scale: 0, opacity: 0 }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 0.6,
-                delay: 0.6,
-                type: "spring",
-                stiffness: 200,
-              }
-        }
-        className="absolute top-[15%] left-[30%] bg-white/90 rounded-full"
-        style={{
-          width: "80px",
-          height: "80px",
-          boxShadow:
-            "0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)",
-        }}
-      />
-      <motion.div
-        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        animate={
-          isMobile
-            ? { scale: 1, opacity: 1 }
-            : isInView
-            ? { scale: 1, opacity: 1 }
-            : { scale: 0, opacity: 0 }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 0.6,
-                delay: 0.65,
-                type: "spring",
-                stiffness: 200,
-              }
-        }
-        className="absolute bottom-[25%] right-[20%] bg-white/90 rounded-full"
-        style={{
-          width: "100px",
-          height: "100px",
-          boxShadow:
-            "0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)",
-        }}
-      />
-      <motion.div
-        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        animate={
-          isMobile
-            ? { scale: 1, opacity: 1 }
-            : isInView
-            ? { scale: 1, opacity: 1 }
-            : { scale: 0, opacity: 0 }
-        }
-        transition={
-          isMobile
-            ? {}
-            : {
-                duration: 0.6,
-                delay: 0.7,
-                type: "spring",
-                stiffness: 200,
-              }
-        }
-        className="absolute bottom-[30%] right-[15%] bg-white/70 rounded-full"
-        style={{
-          width: "40px",
-          height: "40px",
-          boxShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
-        }}
-      />
+      {/* Decorative white circles around the main circle - Hidden on mobile */}
+      {!isMobile && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={
+            isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }
+          }
+          transition={{
+            duration: 0.6,
+            delay: 0.6,
+            type: "spring",
+            stiffness: 200,
+          }}
+          className="absolute top-[15%] left-[30%] bg-white/90 rounded-full"
+          style={{
+            width: "80px",
+            height: "80px",
+            boxShadow:
+              "0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)",
+          }}
+        />
+      )}
+      {!isMobile && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={
+            isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }
+          }
+          transition={{
+            duration: 0.6,
+            delay: 0.65,
+            type: "spring",
+            stiffness: 200,
+          }}
+          className="absolute bottom-[25%] right-[20%] bg-white/90 rounded-full"
+          style={{
+            width: "100px",
+            height: "100px",
+            boxShadow:
+              "0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)",
+          }}
+        />
+      )}
+      {!isMobile && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={
+            isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }
+          }
+          transition={{
+            duration: 0.6,
+            delay: 0.7,
+            type: "spring",
+            stiffness: 200,
+          }}
+          className="absolute bottom-[30%] right-[15%] bg-white/70 rounded-full"
+          style={{
+            width: "40px",
+            height: "40px",
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
+          }}
+        />
+      )}
 
       <motion.div
         initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -904,7 +856,7 @@ export default function ArchitectingExcellence() {
       className="py-20 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8 bg-white"
       style={{ fontFamily: "'Poppins',  " }}
     >
-      <div className="container mx-auto max-w-[1400px]">
+      <div className="container mx-auto max-w-[1400px] px-2 sm:px-0">
         {/* Header with Staggered Animations - No animations on mobile */}
         <div className="text-center mb-16 lg:mb-20">
           {isMobile ? (
@@ -982,9 +934,9 @@ export default function ArchitectingExcellence() {
         </div>
 
         {/* Main Grid - 3 Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-6 mb-6 px-2 sm:px-0">
           {/* Left Column - 2 Stacked Cards */}
-          <div className="flex flex-col gap-8 md:gap-6">
+          <div className="flex flex-col gap-6 sm:gap-8 md:gap-6 w-full">
             {/* Yellow Philosophy Card with Enhanced Animations - No animations on mobile */}
             {isMobile ? (
               <div className="bg-[#FFC107] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[420px] sm:min-h-[450px] lg:min-h-[450px] relative overflow-hidden group">
