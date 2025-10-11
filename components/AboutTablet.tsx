@@ -42,6 +42,11 @@ export default function AboutTablet() {
     video_url: "",
     video_file_url: "",
     poster_image_url: "",
+    // Video player settings - unmuted by default as requested
+    video_autoplay: true,
+    video_muted: false,
+    video_loop: true,
+    video_controls: false,
   };
 
   // Use API data or fallback
@@ -119,10 +124,11 @@ export default function AboutTablet() {
                 <video
                   ref={videoRef}
                   className="w-full h-full object-cover"
-                  muted
-                  loop
+                  muted={data.video_muted}
+                  loop={data.video_loop}
                   playsInline
-                  autoPlay
+                  autoPlay={data.video_autoplay}
+                  controls={data.video_controls}
                   poster={data.poster_image_url}
                 >
                   <source src={data.video_file_url} type="video/mp4" />
@@ -137,9 +143,13 @@ export default function AboutTablet() {
                     className="w-full h-full"
                     src={`https://www.youtube.com/embed/${getYouTubeVideoId(
                       data.video_url
-                    )}?autoplay=1&mute=1&loop=1&playlist=${getYouTubeVideoId(
-                      data.video_url
-                    )}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+                    )}?autoplay=${data.video_autoplay ? 1 : 0}&mute=${
+                      data.video_muted ? 1 : 0
+                    }&loop=${
+                      data.video_loop ? 1 : 0
+                    }&playlist=${getYouTubeVideoId(data.video_url)}&controls=${
+                      data.video_controls ? 1 : 0
+                    }&showinfo=0&rel=0&modestbranding=1`}
                     title="About Video"
                     style={{ border: 0 }}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -151,10 +161,11 @@ export default function AboutTablet() {
                 <video
                   ref={videoRef}
                   className="w-full h-full object-cover"
-                  muted
-                  loop
+                  muted={data.video_muted}
+                  loop={data.video_loop}
                   playsInline
-                  autoPlay
+                  autoPlay={data.video_autoplay}
+                  controls={data.video_controls}
                   poster={data.poster_image_url}
                 >
                   <source src={data.video_url} type="video/mp4" />

@@ -532,6 +532,12 @@ class AboutTabletSection(models.Model):
     video_file = models.FileField(upload_to='videos/', blank=True, null=True, help_text="Upload video file")
     poster_image = models.ImageField(upload_to='videos/', blank=True, null=True, help_text="Video poster/thumbnail")
 
+    # Video player settings
+    video_autoplay = models.BooleanField(default=True, help_text="Enable video autoplay")
+    video_muted = models.BooleanField(default=False, help_text="Mute video by default (False = unmuted)")
+    video_loop = models.BooleanField(default=True, help_text="Enable video looping")
+    video_controls = models.BooleanField(default=False, help_text="Show video controls")
+
     # Animation settings
     enable_3d_animation = models.BooleanField(default=True, help_text="Enable 3D tablet animation")
     animation_duration = models.FloatField(default=1.0, help_text="Animation duration in seconds")

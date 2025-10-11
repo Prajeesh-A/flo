@@ -226,6 +226,11 @@ export interface AboutTabletSection {
   animation_duration: number;
   background_color: string;
   text_color: string;
+  // Video player settings
+  video_autoplay: boolean;
+  video_muted: boolean;
+  video_loop: boolean;
+  video_controls: boolean;
   created_at: string;
   updated_at: string;
 }
