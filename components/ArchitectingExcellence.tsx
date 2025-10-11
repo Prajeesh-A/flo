@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
 import { useCTAModal } from "@/contexts/CTAModalContext";
+import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 
 // Hook to detect mobile viewport
 const useIsMobile = () => {
@@ -901,9 +902,12 @@ export default function ArchitectingExcellence() {
                 <br />
                 {data.main_title_line2}
               </h2>
-              <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
-                {data.subtitle}
-              </p>
+              <div className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+                <RichTextRenderer
+                  content={data.subtitle}
+                  fallback="Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks."
+                />
+              </div>
             </>
           ) : (
             <>
@@ -927,7 +931,10 @@ export default function ArchitectingExcellence() {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-normal"
               >
-                {data.subtitle}
+                <RichTextRenderer
+                  content={data.subtitle}
+                  fallback="Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks."
+                />
               </motion.p>
             </>
           )}

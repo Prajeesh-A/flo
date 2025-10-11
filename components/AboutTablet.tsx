@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
+import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 
 // Helper function to extract YouTube video ID
 function getYouTubeVideoId(url: string): string {
@@ -169,9 +170,12 @@ export default function AboutTablet() {
                     <h3 className="text-sm sm:text-lg lg:text-xl font-semibold mb-1 sm:mb-2">
                       {data.title}
                     </h3>
-                    <p className="text-xs sm:text-sm opacity-90">
-                      {data.subtitle}
-                    </p>
+                    <div className="text-xs sm:text-sm opacity-90">
+                      <RichTextRenderer
+                        content={data.subtitle}
+                        fallback="3D Interactive Demo"
+                      />
+                    </div>
                   </div>
                 </div>
               )}

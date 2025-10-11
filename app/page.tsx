@@ -21,6 +21,7 @@ import ContactSection from "@/components/ContactSection";
 import SocialSection from "@/components/SocialSection";
 import FooterSection from "@/components/FooterSection";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
+import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 import { api, useApiData } from "@/lib/api";
 import { useNavigationItems } from "@/lib/api-swr";
 import { loadCriticalPageData } from "@/lib/api-batch";
@@ -358,7 +359,7 @@ function HomePageContent() {
             >
               <path d="M3 2L21 12L13 14L11 22L3 2Z" fill="currentColor" />
             </svg>
-            <div className="custom-cursor-pill bg-white text-gray-900 shadow-xl border border-gray-200 px-4 py-2 rounded-full font-medium text-sm backdrop-blur-sm">
+            <div className="custom-cursor-pill bg-[#2ECC71] text-white shadow-xl border border-gray-200 px-4 py-2 rounded-full font-poppins font-normal text-sm backdrop-blur-sm">
               Here we go!
             </div>
           </div>
@@ -405,14 +406,24 @@ function HomePageContent() {
             </h1>
 
             {/* Description */}
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-8 sm:mb-16 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
-              {heroLoading
-                ? "Loading..."
-                : heroError
-                ? " floneo's Low-Code/No-Code platform turns manual processes into instant, powerful applications."
-                : heroData?.description ||
-                  " floneo's Low-Code/No-Code platform turns manual processes into instant, powerful applications."}
-            </p>
+            <div className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-8 sm:mb-16 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
+              {heroLoading ? (
+                <p>Loading...</p>
+              ) : heroError ? (
+                <p>
+                  FloNeo's Low-Code/No-Code platform turns manual processes into
+                  instant, powerful applications.
+                </p>
+              ) : (
+                <RichTextRenderer
+                  content={
+                    heroData?.description ||
+                    "FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications."
+                  }
+                  fallback="FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications."
+                />
+              )}
+            </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 px-4 sm:px-0">

@@ -9,6 +9,7 @@ import {
 } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { api, useApiData } from "@/lib/api";
+import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 
 // Hook to detect mobile viewport
 const useIsMobile = () => {
@@ -198,12 +199,15 @@ export default function WhyChooseUsSection() {
             delay: getMobileDuration(0.2, isMobile),
           }}
         >
-          <p
+          <div
             className="text-base text-gray-700 leading-relaxed max-w-2xl mx-auto"
             style={{ fontWeight: 400 }}
           >
-            {data.subtitle}
-          </p>
+            <RichTextRenderer
+              content={data.subtitle}
+              fallback="that puts you in charge of your operations without IT bottlenecks"
+            />
+          </div>
         </motion.div>
 
         {/* Three Column Layout */}
@@ -279,12 +283,15 @@ export default function WhyChooseUsSection() {
             </div>
 
             {/* Paragraph */}
-            <p
+            <div
               className="text-sm text-gray-700 leading-relaxed text-center mb-8 px-4"
               style={{ fontWeight: 400 }}
             >
-              {data.global_description}
-            </p>
+              <RichTextRenderer
+                content={data.global_description}
+                fallback="Our app supports users in over 140 countries, offering global tools to manage and optimize your finances."
+              />
+            </div>
 
             {/* Two-Line Country Ticker */}
             <div className="relative overflow-hidden">

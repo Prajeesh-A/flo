@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
 import { useCTAModal } from "@/contexts/CTAModalContext";
+import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 
 // Hook to detect mobile viewport
 const useIsMobile = () => {
@@ -274,7 +275,7 @@ export default function BenefitsSection() {
         </motion.h3>
 
         {/* Description */}
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{
@@ -285,8 +286,11 @@ export default function BenefitsSection() {
           className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
           style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400 }}
         >
-          {data.description}
-        </motion.p>
+          <RichTextRenderer
+            content={data.description}
+            fallback="Experience unparalleled quality and innovation"
+          />
+        </motion.div>
 
         {/* CTA Buttons */}
         <motion.div
