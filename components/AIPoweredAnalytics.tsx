@@ -56,12 +56,12 @@ export default function AIPoweredAnalytics() {
   const loading = false;
   const error = null;
 
-  // Fetch metrics from API (this endpoint works!)
+  // Fetch AI Analytics section from API
   const {
-    data: metricsData,
-    loading: metricsLoading,
-    error: metricsError,
-  } = useApiData(api.getMetrics);
+    data: aiAnalyticsData,
+    loading: aiAnalyticsLoading,
+    error: aiAnalyticsError,
+  } = useApiData(api.getAIPoweredAnalyticsSection);
 
   // Fallback data
   const fallbackData = {
@@ -89,29 +89,53 @@ export default function AIPoweredAnalytics() {
     feature_2_title: "Enhance Operational Strategy",
     feature_2_description:
       "floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter.",
+    feature_3_title: "Real-time Monitoring",
+    feature_3_description:
+      "Monitor your systems and processes in real-time with advanced analytics and instant alerts for optimal performance.",
     is_visible: true,
   };
 
-  // URGENT FIX: Use working API data
-  const data = sectionData; // This is now hardcoded since endpoint doesn't exist
-  const metrics = metricsData; // This comes from working API
+  // Use AI Analytics data or fallback
+  const data = aiAnalyticsData || fallbackData;
 
-  // URGENT: Don't render if no metrics from API
-  if (!metrics) {
-    return (
-      <section id="ai-analytics" className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <strong>🚨 URGENT:</strong> Metrics API not working!
-            <br />
-            Error: {metricsError || "No data from /api/metrics/"}
-            <br />
-            Check Django admin Metrics and API connectivity immediately!
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Create metrics from AI Analytics features
+  const metrics = {
+    results: [
+      {
+        id: 1,
+        value: "95",
+        suffix: "%",
+        label: data.feature_1_title || "Accuracy",
+        description: data.feature_1_description || "AI prediction accuracy",
+        color: "bg-pink-400",
+      },
+      {
+        id: 2,
+        value: "2.3",
+        suffix: "x",
+        label: data.feature_2_title || "Faster",
+        description:
+          data.feature_2_description || "Processing speed improvement",
+        color: "bg-green-400",
+      },
+      {
+        id: 3,
+        value: "99.9",
+        suffix: "%",
+        label: data.feature_3_title || "Uptime",
+        description: data.feature_3_description || "System reliability",
+        color: "bg-blue-400",
+      },
+      {
+        id: 4,
+        value: "24/7",
+        suffix: "",
+        label: "Support",
+        description: "Always available",
+        color: "bg-purple-400",
+      },
+    ],
+  };
 
   // Don't render if not visible
   if (!data.is_visible) {

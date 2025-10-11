@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { api, useApiData } from "@/lib/api";
 
 // Hook to detect mobile viewport
 const useIsMobile = () => {
@@ -44,7 +45,7 @@ interface MetricBox {
   };
 }
 
-const metricsData: MetricBox[] = [
+const fallbackMetricsData: MetricBox[] = [
   {
     id: 1,
     value: "3.5",
@@ -248,6 +249,16 @@ export default function MetricsSection() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
   const isMobile = useIsMobile();
 
+  // Fetch metrics from API
+  const {
+    data: metricsData,
+    loading: metricsLoading,
+    error: metricsError,
+  } = useApiData(api.getMetrics);
+
+  // Use API data or fallback to hardcoded data
+  const finalMetricsData = metricsData?.results || fallbackMetricsData;
+
   return (
     <section
       id="metrics"
@@ -274,7 +285,7 @@ export default function MetricsSection() {
 
       {/* Metric Cards */}
       <div className="relative w-full h-full">
-        {metricsData.map((metric, index) => (
+        {finalMetricsData.map((metric: any, index: number) => (
           <MetricCard
             key={metric.id}
             metric={metric}
