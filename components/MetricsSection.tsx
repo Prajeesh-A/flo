@@ -30,6 +30,23 @@ const getMobileDuration = (
   return isMobile ? Math.max(0.3, desktopDuration * 0.4) : desktopDuration;
 };
 
+// Helper function to generate random positions for metrics
+const generateRandomPosition = (index: number) => {
+  const positions = [
+    { top: "8%", left: "5%" },
+    { top: "30%", right: "8%" },
+    { bottom: "11%", left: "12%" },
+    { top: "15%", right: "15%" },
+    { bottom: "25%", right: "5%" },
+    { top: "45%", left: "8%" },
+    { bottom: "35%", left: "20%" },
+    { top: "60%", right: "12%" },
+  ];
+
+  // Use modulo to cycle through positions if there are more metrics than positions
+  return positions[index % positions.length];
+};
+
 interface MetricBox {
   id: number;
   value: string;
@@ -257,7 +274,13 @@ export default function MetricsSection() {
   } = useApiData(api.getMetrics);
 
   // Use API data or fallback to hardcoded data
-  const finalMetricsData = metricsData?.results || fallbackMetricsData;
+  const rawMetricsData = metricsData?.results || fallbackMetricsData;
+
+  // Add position information to API metrics that don't have it
+  const finalMetricsData = rawMetricsData.map((metric: any, index: number) => ({
+    ...metric,
+    position: metric.position || generateRandomPosition(index),
+  }));
 
   return (
     <section
