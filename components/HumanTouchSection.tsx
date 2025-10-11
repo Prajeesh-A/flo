@@ -331,7 +331,7 @@ function PhoneMockup({
             delay: getMobileDuration(2.5, isMobile),
           },
         }}
-        className="relative w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[340px] mx-auto"
+        className="relative w-full max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] xl:max-w-[340px] mx-auto"
         style={{
           filter: "drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15))",
           willChange: isInView ? "transform, opacity" : "auto",
