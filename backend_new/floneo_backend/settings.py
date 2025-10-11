@@ -52,15 +52,19 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'content.middleware.PerformanceHeadersMiddleware',  # Performance tracking
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'content.middleware.CORSCacheMiddleware',  # Enhanced CORS with caching
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'content.middleware.APICacheMiddleware',  # API cache headers
+    'content.middleware.CompressionMiddleware',  # Compression hints
 ]
 
 ROOT_URLCONF = 'floneo_backend.urls'

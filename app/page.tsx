@@ -20,7 +20,10 @@ import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import SocialSection from "@/components/SocialSection";
 import FooterSection from "@/components/FooterSection";
+import PerformanceMonitor from "@/components/PerformanceMonitor";
 import { api, useApiData } from "@/lib/api";
+import { useNavigationItems } from "@/lib/api-swr";
+import { loadCriticalPageData } from "@/lib/api-batch";
 import { CTAModalProvider, useCTAModal } from "@/contexts/CTAModalContext";
 
 function HomePageContent() {
@@ -50,12 +53,12 @@ function HomePageContent() {
     console.log("- Hero Data:", heroData);
   }, [heroLoading, heroError, heroData]);
 
-  // Fetch Navigation Items from Django API
+  // Fetch Navigation Items from Django API with SWR caching
   const {
     data: navigationItems,
-    loading: navLoading,
+    isLoading: navLoading,
     error: navError,
-  } = useApiData(api.getNavigationItems);
+  } = useNavigationItems();
 
   // Fallback navigation items
   const fallbackNavItems = [
@@ -486,6 +489,9 @@ function HomePageContent() {
       <SocialSection />
       {/* Footer Section */}
       <FooterSection />
+
+      {/* Performance Monitoring */}
+      <PerformanceMonitor />
     </div>
   );
 }
