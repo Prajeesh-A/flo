@@ -193,8 +193,8 @@ function PhoneMockup({
             container.clientHeight <
           100;
 
-        // Always scroll on mobile for better UX, or if near bottom, or if there are many messages
-        if (isMobile || isNearBottom || visibleMessages.length > 2) {
+        // Only scroll if we're near the bottom or if there are many messages
+        if (isNearBottom || visibleMessages.length > 3) {
           container.scrollTo({
             top: container.scrollHeight,
             behavior: "smooth",
@@ -207,20 +207,53 @@ function PhoneMockup({
   // Auto-scroll when new messages appear with slight delay for natural feel
   useEffect(() => {
     if (visibleMessages.length > 0) {
-      // Faster scroll on mobile for better responsiveness
-      const scrollDelay = isMobile ? 150 : 300;
-      scrollToBottom(scrollDelay);
+      scrollToBottom(300); // Small delay to let message animation settle
     }
-  }, [visibleMessages, isMobile]);
+  }, [visibleMessages]);
 
   // Scroll when typing indicator appears/disappears
   useEffect(() => {
     if (showTyping) {
-      // Faster scroll on mobile for typing indicator
-      const scrollDelay = isMobile ? 100 : 200;
-      scrollToBottom(scrollDelay);
+      scrollToBottom(200);
     }
-  }, [showTyping, isMobile]);
+  }, [showTyping]);
+
+  // Auto-scroll functionality for mobile - similar to desktop
+  useEffect(() => {
+    if (!isInView || !isMobile) return;
+
+    // Wait for chat animation to complete before starting auto-scroll
+    const startDelay = setTimeout(() => {
+      const autoScrollInterval = setInterval(() => {
+        if (chatContainerRef.current) {
+          const container = chatContainerRef.current;
+          const isAtBottom =
+            container.scrollHeight -
+              container.scrollTop -
+              container.clientHeight <
+            20;
+
+          if (isAtBottom) {
+            // Scroll to top smoothly when at bottom
+            container.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          } else {
+            // Continue scrolling down slowly
+            container.scrollBy({
+              top: 30,
+              behavior: "smooth",
+            });
+          }
+        }
+      }, 3000); // Auto-scroll every 3 seconds on mobile for better UX
+
+      return () => clearInterval(autoScrollInterval);
+    }, 8000); // Wait 8 seconds for chat to populate before auto-scrolling
+
+    return () => clearTimeout(startDelay);
+  }, [isInView, isMobile]);
 
   useEffect(() => {
     if (!isInView) {
@@ -260,9 +293,6 @@ function PhoneMockup({
         setShowTyping(false);
         setVisibleMessages((prev) => [...prev, message.id]);
 
-        // Force scroll after bot message appears (especially important on mobile)
-        setTimeout(() => scrollToBottom(0), 100);
-
         // Wait for message to settle before next message
         if (index + 1 < chatMessages.length) {
           const nextMessageDelay = 1800 + Math.random() * 400; // 1.8-2.2s delay for bot messages
@@ -277,9 +307,6 @@ function PhoneMockup({
     } else {
       // User messages appear immediately
       setVisibleMessages((prev) => [...prev, message.id]);
-
-      // Force scroll after user message appears (especially important on mobile)
-      setTimeout(() => scrollToBottom(0), 50);
 
       // Wait before next message for natural conversation flow
       if (index + 1 < chatMessages.length) {
@@ -331,7 +358,7 @@ function PhoneMockup({
             delay: getMobileDuration(2.5, isMobile),
           },
         }}
-        className="relative w-full max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] xl:max-w-[340px] mx-auto"
+        className="relative w-full max-w-[220px] md:max-w-[340px] mx-auto"
         style={{
           filter: "drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15))",
           willChange: isInView ? "transform, opacity" : "auto",
@@ -572,7 +599,7 @@ export default function HumanTouchSection() {
 
         {/* Mobile Layout */}
         <div className="md:hidden">
-          <div className="flex flex-col items-center gap-8">
+          <div className="flex flex-col items-center gap-6">
             {/* Top Text - "Human" */}
             <motion.h2
               initial={{ opacity: 0, y: -50 }}
@@ -581,18 +608,20 @@ export default function HumanTouchSection() {
                 duration: getMobileDuration(1.2, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-6xl sm:text-7xl font-bold text-black text-center"
+              className="text-5xl sm:text-6xl font-bold text-black text-center"
               style={{ fontWeight: 700 }}
             >
               {data.title}
             </motion.h2>
 
-            {/* Phone Mockup */}
-            <PhoneMockup
-              isInView={isInView}
-              chatMessages={chatMessages}
-              isMobile={isMobile}
-            />
+            {/* Phone Mockup - Smaller for mobile */}
+            <div className="w-full max-w-[200px] mx-auto">
+              <PhoneMockup
+                isInView={isInView}
+                chatMessages={chatMessages}
+                isMobile={isMobile}
+              />
+            </div>
 
             {/* Bottom Text - "Touch" */}
             <motion.h2
@@ -603,7 +632,7 @@ export default function HumanTouchSection() {
                 delay: getMobileDuration(0.1, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-6xl sm:text-7xl font-bold text-[#2ecc71] text-center"
+              className="text-5xl sm:text-6xl font-bold text-[#2ecc71] text-center"
               style={{ fontWeight: 700 }}
             >
               {data.subtitle}

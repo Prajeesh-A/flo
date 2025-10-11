@@ -921,21 +921,24 @@ html {
   }
 
   .hero-section {
-    padding-top: 5rem !important;
-    padding-bottom: 3rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+    padding-top: 6rem !important;
+    padding-bottom: 8rem !important; /* Increased bottom padding for more space */
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    min-height: 100vh !important; /* Ensure full viewport height */
+    display: flex !important;
+    align-items: center !important;
   }
 
-  /* Hero brand name mobile improvements - Make it much bigger */
-  .hero-brand-name {
-    font-size: 4rem !important;
+  /* Hero section mobile improvements - Make floneo bigger and center of attention */
+  .hero-section h1 {
+    font-size: 4rem !important; /* Increased from 2.5rem to make floneo bigger */
     line-height: 1.1 !important;
-    margin-bottom: 2rem !important;
+    margin-bottom: 2rem !important; /* More space below floneo */
   }
 
-  /* Other h1 elements (not hero brand) */
-  h1:not(.hero-brand-name) {
+  /* Make other h1/h2 elements smaller to not interfere */
+  h1:not(.hero-section h1) {
     font-size: 2.5rem !important;
     line-height: 1.2 !important;
   }
@@ -945,20 +948,54 @@ html {
     line-height: 1.3 !important;
   }
 
+  /* Make hero description smaller and more minimal */
+  .hero-section .text-lg {
+    font-size: 1rem !important; /* Smaller paragraph text */
+    line-height: 1.5 !important;
+    margin-bottom: 3rem !important; /* More space below description */
+    opacity: 0.8 !important; /* Slightly faded for minimal look */
+  }
+
+  /* Make hero tagline more minimal */
+  .hero-section .flex.items-center.justify-center.gap-0 {
+    margin-bottom: 1rem !important; /* Reduce space below tagline */
+  }
+
+  .hero-section .flex.items-center.justify-center.gap-0 span {
+    font-size: 0.9rem !important; /* Smaller tagline */
+    opacity: 0.7 !important; /* More subtle */
+    font-weight: 300 !important; /* Lighter weight */
+  }
+
+  /* Ensure trusted by section is pushed down and not visible without scrolling */
+  .hero-section .flex.items-center.justify-center.gap-3 {
+    margin-top: 4rem !important; /* Push rating section down */
+    opacity: 0.7 !important; /* Make it more subtle */
+  }
+
+  /* Add more spacing between CTA buttons and rating */
+  .hero-section .flex.flex-col.sm\\:flex-row.gap-4 {
+    margin-bottom: 3rem !important; /* More space below CTA buttons */
+  }
+
+  /* Mobile phone mockup sizing in Human Touch section */
+  #features .relative.w-full.max-w-\\[220px\\] {
+    max-width: 180px !important; /* Even smaller on mobile */
+  }
+
+  /* Adjust Human Touch section mobile text sizing */
+  #features .md\\:hidden .text-5xl {
+    font-size: 3rem !important; /* Smaller text on mobile */
+    line-height: 1.1 !important;
+  }
+
   /* CTA buttons mobile */
   .hero-cta-primary,
   .hero-cta-secondary {
     width: 100% !important;
-    max-width: 300px !important;
+    max-width: 280px !important;
     padding: 1rem 2rem !important;
     font-size: 1rem !important;
-    margin: 0.5rem 0 !important;
-  }
-
-  /* Better mobile container spacing */
-  .hero-section .container {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
   }
 }
 
@@ -967,15 +1004,6 @@ html {
   .hero-section {
     padding-top: 4rem !important;
     padding-bottom: 2rem !important;
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-  }
-
-  /* Hero brand name on very small screens */
-  .hero-brand-name {
-    font-size: 3.5rem !important;
-    line-height: 1.05 !important;
-    margin-bottom: 1.5rem !important;
   }
 
   /* Smaller buttons on very small screens */
