@@ -21,8 +21,10 @@ import ContactSection from "@/components/ContactSection";
 import SocialSection from "@/components/SocialSection";
 import FooterSection from "@/components/FooterSection";
 import { api, useApiData } from "@/lib/api";
+import { CTAModalProvider, useCTAModal } from "@/contexts/CTAModalContext";
 
-export default function HomePage() {
+function HomePageContent() {
+  const { openModal } = useCTAModal();
   const [isVisible, setIsVisible] = useState(false);
   const [logoRotation, setLogoRotation] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -57,12 +59,12 @@ export default function HomePage() {
 
   // Fallback navigation items
   const fallbackNavItems = [
-    { label: "About Us", href: "#about", is_active: true },
+    { label: "About Us", href: "#about-us", is_active: true },
     { label: "Features", href: "#features", is_active: true },
     { label: "Services", href: "#services", is_active: true },
     { label: "Analytics", href: "#analytics", is_active: true },
-    { label: "Pricing", href: "#pricing", is_active: true },
     { label: "Help Center", href: "#help", is_active: true },
+    { label: "Contact", href: "#contact", is_active: true },
   ];
 
   // Use API data or fallback
@@ -129,6 +131,10 @@ export default function HomePage() {
     const handleMouseMove = (e: MouseEvent) => {
       if (!heroRef.current) return;
 
+      // Only show cursor on desktop devices
+      const isDesktop = window.innerWidth > 768;
+      if (!isDesktop) return;
+
       const heroRect = heroRef.current.getBoundingClientRect();
       const isInHero =
         e.clientX >= heroRect.left &&
@@ -150,7 +156,7 @@ export default function HomePage() {
       setCustomCursor({
         x: e.clientX,
         y: e.clientY,
-        visible: isInHero && !isInteractive,
+        visible: isInHero && !isInteractive && isDesktop,
       });
     };
 
@@ -228,7 +234,9 @@ export default function HomePage() {
               </div>
 
               {/* Contact Sales Button */}
-              <button className="contact-sales-btn">Contact Sales</button>
+              <button className="contact-sales-btn" onClick={openModal}>
+                Contact Sales
+              </button>
             </div>
           </nav>
 
@@ -252,7 +260,10 @@ export default function HomePage() {
               </div>
 
               {/* Contact Sales Button - Mobile */}
-              <button className="bg-[#2C2C2E] text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-[#1C1C1E] transition-colors">
+              <button
+                className="bg-[#2C2C2E] text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-[#1C1C1E] transition-colors"
+                onClick={openModal}
+              >
                 Contact Sales
               </button>
 
@@ -335,7 +346,7 @@ export default function HomePage() {
         )}
       </header>
       {/* Custom Cursor */}
-      {/* {customCursor.visible && (
+      {customCursor.visible && (
         <div
           className="custom-cursor pointer-events-none fixed z-[9999]"
           style={{
@@ -343,28 +354,33 @@ export default function HomePage() {
             top: customCursor.y,
             opacity: customCursor.visible ? 1 : 0,
             transform: "translate(-50%, -50%)",
+            transition: "opacity 0.2s ease-in-out",
           }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <svg
-              width={24}
-              height={24}
+              width={28}
+              height={28}
               viewBox="0 0 24 24"
-              className="text-blue-600"
+              className="text-white drop-shadow-lg"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              style={{ display: "block" }}
+              style={{
+                display: "block",
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
+              }}
             >
               <path d="M3 2L21 12L13 14L11 22L3 2Z" fill="currentColor" />
             </svg>
-            <div className="custom-cursor-pill bg-white text-gray-900 shadow-lg border border-gray-200 px-4 py-2 rounded-full font-light">
+            <div className="custom-cursor-pill bg-white text-gray-900 shadow-xl border border-gray-200 px-4 py-2 rounded-full font-medium text-sm backdrop-blur-sm">
               Here we go!
             </div>
           </div>
         </div>
-      )} */}
+      )}
       {/* Hero Section */}
       <section
+        id="home"
         ref={heroRef}
         className="hero-section pt-40 pb-32 md:pt-48 md:pb-40 px-6 sm:px-8 lg:px-12"
       >
@@ -414,7 +430,7 @@ export default function HomePage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 px-4 sm:px-0">
-              <button className="hero-cta-primary">
+              <button className="hero-cta-primary" onClick={openModal}>
                 <span>
                   {heroLoading
                     ? "Get Started"
@@ -423,7 +439,7 @@ export default function HomePage() {
                     : heroData?.cta_primary_text || "Get Started"}
                 </span>
               </button>
-              <button className="hero-cta-secondary">
+              <button className="hero-cta-secondary" onClick={openModal}>
                 <span>
                   {heroLoading
                     ? "Schedule a Demo"
@@ -488,5 +504,13 @@ export default function HomePage() {
       {/* Footer Section */}
       <FooterSection />
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <CTAModalProvider>
+      <HomePageContent />
+    </CTAModalProvider>
   );
 }

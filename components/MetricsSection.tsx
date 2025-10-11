@@ -3,6 +3,32 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
+// Hook to detect mobile viewport
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
+// Helper function to get mobile-optimized animation duration
+const getMobileDuration = (
+  desktopDuration: number,
+  isMobile: boolean
+): number => {
+  return isMobile ? Math.max(0.3, desktopDuration * 0.4) : desktopDuration;
+};
+
 interface MetricBox {
   id: number;
   value: string;
@@ -126,15 +152,21 @@ const useCounter = (
 const MetricCard = ({
   metric,
   index,
+  isMobile,
 }: {
   metric: MetricBox;
   index: number;
+  isMobile: boolean;
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.3 });
 
   const numericValue = parseFloat(metric.value);
-  const counter = useCounter(numericValue, 2000, isInView);
+  const counter = useCounter(
+    numericValue,
+    getMobileDuration(2000, isMobile),
+    isInView
+  );
 
   // Format the counter value
   const formattedValue =
@@ -152,14 +184,14 @@ const MetricCard = ({
           : { opacity: 0, scale: 0.8, y: 20 }
       }
       transition={{
-        duration: 0.6,
-        delay: index * 0.2,
+        duration: getMobileDuration(0.6, isMobile),
+        delay: getMobileDuration(index * 0.2, isMobile),
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
       whileHover={{
         scale: 1.05,
         y: -10,
-        transition: { duration: 0.3 },
+        transition: { duration: getMobileDuration(0.3, isMobile) },
       }}
       className="absolute rounded-3xl backdrop-blur-md cursor-pointer md:absolute sm:relative sm:mx-auto sm:mb-6"
       style={{
@@ -214,9 +246,11 @@ const MetricCard = ({
 export default function MetricsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const isMobile = useIsMobile();
 
   return (
     <section
+      id="metrics"
       ref={sectionRef}
       className="relative w-full h-[140vh] min-h-[1800px] md:h-[140vh] md:min-h-[1800px] sm:h-auto sm:min-h-[1200px] overflow-hidden"
       style={{
@@ -241,7 +275,12 @@ export default function MetricsSection() {
       {/* Metric Cards */}
       <div className="relative w-full h-full">
         {metricsData.map((metric, index) => (
-          <MetricCard key={metric.id} metric={metric} index={index} />
+          <MetricCard
+            key={metric.id}
+            metric={metric}
+            index={index}
+            isMobile={isMobile}
+          />
         ))}
       </div>
     </section>

@@ -1,9 +1,36 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
+import { useCTAModal } from "@/contexts/CTAModalContext";
+
+// Hook to detect mobile viewport
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
+// Helper function to get mobile-optimized animation duration
+const getMobileDuration = (
+  desktopDuration: number,
+  isMobile: boolean
+): number => {
+  return isMobile ? Math.max(0.3, desktopDuration * 0.4) : desktopDuration;
+};
 
 export default function BenefitsSection() {
   // Fetch section data from API
@@ -53,6 +80,8 @@ export default function BenefitsSection() {
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const isMobile = useIsMobile();
+  const { openModal } = useCTAModal();
 
   // Position mapping for floating benefits - matching reference image
   const getPositionClasses = (position: string) => {
@@ -80,6 +109,7 @@ export default function BenefitsSection() {
 
   return (
     <section
+      id="services"
       ref={sectionRef}
       className="relative min-h-screen overflow-hidden py-12 sm:py-20 px-4 sm:px-12 lg:px-24"
       style={{
@@ -104,13 +134,21 @@ export default function BenefitsSection() {
                 : { opacity: 0, scale: 0.8, y: 0 }
             }
             transition={{
-              opacity: { duration: 0.5, delay: index * 0.1, ease: "easeOut" },
-              scale: { duration: 0.5, delay: index * 0.1, ease: "easeOut" },
+              opacity: {
+                duration: getMobileDuration(0.5, isMobile),
+                delay: getMobileDuration(index * 0.1, isMobile),
+                ease: "easeOut",
+              },
+              scale: {
+                duration: getMobileDuration(0.5, isMobile),
+                delay: getMobileDuration(index * 0.1, isMobile),
+                ease: "easeOut",
+              },
               y: {
-                duration: 3 + index * 0.2, // Staggered timing: 3-4.6 seconds
+                duration: getMobileDuration(3 + index * 0.2, isMobile), // Staggered timing: 3-4.6 seconds
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: index * 0.3 + 1, // Start floating after initial animation + staggered delay
+                delay: getMobileDuration(index * 0.3 + 1, isMobile), // Start floating after initial animation + staggered delay
               },
             }}
             className={`absolute ${getPositionClasses(benefit.position)} z-10`}
@@ -148,8 +186,8 @@ export default function BenefitsSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{
-              duration: 0.5,
-              delay: index * 0.1,
+              duration: getMobileDuration(0.5, isMobile),
+              delay: getMobileDuration(index * 0.1, isMobile),
               ease: "easeOut",
             }}
             className="w-full max-w-sm mx-auto px-4"
@@ -185,7 +223,10 @@ export default function BenefitsSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{
+            duration: getMobileDuration(0.6, isMobile),
+            ease: "easeOut",
+          }}
           className="mb-8"
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
@@ -206,7 +247,11 @@ export default function BenefitsSection() {
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          transition={{
+            duration: getMobileDuration(0.6, isMobile),
+            delay: getMobileDuration(0.2, isMobile),
+            ease: "easeOut",
+          }}
           className="text-5xl md:text-6xl lg:text-7xl  text-white mb-4 leading-tight"
           style={{ fontFamily: "'Poppins', sans-serif" }}
         >
@@ -217,7 +262,11 @@ export default function BenefitsSection() {
         <motion.h3
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+          transition={{
+            duration: getMobileDuration(0.6, isMobile),
+            delay: getMobileDuration(0.3, isMobile),
+            ease: "easeOut",
+          }}
           className="text-5xl md:text-6xl lg:text-7xl  text-white mb-8 leading-tight"
           style={{ fontFamily: "'Poppins', sans-serif" }}
         >
@@ -228,7 +277,11 @@ export default function BenefitsSection() {
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          transition={{
+            duration: getMobileDuration(0.6, isMobile),
+            delay: getMobileDuration(0.4, isMobile),
+            ease: "easeOut",
+          }}
           className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
           style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400 }}
         >
@@ -239,28 +292,32 @@ export default function BenefitsSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+          transition={{
+            duration: getMobileDuration(0.6, isMobile),
+            delay: getMobileDuration(0.5, isMobile),
+            ease: "easeOut",
+          }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <motion.a
-            href={data.cta_primary_url}
+          <motion.button
+            onClick={openModal}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg"
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             {data.cta_primary_text}
-          </motion.a>
+          </motion.button>
 
-          <motion.a
-            href={data.cta_secondary_url}
+          <motion.button
+            onClick={openModal}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-black/60 hover:bg-black/80 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm"
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             {data.cta_secondary_text}
-          </motion.a>
+          </motion.button>
         </motion.div>
       </div>
 

@@ -4,6 +4,24 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
 
+// Hook to detect mobile viewport
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
 // Floating element icons (using simple SVG icons)
 const FloatingIcon = ({
   icon,
@@ -219,6 +237,7 @@ export default function AnalyticsSection() {
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const isMobile = useIsMobile();
 
   const leftTextControls = useAnimation();
   const rightTextControls = useAnimation();
@@ -254,7 +273,7 @@ export default function AnalyticsSection() {
       icon: "analytics",
       position: "-top-12 -right-12",
       color: "bg-gradient-to-br from-yellow-400 to-yellow-500",
-      zIndex: "z-30",
+      zIndex: isMobile ? "z-10" : "z-30", // Behind main card on mobile
       delay: 0.8,
       size: "w-40 h-40",
     },
@@ -262,7 +281,7 @@ export default function AnalyticsSection() {
       icon: "chart",
       position: "-bottom-8 -left-16",
       color: "bg-gradient-to-br from-blue-500 to-blue-600",
-      zIndex: "z-10",
+      zIndex: isMobile ? "z-10" : "z-10", // Already behind main card
       delay: 0.9,
       size: "w-36 h-36",
     },
@@ -270,6 +289,7 @@ export default function AnalyticsSection() {
 
   return (
     <section
+      id="analytics"
       ref={sectionRef}
       className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden"
       style={{ fontFamily: "'Surgena','semibold', " }}
@@ -347,29 +367,31 @@ export default function AnalyticsSection() {
               {/* Green gradient effect on bottom */}
               <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-green-500/20 to-transparent"></div>
 
-              {/* Glassy Popup - Top Right Corner (Square Shape) */}
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={isInView ? { scale: 1, opacity: 1 } : {}}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="absolute top-40 right-4 bg-black/60 backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-xl"
-                style={{ width: "160px", height: "160px" }}
-              >
-                {/* Inner glassmorphism overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
+              {/* Glassy Popup - Top Right Corner (Square Shape) - Hidden on mobile */}
+              {!isMobile && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={isInView ? { scale: 1, opacity: 1 } : {}}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                  className="absolute top-40 right-4 bg-black/60 backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-xl"
+                  style={{ width: "160px", height: "160px" }}
+                >
+                  {/* Inner glassmorphism overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
 
-                <div className="relative z-10 text-center">
-                  <div className="text-white text-sm font-medium mb-1">
-                    Turn Insights
+                  <div className="relative z-10 text-center">
+                    <div className="text-white text-sm font-medium mb-1">
+                      Turn Insights
+                    </div>
+                    <div className="text-white text-sm font-medium mb-2">
+                      Into Savings
+                    </div>
+                    <div className="text-gray-300 text-xs leading-tight">
+                      helping you make informed decisions and avoid overspending
+                    </div>
                   </div>
-                  <div className="text-white text-sm font-medium mb-2">
-                    Into Savings
-                  </div>
-                  <div className="text-gray-300 text-xs leading-tight">
-                    helping you make informed decisions and avoid overspending
-                  </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              )}
 
               <div className="relative z-10">
                 {/* Title */}

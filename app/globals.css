@@ -364,16 +364,29 @@ html {
 }
 
 .custom-cursor-pill {
-  background: var(--growth-green);
-  color: black;
+  background: white;
+  color: #1f2937;
   padding: 8px 16px;
   border-radius: 25px;
   font-family: var(--font-poppins), system-ui, sans-serif;
   font-weight: 600;
   font-size: 0.875rem;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
   animation: cursor-pulse 2s ease-in-out infinite;
+}
+
+/* Hide custom cursor on mobile devices */
+@media (max-width: 768px) {
+  .custom-cursor {
+    display: none !important;
+  }
+
+  .hero-section {
+    cursor: auto !important;
+  }
 }
 
 @keyframes cursor-pulse {
@@ -861,9 +874,21 @@ html {
 
 /* Additional Mobile Optimizations */
 @media (max-width: 768px) {
-  /* Prevent horizontal scroll */
+  /* Enhanced smooth scrolling for mobile */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
   body {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
     overflow-x: hidden;
+  }
+
+  /* Smooth scrolling for all scrollable containers on mobile */
+  * {
+    scroll-behavior: smooth;
   }
 
   /* Improve touch targets */

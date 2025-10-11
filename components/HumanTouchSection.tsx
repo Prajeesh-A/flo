@@ -5,6 +5,32 @@ import { motion, useInView, useAnimation } from "framer-motion";
 import { RefreshCw, Users } from "lucide-react";
 import { api, useApiData } from "@/lib/api";
 
+// Hook to detect mobile viewport
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
+// Helper function to get mobile-optimized animation duration
+const getMobileDuration = (
+  desktopDuration: number,
+  isMobile: boolean
+): number => {
+  return isMobile ? Math.max(0.3, desktopDuration * 0.4) : desktopDuration;
+};
+
 /**
  * HumanTouchSection - Animated section with sliding text and chat mockup
  *
@@ -61,23 +87,35 @@ const defaultChatMessages = [
 ];
 
 // Typing indicator component
-function TypingIndicator() {
+function TypingIndicator({ isMobile }: { isMobile: boolean }) {
   return (
     <div className="flex items-center gap-1 px-4 py-3 bg-[#EDEDED] rounded-2xl rounded-bl-sm w-fit">
       <motion.div
         className="w-2 h-2 bg-gray-500 rounded-full"
         animate={{ opacity: [0.3, 1, 0.3] }}
-        transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+        transition={{
+          duration: getMobileDuration(1, isMobile),
+          repeat: Infinity,
+          delay: 0,
+        }}
       />
       <motion.div
         className="w-2 h-2 bg-gray-500 rounded-full"
         animate={{ opacity: [0.3, 1, 0.3] }}
-        transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+        transition={{
+          duration: getMobileDuration(1, isMobile),
+          repeat: Infinity,
+          delay: getMobileDuration(0.2, isMobile),
+        }}
       />
       <motion.div
         className="w-2 h-2 bg-gray-500 rounded-full"
         animate={{ opacity: [0.3, 1, 0.3] }}
-        transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+        transition={{
+          duration: getMobileDuration(1, isMobile),
+          repeat: Infinity,
+          delay: getMobileDuration(0.4, isMobile),
+        }}
       />
     </div>
   );
@@ -85,7 +123,15 @@ function TypingIndicator() {
 
 // Chat bubble component - Memoized for performance
 const ChatBubble = React.memo(
-  ({ message, isVisible }: { message: any; isVisible: boolean }) => {
+  ({
+    message,
+    isVisible,
+    isMobile,
+  }: {
+    message: any;
+    isVisible: boolean;
+    isMobile: boolean;
+  }) => {
     const isUser = message.sender === "user";
 
     return (
@@ -97,7 +143,7 @@ const ChatBubble = React.memo(
             : { opacity: 0, y: 15, scale: 0.95 }
         }
         transition={{
-          duration: 0.6,
+          duration: getMobileDuration(0.6, isMobile),
           ease: "easeOut",
           type: "spring",
           stiffness: 100,
@@ -125,9 +171,11 @@ ChatBubble.displayName = "ChatBubble";
 function PhoneMockup({
   isInView,
   chatMessages,
+  isMobile,
 }: {
   isInView: boolean;
   chatMessages: any[];
+  isMobile: boolean;
 }) {
   const [visibleMessages, setVisibleMessages] = useState<number[]>([]);
   const [showTyping, setShowTyping] = useState(false);
@@ -256,13 +304,21 @@ function PhoneMockup({
             : { opacity: 0, scale: 0.9 }
         }
         transition={{
-          opacity: { duration: 0.8, delay: 1.3, ease: [0.25, 0.1, 0.25, 1] },
-          scale: { duration: 0.8, delay: 1.3, ease: [0.25, 0.1, 0.25, 1] },
+          opacity: {
+            duration: getMobileDuration(0.8, isMobile),
+            delay: getMobileDuration(1.3, isMobile),
+            ease: [0.25, 0.1, 0.25, 1],
+          },
+          scale: {
+            duration: getMobileDuration(0.8, isMobile),
+            delay: getMobileDuration(1.3, isMobile),
+            ease: [0.25, 0.1, 0.25, 1],
+          },
           y: {
-            duration: 3,
+            duration: getMobileDuration(3, isMobile),
             repeat: Infinity,
             ease: "easeInOut",
-            delay: 2.5,
+            delay: getMobileDuration(2.5, isMobile),
           },
         }}
         className="relative w-full max-w-[340px] mx-auto"
@@ -308,16 +364,20 @@ function PhoneMockup({
                   key={message.id}
                   message={message}
                   isVisible={visibleMessages.includes(message.id)}
+                  isMobile={isMobile}
                 />
               ))}
-              {showTyping && <TypingIndicator />}
+              {showTyping && <TypingIndicator isMobile={isMobile} />}
 
               {/*  floneo App Card - Special message with logo */}
               {visibleMessages.includes(6) && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
+                  transition={{
+                    duration: getMobileDuration(0.5, isMobile),
+                    delay: getMobileDuration(0.3, isMobile),
+                  }}
                   className="flex justify-start mb-3"
                 >
                   <div className="bg-white rounded-2xl p-4 max-w-[220px] shadow-lg">
@@ -361,7 +421,7 @@ function PhoneMockup({
             rotate: [0, 5, 0],
           }}
           transition={{
-            duration: 8,
+            duration: getMobileDuration(8, isMobile),
             repeat: Infinity,
             ease: "easeInOut",
           }}
@@ -387,10 +447,10 @@ function PhoneMockup({
             rotate: [0, -5, 0],
           }}
           transition={{
-            duration: 7,
+            duration: getMobileDuration(7, isMobile),
             repeat: Infinity,
             ease: "easeInOut",
-            delay: 1,
+            delay: getMobileDuration(1, isMobile),
           }}
           className="absolute -right-32 bottom-28"
           style={{
@@ -444,9 +504,11 @@ export default function HumanTouchSection() {
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const isMobile = useIsMobile();
 
   return (
     <section
+      id="features"
       ref={sectionRef}
       className="relative py-20 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden"
       style={{ fontFamily: "'Poppins',  " }}
@@ -463,7 +525,7 @@ export default function HumanTouchSection() {
                 isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }
               }
               transition={{
-                duration: 1.2,
+                duration: getMobileDuration(1.2, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
               className="text-6xl lg:text-7xl xl:text-8xl font-bold text-black leading-tight"
@@ -477,8 +539,8 @@ export default function HumanTouchSection() {
               initial={{ opacity: 0, x: 100 }}
               animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
               transition={{
-                duration: 1.2,
-                delay: 0.1,
+                duration: getMobileDuration(1.2, isMobile),
+                delay: getMobileDuration(0.1, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
               className="text-6xl lg:text-7xl xl:text-8xl font-bold text-[#2ecc71] leading-tight"
@@ -490,7 +552,11 @@ export default function HumanTouchSection() {
 
           {/* Phone Mockup - Center Below Text */}
           <div className="relative flex items-center justify-center">
-            <PhoneMockup isInView={isInView} chatMessages={chatMessages} />
+            <PhoneMockup
+              isInView={isInView}
+              chatMessages={chatMessages}
+              isMobile={isMobile}
+            />
           </div>
         </div>
 
@@ -502,7 +568,7 @@ export default function HumanTouchSection() {
               initial={{ opacity: 0, y: -50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -50 }}
               transition={{
-                duration: 1.2,
+                duration: getMobileDuration(1.2, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
               className="text-6xl sm:text-7xl font-bold text-black text-center"
@@ -512,15 +578,19 @@ export default function HumanTouchSection() {
             </motion.h2>
 
             {/* Phone Mockup */}
-            <PhoneMockup isInView={isInView} chatMessages={chatMessages} />
+            <PhoneMockup
+              isInView={isInView}
+              chatMessages={chatMessages}
+              isMobile={isMobile}
+            />
 
             {/* Bottom Text - "Touch" */}
             <motion.h2
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
               transition={{
-                duration: 1.2,
-                delay: 0.1,
+                duration: getMobileDuration(1.2, isMobile),
+                delay: getMobileDuration(0.1, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
               className="text-6xl sm:text-7xl font-bold text-[#2ecc71] text-center"
@@ -535,7 +605,10 @@ export default function HumanTouchSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 1.5 }}
+          transition={{
+            duration: getMobileDuration(0.8, isMobile),
+            delay: getMobileDuration(1.5, isMobile),
+          }}
           className="mt-16 text-center max-w-2xl mx-auto space-y-3"
         >
           <p className="text-lg text-black font-normal">

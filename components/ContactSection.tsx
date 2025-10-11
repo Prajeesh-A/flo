@@ -3,8 +3,11 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { api, useApiData } from "@/lib/api";
+import { useCTAModal } from "@/contexts/CTAModalContext";
 
 export default function ContactSection() {
+  const { openModal } = useCTAModal();
+
   // Fetch section data from API
   const {
     data: sectionData,
@@ -35,11 +38,15 @@ export default function ContactSection() {
     lastName: "",
     email: "",
     phone: "",
-    emailAddress: "",
-    phoneNumber: "",
-    pricing: "",
+    subject: "",
     message: "",
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -53,13 +60,59 @@ export default function ContactSection() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: "" });
+
+    try {
+      // Combine first and last name for the API
+      const fullName =
+        `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+
+      // Prepare data for API submission
+      const submissionData = {
+        name: fullName,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject || "Contact Form Submission",
+        message: formData.message,
+      };
+
+      // Submit to Django API
+      await api.submitContactForm(submissionData);
+
+      // Show success message
+      setSubmitStatus({
+        type: "success",
+        message:
+          data.form_success_message ||
+          "Thank you for your message! We'll get back to you soon.",
+      });
+
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setSubmitStatus({
+        type: "error",
+        message:
+          "Sorry, there was an error sending your message. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section className="bg-gray-100 py-[100px] px-6">
+    <section id="contact" className="bg-gray-100 py-[100px] px-6">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Left Column */}
@@ -133,6 +186,7 @@ export default function ContactSection() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={openModal}
                 className="w-full bg-[#1A2332] hover:bg-[#2A3442] text-white py-4 rounded-[24px] font-medium transition-colors duration-200"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
@@ -165,6 +219,21 @@ export default function ContactSection() {
               Talk with our sales team to see how floneo can fit your needs.
             </p>
 
+            {/* Success/Error Message */}
+            {submitStatus.type && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-4 rounded-lg mb-6 ${
+                  submitStatus.type === "success"
+                    ? "bg-green-500/20 border border-green-500/30 text-green-300"
+                    : "bg-red-500/20 border border-red-500/30 text-red-300"
+                }`}
+              >
+                {submitStatus.message}
+              </motion.div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -174,6 +243,7 @@ export default function ContactSection() {
                     placeholder="First Name"
                     value={formData.firstName}
                     onChange={handleInputChange}
+                    required
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
                   />
                 </div>
@@ -184,6 +254,7 @@ export default function ContactSection() {
                     placeholder="Last Name"
                     value={formData.lastName}
                     onChange={handleInputChange}
+                    required
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
                   />
                 </div>
@@ -193,19 +264,20 @@ export default function ContactSection() {
                 <div>
                   <input
                     type="email"
-                    name="emailAddress"
+                    name="email"
                     placeholder="Email Address"
-                    value={formData.emailAddress}
+                    value={formData.email}
                     onChange={handleInputChange}
+                    required
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
                   />
                 </div>
                 <div>
                   <input
                     type="tel"
-                    name="phoneNumber"
+                    name="phone"
                     placeholder="Phone"
-                    value={formData.phoneNumber}
+                    value={formData.phone}
                     onChange={handleInputChange}
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
                   />
@@ -213,34 +285,14 @@ export default function ContactSection() {
               </div>
 
               <div>
-                <select
-                  name="pricing"
-                  value={formData.pricing}
+                <input
+                  type="text"
+                  name="subject"
+                  placeholder="Subject (optional)"
+                  value={formData.subject}
                   onChange={handleInputChange}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors"
-                >
-                  <option value="" className="bg-[#1A2332] text-white">
-                    Pricing Package
-                  </option>
-                  <option value="starter" className="bg-[#1A2332] text-white">
-                    Starter Plan
-                  </option>
-                  <option
-                    value="professional"
-                    className="bg-[#1A2332] text-white"
-                  >
-                    Professional Plan
-                  </option>
-                  <option
-                    value="enterprise"
-                    className="bg-[#1A2332] text-white"
-                  >
-                    Enterprise Plan
-                  </option>
-                  <option value="custom" className="bg-[#1A2332] text-white">
-                    Custom Plan
-                  </option>
-                </select>
+                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
+                />
               </div>
 
               <div>
@@ -250,18 +302,26 @@ export default function ContactSection() {
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
+                  required
                   className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors resize-none"
                 />
               </div>
 
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full bg-[#2ECC71] hover:bg-[#27AE60] text-white py-4 rounded-[24px] font-medium transition-colors duration-200"
+                disabled={isSubmitting}
+                whileHover={!isSubmitting ? { scale: 1.02 } : {}}
+                whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                className={`w-full py-4 rounded-[24px] font-medium transition-colors duration-200 ${
+                  isSubmitting
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-[#2ECC71] hover:bg-[#27AE60] text-white"
+                }`}
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
-                Submit
+                {isSubmitting
+                  ? "Sending..."
+                  : data.form_submit_text || "Submit"}
               </motion.button>
             </form>
           </motion.div>

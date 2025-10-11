@@ -3,6 +3,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
+import { useCTAModal } from "@/contexts/CTAModalContext";
+
+// Hook to detect mobile viewport
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
 
 /**
  * ArchitectingExcellence - Feature showcase section
@@ -78,87 +97,143 @@ function DarkGradientCard({
   counter1Label,
   counter2Value,
   counter2Label,
+  isMobile,
 }: {
   isInView: boolean;
   counter1Value: number;
   counter1Label: string;
   counter2Value: number;
   counter2Label: string;
+  isMobile: boolean;
 }) {
   const count1 = useCounter(counter1Value, 2000, isInView);
   const count2 = useCounter(counter2Value, 2500, isInView);
 
+  // Mobile static styles - no animations
+  const mobileStaticProps = {
+    initial: { opacity: 1, y: 0 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0 },
+  };
+
+  // Desktop animated styles
+  const desktopAnimatedProps = {
+    initial: { opacity: 0, y: 40 },
+    animate: isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 },
+    transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] },
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+      {...(isMobile ? mobileStaticProps : desktopAnimatedProps)}
       className="bg-gradient-to-br from-[#0a1f1f] via-[#0d3d3d] to-[#2ecc71] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group"
     >
-      {/* Animated decorative circles with floating effect */}
+      {/* Animated decorative circles with floating effect - Static on mobile */}
       <motion.div
-        animate={{
-          y: [0, -20, 0],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={
+          isMobile
+            ? {}
+            : {
+                y: [0, -20, 0],
+                scale: [1, 1.1, 1],
+              }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+        }
         className="absolute top-8 left-8 w-20 h-20 bg-white/30 rounded-full blur-xl"
       />
       <motion.div
-        animate={{
-          y: [0, 20, 0],
-          scale: [1, 1.15, 1],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
+        animate={
+          isMobile
+            ? {}
+            : {
+                y: [0, 20, 0],
+                scale: [1, 1.15, 1],
+              }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 1,
+              }
+        }
         className="absolute top-1/3 right-12 w-32 h-32 bg-[#2ecc71]/50 rounded-full blur-2xl"
       />
       <motion.div
-        animate={{
-          y: [0, -15, 0],
-          x: [0, 10, 0],
-          scale: [1, 1.05, 1],
-        }}
-        transition={{
-          duration: 7,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2,
-        }}
+        animate={
+          isMobile
+            ? {}
+            : {
+                y: [0, -15, 0],
+                x: [0, 10, 0],
+                scale: [1, 1.05, 1],
+              }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 7,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 2,
+              }
+        }
         className="absolute bottom-12 left-1/4 w-24 h-24 bg-white/20 rounded-full blur-xl"
       />
       <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={
+          isMobile
+            ? {}
+            : {
+                scale: [1, 1.2, 1],
+                opacity: [0.2, 0.4, 0.2],
+              }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+        }
         className="absolute bottom-1/4 right-1/4 w-16 h-16 bg-white/10 rounded-full blur-lg"
       />
 
-      {/* Percentage badges with enhanced glow and hover effects */}
+      {/* Percentage badges with enhanced glow and hover effects - Static on mobile */}
       <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        transition={{
-          duration: 0.6,
-          delay: 0.3,
-          type: "spring",
-          stiffness: 200,
-        }}
-        whileHover={{ scale: 1.1 }}
+        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        animate={
+          isMobile
+            ? { scale: 1, opacity: 1 }
+            : isInView
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 0.6,
+                delay: 0.3,
+                type: "spring",
+                stiffness: 200,
+              }
+        }
+        whileHover={isMobile ? {} : { scale: 1.1 }}
         className="absolute top-10 right-10 bg-[#0066ff]/80 backdrop-blur-md rounded-full px-7 py-5 border border-[#0066ff]/50 cursor-pointer"
         style={{
           boxShadow:
@@ -168,15 +243,25 @@ function DarkGradientCard({
         <span className="text-white font-semibold text-2xl">{count1}%</span>
       </motion.div>
       <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        transition={{
-          duration: 0.6,
-          delay: 0.5,
-          type: "spring",
-          stiffness: 200,
-        }}
-        whileHover={{ scale: 1.05 }}
+        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        animate={
+          isMobile
+            ? { scale: 1, opacity: 1 }
+            : isInView
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 0.6,
+                delay: 0.5,
+                type: "spring",
+                stiffness: 200,
+              }
+        }
+        whileHover={isMobile ? {} : { scale: 1.05 }}
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#2ecc71]/40 backdrop-blur-md rounded-full border border-[#2ecc71]/60 cursor-pointer flex items-center justify-center"
         style={{
           width: "280px",
@@ -188,16 +273,26 @@ function DarkGradientCard({
         <span className="text-white font-semibold text-5xl">{count2}%</span>
       </motion.div>
 
-      {/* Decorative white circles around the main circle */}
+      {/* Decorative white circles around the main circle - Static on mobile */}
       <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        transition={{
-          duration: 0.6,
-          delay: 0.6,
-          type: "spring",
-          stiffness: 200,
-        }}
+        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        animate={
+          isMobile
+            ? { scale: 1, opacity: 1 }
+            : isInView
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 0.6,
+                delay: 0.6,
+                type: "spring",
+                stiffness: 200,
+              }
+        }
         className="absolute top-[15%] left-[30%] bg-white/90 rounded-full"
         style={{
           width: "80px",
@@ -207,14 +302,24 @@ function DarkGradientCard({
         }}
       />
       <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        transition={{
-          duration: 0.6,
-          delay: 0.65,
-          type: "spring",
-          stiffness: 200,
-        }}
+        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        animate={
+          isMobile
+            ? { scale: 1, opacity: 1 }
+            : isInView
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 0.6,
+                delay: 0.65,
+                type: "spring",
+                stiffness: 200,
+              }
+        }
         className="absolute bottom-[25%] right-[20%] bg-white/90 rounded-full"
         style={{
           width: "100px",
@@ -224,14 +329,24 @@ function DarkGradientCard({
         }}
       />
       <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        transition={{
-          duration: 0.6,
-          delay: 0.7,
-          type: "spring",
-          stiffness: 200,
-        }}
+        initial={isMobile ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        animate={
+          isMobile
+            ? { scale: 1, opacity: 1 }
+            : isInView
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 0.6,
+                delay: 0.7,
+                type: "spring",
+                stiffness: 200,
+              }
+        }
         className="absolute bottom-[30%] right-[15%] bg-white/70 rounded-full"
         style={{
           width: "40px",
@@ -241,9 +356,15 @@ function DarkGradientCard({
       />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.8, delay: 0.7 }}
+        initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        animate={
+          isMobile
+            ? { opacity: 1, y: 0 }
+            : isInView
+            ? { opacity: 1, y: 0 }
+            : { opacity: 0, y: 20 }
+        }
+        transition={isMobile ? {} : { duration: 0.8, delay: 0.7 }}
         className="relative z-10 mt-auto"
       >
         <h3 className="text-4xl md:text-5xl lg:text-6xl font-normal text-white mb-2">
@@ -263,46 +384,78 @@ function PhoneMockupCard({
   teamName,
   teamRole,
   teamImage,
+  isMobile,
 }: {
   isInView: boolean;
   teamName: string;
   teamRole: string;
   teamImage: string | null;
+  isMobile: boolean;
 }) {
+  // Mobile static styles - no animations
+  const mobileStaticProps = {
+    initial: { opacity: 1, y: 0 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0 },
+  };
+
+  // Desktop animated styles
+  const desktopAnimatedProps = {
+    initial: { opacity: 0, y: 40 },
+    animate: isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 },
+    transition: { duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] },
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+      {...(isMobile ? mobileStaticProps : desktopAnimatedProps)}
       className="bg-gradient-to-br from-[#1a1a2e] via-[#2d2d44] to-[#16213e] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[760px] lg:min-h-[900px] relative overflow-hidden group"
     >
-      {/* Animated background gradient overlay */}
+      {/* Animated background gradient overlay - Static on mobile */}
       <motion.div
-        animate={{
-          opacity: [0.3, 0.5, 0.3],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={
+          isMobile
+            ? {}
+            : {
+                opacity: [0.3, 0.5, 0.3],
+                scale: [1, 1.1, 1],
+              }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+        }
         className="absolute inset-0 bg-gradient-to-br from-[#0066ff]/20 to-transparent rounded-3xl"
       />
 
-      {/* Mobile Holding Background */}
+      {/* Mobile Holding Background - Static on mobile */}
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={
-          isInView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }
+        initial={
+          isMobile ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }
         }
-        transition={{
-          duration: 0.8,
-          delay: 0.4,
-          type: "spring",
-          stiffness: 100,
-        }}
-        whileHover={{ scale: 1.02 }}
+        animate={
+          isMobile
+            ? { scale: 1, opacity: 1 }
+            : isInView
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0.8, opacity: 0 }
+        }
+        transition={
+          isMobile
+            ? {}
+            : {
+                duration: 0.8,
+                delay: 0.4,
+                type: "spring",
+                stiffness: 100,
+              }
+        }
+        whileHover={isMobile ? {} : { scale: 1.02 }}
         className="flex-1 relative z-10 rounded-3xl overflow-hidden"
         style={{
           backgroundImage: "url('/mobile-holding.png')",
@@ -317,21 +470,31 @@ function PhoneMockupCard({
         {/* Optional overlay for better text readability if needed */}
         <div className="absolute inset-0 bg-black/10 rounded-3xl" />
 
-        {/* Enhanced Glassmorphism Team Card Overlay */}
+        {/* Enhanced Glassmorphism Team Card Overlay - Static on mobile */}
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.9 }}
-          animate={
-            isInView
+          initial={
+            isMobile
               ? { opacity: 1, y: 0, scale: 1 }
               : { opacity: 0, y: 30, scale: 0.9 }
           }
-          transition={{
-            duration: 0.8,
-            delay: 0.8,
-            type: "spring",
-            stiffness: 100,
-          }}
-          whileHover={{ scale: 1.02, y: -5 }}
+          animate={
+            isMobile
+              ? { opacity: 1, y: 0, scale: 1 }
+              : isInView
+              ? { opacity: 1, y: 0, scale: 1 }
+              : { opacity: 0, y: 30, scale: 0.9 }
+          }
+          transition={
+            isMobile
+              ? {}
+              : {
+                  duration: 0.8,
+                  delay: 0.8,
+                  type: "spring",
+                  stiffness: 100,
+                }
+          }
+          whileHover={isMobile ? {} : { scale: 1.02, y: -5 }}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-[85%] max-w-[320px] rounded-3xl p-6 border border-white/20"
           style={{
             background:
@@ -363,8 +526,8 @@ function PhoneMockupCard({
             {/* Team icon */}
             <div className="flex items-center gap-3">
               <motion.div
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.6 }}
+                whileHover={isMobile ? {} : { rotate: 360, scale: 1.1 }}
+                transition={isMobile ? {} : { duration: 0.6 }}
                 className="w-12 h-12 bg-gradient-to-br from-[#242424] to-[#242424] rounded-full flex items-center justify-center shadow-lg"
                 style={{
                   boxShadow:
@@ -405,6 +568,7 @@ function StepCarousel({
   onStepClick,
   isInView,
   steps,
+  isMobile,
 }: {
   currentStep: number;
   onStepClick: (index: number) => void;
@@ -415,8 +579,90 @@ function StepCarousel({
     subtitle: string;
     description: string;
   }>;
+  isMobile: boolean;
 }) {
   const step = steps[currentStep];
+
+  if (isMobile) {
+    return (
+      <div className="bg-[#0066ff] rounded-3xl p-10 md:p-12 lg:p-16 relative overflow-hidden group">
+        {/* Static background gradient on mobile */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+
+        {/* Step indicators - static on mobile */}
+        <div className="flex gap-3 mb-10 justify-center md:justify-start relative z-10">
+          {steps.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => onStepClick(index)}
+              className={`h-4 rounded-full transition-all duration-500 ${
+                index === currentStep
+                  ? "bg-[#FFC107] w-10"
+                  : "bg-white/30 hover:bg-white/50 w-4"
+              }`}
+              style={{
+                boxShadow:
+                  index === currentStep
+                    ? "0 0 20px rgba(255, 193, 7, 0.6)"
+                    : "none",
+              }}
+              aria-label={`Go to step ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        <div
+          key={currentStep}
+          className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative z-10"
+        >
+          {/* Left side - Number and details - static on mobile */}
+          <div className="flex items-start gap-8">
+            <div
+              className="text-[#FFC107] font-semibold text-7xl md:text-8xl lg:text-9xl"
+              style={{
+                textShadow: "0 0 30px rgba(255, 193, 7, 0.5)",
+              }}
+            >
+              {step.number}
+            </div>
+            <div className="flex-1">
+              <div className="text-white/80 text-base uppercase tracking-wider mb-3 font-normal">
+                STEP {step.number}
+              </div>
+              <h3 className="text-white font-semibold text-2xl md:text-3xl mb-5">
+                {step.title}
+              </h3>
+              <p className="text-white/90 text-base md:text-lg leading-relaxed font-normal">
+                {step.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Right side - Subtitle and CTA - static on mobile */}
+          <div className="text-left md:text-right">
+            <h3 className="text-white font-semibold text-4xl md:text-5xl lg:text-6xl mb-8 leading-tight">
+              {step.subtitle}
+            </h3>
+            <button
+              onClick={() => onStepClick((currentStep + 1) % steps.length)}
+              className="bg-white text-[#0066ff] px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-100 transition-colors"
+            >
+              Operational Freedom Starts Here →
+            </button>
+          </div>
+        </div>
+
+        {/* Static decorative element on mobile */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
+          <svg width="200" height="200" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="40" stroke="white" strokeWidth="2" />
+            <circle cx="50" cy="50" r="30" stroke="white" strokeWidth="1" />
+            <circle cx="50" cy="50" r="20" stroke="white" strokeWidth="1" />
+          </svg>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -566,6 +812,8 @@ export default function ArchitectingExcellence() {
   const [currentStep, setCurrentStep] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const isMobile = useIsMobile();
+  const { openModal } = useCTAModal();
 
   // Fetch section data from API
   const {
@@ -651,123 +899,182 @@ export default function ArchitectingExcellence() {
 
   return (
     <section
+      id="about-us"
       ref={sectionRef}
       className="py-20 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8 bg-white"
       style={{ fontFamily: "'Poppins',  " }}
     >
       <div className="container mx-auto max-w-[1400px]">
-        {/* Header with Staggered Animations */}
+        {/* Header with Staggered Animations - No animations on mobile */}
         <div className="text-center mb-16 lg:mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-center gap-2 mb-4"
-          >
+          {isMobile ? (
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="w-3 h-3 bg-[#FFC107] rounded-full" />
+              <span className="text-base font-normal text-gray-600 uppercase tracking-wider">
+                {data.badge_text}
+              </span>
+            </div>
+          ) : (
             <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                boxShadow: [
-                  "0 0 0 0 rgba(255, 193, 7, 0.4)",
-                  "0 0 0 10px rgba(255, 193, 7, 0)",
-                  "0 0 0 0 rgba(255, 193, 7, 0)",
-                ],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="w-3 h-3 bg-[#FFC107] rounded-full"
-            />
-            <span className="text-base font-normal text-gray-600 uppercase tracking-wider">
-              {data.badge_text}
-            </span>
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6"
-          >
-            {data.main_title_line1}
-            <br />
-            {data.main_title_line2}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-normal"
-          >
-            {data.subtitle}
-          </motion.p>
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6 }}
+              className="flex items-center justify-center gap-2 mb-4"
+            >
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  boxShadow: [
+                    "0 0 0 0 rgba(255, 193, 7, 0.4)",
+                    "0 0 0 10px rgba(255, 193, 7, 0)",
+                    "0 0 0 0 rgba(255, 193, 7, 0)",
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="w-3 h-3 bg-[#FFC107] rounded-full"
+              />
+              <span className="text-base font-normal text-gray-600 uppercase tracking-wider">
+                {data.badge_text}
+              </span>
+            </motion.div>
+          )}
+          {isMobile ? (
+            <>
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6">
+                {data.main_title_line1}
+                <br />
+                {data.main_title_line2}
+              </h2>
+              <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+                {data.subtitle}
+              </p>
+            </>
+          ) : (
+            <>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={
+                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-5xl md:text-6xl lg:text-7xl font-semibold text-black mb-6"
+              >
+                {data.main_title_line1}
+                <br />
+                {data.main_title_line2}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={
+                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-normal"
+              >
+                {data.subtitle}
+              </motion.p>
+            </>
+          )}
         </div>
 
         {/* Main Grid - 3 Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Left Column - 2 Stacked Cards */}
           <div className="flex flex-col gap-6">
-            {/* Yellow Philosophy Card with Enhanced Animations */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-[#FFC107] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group"
-            >
-              {/* Animated background gradient */}
-              <motion.div
-                animate={{
-                  opacity: [0.1, 0.2, 0.1],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
-              />
+            {/* Yellow Philosophy Card with Enhanced Animations - No animations on mobile */}
+            {isMobile ? (
+              <div className="bg-[#FFC107] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group">
+                {/* Static background gradient on mobile */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
 
+                <div className="relative z-10">
+                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-white mb-8 leading-tight">
+                    {data.philosophy_title.split("\n").map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index <
+                          data.philosophy_title.split("\n").length - 1 && (
+                          <br />
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </h3>
+                </div>
+
+                <button
+                  className="bg-black text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-900 transition-colors self-start relative z-10"
+                  onClick={openModal}
+                >
+                  {data.philosophy_button_text}
+                </button>
+              </div>
+            ) : (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, x: -40 }}
                 animate={
-                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                  isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }
                 }
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="relative z-10"
+                transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+                whileHover={{ scale: 1.02 }}
+                className="bg-[#FFC107] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group"
               >
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-white mb-8 leading-tight">
-                  {data.philosophy_title.split("\n").map((line, index) => (
-                    <React.Fragment key={index}>
-                      {line}
-                      {index < data.philosophy_title.split("\n").length - 1 && (
-                        <br />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </h3>
+                {/* Animated background gradient */}
+                <motion.div
+                  animate={{
+                    opacity: [0.1, 0.2, 0.1],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
+                />
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={
+                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                  }
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="relative z-10"
+                >
+                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-white mb-8 leading-tight">
+                    {data.philosophy_title.split("\n").map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index <
+                          data.philosophy_title.split("\n").length - 1 && (
+                          <br />
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </h3>
+                </motion.div>
+
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={
+                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                  }
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-black text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-900 transition-colors self-start relative z-10"
+                  onClick={openModal}
+                >
+                  {data.philosophy_button_text}
+                </motion.button>
               </motion.div>
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={
-                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                }
-                transition={{ duration: 0.8, delay: 0.4 }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-                }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-black text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-900 transition-colors self-start relative z-10"
-                onClick={() =>
-                  window.open(data.philosophy_button_url, "_blank")
-                }
-              >
-                {data.philosophy_button_text}
-              </motion.button>
-            </motion.div>
+            )}
 
             {/* Dark Gradient Card - Faster Process Cycles */}
             <DarkGradientCard
@@ -776,6 +1083,7 @@ export default function ArchitectingExcellence() {
               counter1Label={data.counter_1_label}
               counter2Value={data.counter_2_value}
               counter2Label={data.counter_2_label}
+              isMobile={isMobile}
             />
           </div>
 
@@ -785,6 +1093,7 @@ export default function ArchitectingExcellence() {
             teamName={data.team_name}
             teamRole={data.team_role}
             teamImage={data.team_image}
+            isMobile={isMobile}
           />
         </div>
 
@@ -794,6 +1103,7 @@ export default function ArchitectingExcellence() {
           onStepClick={handleStepClick}
           isInView={isInView}
           steps={steps}
+          isMobile={isMobile}
         />
       </div>
     </section>

@@ -7,8 +7,34 @@ import {
   useTransform,
   animate,
 } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { api, useApiData } from "@/lib/api";
+
+// Hook to detect mobile viewport
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
+// Helper function to get mobile-optimized animation duration
+const getMobileDuration = (
+  desktopDuration: number,
+  isMobile: boolean
+): number => {
+  return isMobile ? Math.max(0.3, desktopDuration * 0.4) : desktopDuration;
+};
 
 // Country data for ticker (includes emoji + flag image URL)
 const countries: {
@@ -103,6 +129,7 @@ export default function WhyChooseUsSection() {
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const isMobile = useIsMobile();
 
   // Counter animation
   const count = useMotionValue(0);
@@ -111,7 +138,7 @@ export default function WhyChooseUsSection() {
   useEffect(() => {
     if (isInView) {
       const controls = animate(count, 140, {
-        duration: 2,
+        duration: getMobileDuration(2, isMobile),
         ease: "easeOut",
       });
       return controls.stop;
@@ -120,6 +147,7 @@ export default function WhyChooseUsSection() {
 
   return (
     <section
+      id="why-choose-us"
       ref={sectionRef}
       className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden"
       style={{
@@ -132,7 +160,7 @@ export default function WhyChooseUsSection() {
           className="text-center mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: getMobileDuration(0.6, isMobile) }}
         >
           <p
             className="text-sm text-gray-500 uppercase tracking-wider"
@@ -147,7 +175,10 @@ export default function WhyChooseUsSection() {
           className="text-center mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{
+            duration: getMobileDuration(0.6, isMobile),
+            delay: getMobileDuration(0.1, isMobile),
+          }}
         >
           <h2
             className="text-4xl sm:text-5xl lg:text-6xl text-black mb-4 leading-tight"
@@ -162,7 +193,10 @@ export default function WhyChooseUsSection() {
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{
+            duration: getMobileDuration(0.6, isMobile),
+            delay: getMobileDuration(0.2, isMobile),
+          }}
         >
           <p
             className="text-base text-gray-700 leading-relaxed max-w-2xl mx-auto"
@@ -178,7 +212,10 @@ export default function WhyChooseUsSection() {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{
+              duration: getMobileDuration(0.6, isMobile),
+              delay: getMobileDuration(0.3, isMobile),
+            }}
             className="z-10 bg-white"
           >
             <div className="space-y-6">
@@ -225,7 +262,10 @@ export default function WhyChooseUsSection() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{
+              duration: getMobileDuration(0.6, isMobile),
+              delay: getMobileDuration(0.4, isMobile),
+            }}
             className="relative overflow-hidden"
           >
             {/* Counter */}
@@ -263,7 +303,7 @@ export default function WhyChooseUsSection() {
                     x: {
                       repeat: Infinity,
                       repeatType: "loop",
-                      duration: 25,
+                      duration: getMobileDuration(25, isMobile),
                       ease: "linear",
                     },
                   }}
@@ -296,7 +336,7 @@ export default function WhyChooseUsSection() {
                     x: {
                       repeat: Infinity,
                       repeatType: "loop",
-                      duration: 25,
+                      duration: getMobileDuration(25, isMobile),
                       ease: "linear",
                     },
                   }}
@@ -324,7 +364,10 @@ export default function WhyChooseUsSection() {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{
+              duration: getMobileDuration(0.6, isMobile),
+              delay: getMobileDuration(0.5, isMobile),
+            }}
             className="z-10 bg-white"
           >
             <div className="space-y-6">
@@ -367,8 +410,8 @@ export default function WhyChooseUsSection() {
                           : { width: 0 }
                       }
                       transition={{
-                        duration: 1.2,
-                        delay: 0.7,
+                        duration: getMobileDuration(1.2, isMobile),
+                        delay: getMobileDuration(0.7, isMobile),
                         ease: "easeOut",
                       }}
                     />
@@ -399,8 +442,8 @@ export default function WhyChooseUsSection() {
                           : { width: 0 }
                       }
                       transition={{
-                        duration: 1.2,
-                        delay: 0.9,
+                        duration: getMobileDuration(1.2, isMobile),
+                        delay: getMobileDuration(0.9, isMobile),
                         ease: "easeOut",
                       }}
                     />
@@ -431,8 +474,8 @@ export default function WhyChooseUsSection() {
                           : { width: 0 }
                       }
                       transition={{
-                        duration: 1.2,
-                        delay: 1.1,
+                        duration: getMobileDuration(1.2, isMobile),
+                        delay: getMobileDuration(1.1, isMobile),
                         ease: "easeOut",
                       }}
                     />

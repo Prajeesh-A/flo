@@ -121,7 +121,7 @@ export default function FAQSection() {
   ];
 
   return (
-    <section className="relative bg-white py-[100px] overflow-hidden">
+    <section id="help" className="relative bg-white py-[100px] overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         {/* Header */}
         <motion.div
