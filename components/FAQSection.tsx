@@ -169,24 +169,52 @@ export default function FAQSection() {
     !faqItems || faqItemsError || faqItems.length === 0;
 
   // Always render the FAQ section (don't block on API)
-  console.log("FAQ Debug:", {
+  console.log("🔍 FAQ Debug - Detailed:", {
     faqItems,
+    faqItemsType: typeof faqItems,
+    faqItemsArray: Array.isArray(faqItems),
+    faqItemsLength: faqItems?.length,
     faqItemsLoading,
     faqItemsError,
     usingFallbackItems,
     finalFaqs: faqs,
+    finalFaqsLength: faqs?.length,
+    firstFaqItem: faqItems?.[0],
+  });
+
+  // Force use API data if it exists and has items
+  const shouldUseApiData =
+    faqItems && Array.isArray(faqItems) && faqItems.length > 0;
+  const finalFaqItems = shouldUseApiData ? faqItems : defaultFaqItems;
+
+  console.log("🎯 Final FAQ Decision:", {
+    shouldUseApiData,
+    finalFaqItemsLength: finalFaqItems.length,
+    source: shouldUseApiData ? "API" : "FALLBACK",
   });
 
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-        {/* Debug indicator for fallback data */}
-        {usingFallbackItems && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6 text-sm">
-            <strong>Debug:</strong> Using fallback data - FAQ items not loaded
-            from API
-          </div>
-        )}
+        {/* Debug indicator for data source */}
+        <div
+          className={`px-4 py-3 rounded mb-6 text-sm ${
+            shouldUseApiData
+              ? "bg-green-100 border border-green-400 text-green-700"
+              : "bg-yellow-100 border border-yellow-400 text-yellow-700"
+          }`}
+        >
+          <strong>Data Source:</strong>{" "}
+          {shouldUseApiData
+            ? `✅ Using API data (${finalFaqItems.length} items from Django admin)`
+            : `⚠️ Using fallback data (${finalFaqItems.length} default items)`}
+          {faqItemsError && (
+            <>
+              <br />
+              <strong>Error:</strong> {faqItemsError}
+            </>
+          )}
+        </div>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -235,7 +263,7 @@ export default function FAQSection() {
                 Failed to load FAQ items. Using default content.
               </div>
             </div>
-          ) : faqs.length === 0 ? (
+          ) : finalFaqItems.length === 0 ? (
             // Empty state
             <div className="col-span-full text-center py-12">
               <div className="text-gray-600 text-lg">
@@ -244,7 +272,7 @@ export default function FAQSection() {
             </div>
           ) : (
             // FAQ items
-            faqs.map((faq: any, index: number) => (
+            finalFaqItems.map((faq: any, index: number) => (
               <FAQCard key={faq.id || index} faq={faq} index={index} />
             ))
           )}
