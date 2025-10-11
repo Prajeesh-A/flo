@@ -193,8 +193,8 @@ function PhoneMockup({
             container.clientHeight <
           100;
 
-        // Only scroll if we're near the bottom or if there are many messages
-        if (isNearBottom || visibleMessages.length > 3) {
+        // Always scroll on mobile for better UX, or if near bottom, or if there are many messages
+        if (isMobile || isNearBottom || visibleMessages.length > 2) {
           container.scrollTo({
             top: container.scrollHeight,
             behavior: "smooth",
@@ -207,16 +207,20 @@ function PhoneMockup({
   // Auto-scroll when new messages appear with slight delay for natural feel
   useEffect(() => {
     if (visibleMessages.length > 0) {
-      scrollToBottom(300); // Small delay to let message animation settle
+      // Faster scroll on mobile for better responsiveness
+      const scrollDelay = isMobile ? 150 : 300;
+      scrollToBottom(scrollDelay);
     }
-  }, [visibleMessages]);
+  }, [visibleMessages, isMobile]);
 
   // Scroll when typing indicator appears/disappears
   useEffect(() => {
     if (showTyping) {
-      scrollToBottom(200);
+      // Faster scroll on mobile for typing indicator
+      const scrollDelay = isMobile ? 100 : 200;
+      scrollToBottom(scrollDelay);
     }
-  }, [showTyping]);
+  }, [showTyping, isMobile]);
 
   useEffect(() => {
     if (!isInView) {
@@ -256,6 +260,9 @@ function PhoneMockup({
         setShowTyping(false);
         setVisibleMessages((prev) => [...prev, message.id]);
 
+        // Force scroll after bot message appears (especially important on mobile)
+        setTimeout(() => scrollToBottom(0), 100);
+
         // Wait for message to settle before next message
         if (index + 1 < chatMessages.length) {
           const nextMessageDelay = 1800 + Math.random() * 400; // 1.8-2.2s delay for bot messages
@@ -270,6 +277,9 @@ function PhoneMockup({
     } else {
       // User messages appear immediately
       setVisibleMessages((prev) => [...prev, message.id]);
+
+      // Force scroll after user message appears (especially important on mobile)
+      setTimeout(() => scrollToBottom(0), 50);
 
       // Wait before next message for natural conversation flow
       if (index + 1 < chatMessages.length) {
@@ -321,7 +331,7 @@ function PhoneMockup({
             delay: getMobileDuration(2.5, isMobile),
           },
         }}
-        className="relative w-full max-w-[280px] md:max-w-[340px] mx-auto"
+        className="relative w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[340px] mx-auto"
         style={{
           filter: "drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15))",
           willChange: isInView ? "transform, opacity" : "auto",
