@@ -369,7 +369,7 @@ function HomePageContent() {
       <section
         id="home"
         ref={heroRef}
-        className="hero-section pt-40 pb-32 md:pt-48 md:pb-40 px-6 sm:px-8 lg:px-12"
+        className="hero-section pt-32 pb-20 sm:pt-40 sm:pb-32 md:pt-48 md:pb-40 px-4 sm:px-6 md:px-8 lg:px-12"
       >
         <div className="container mx-auto max-w-6xl">
           <div
@@ -380,11 +380,8 @@ function HomePageContent() {
             }`}
           >
             {/* Small tagline with emoji */}
-            <div className="flex items-center justify-center gap-0 mb-0">
-              <span
-                className="text-black text-lg font-light font-poppins"
-                style={{ minWidth: 290 }}
-              >
+            <div className="flex items-center justify-center gap-0 mb-4 sm:mb-6">
+              <span className="text-black text-base sm:text-lg md:text-xl font-light font-poppins text-center px-4">
                 {heroLoading
                   ? "Loading..."
                   : heroError
@@ -395,7 +392,7 @@ function HomePageContent() {
 
             {/* Large  floneo brand name */}
             <h1
-              className="text-4xl sm:text-6xl md:text-[8rem] lg:text-[12rem] font-surgena font-semibold mb-6 sm:mb-10 leading-tight tracking-tight"
+              className="text-6xl sm:text-7xl md:text-[8rem] lg:text-[12rem] font-surgena font-semibold mb-6 sm:mb-10 leading-tight tracking-tight hero-brand-name"
               style={{ color: "var(--deep-navy)", fontWeight: 600 }}
             >
               {heroLoading
