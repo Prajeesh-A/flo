@@ -371,7 +371,7 @@ function PhoneMockup({
         {/* Phone frame - iPhone style */}
         <div
           className={`relative bg-black rounded-[3rem] p-2 ${
-            isMobile ? "w-[180px] h-[360px]" : "w-full aspect-[9.5/19]"
+            isMobile ? "w-[240px] h-[480px]" : "w-full aspect-[9.5/19]"
           }`}
         >
           {/* Dynamic Island */}
@@ -410,7 +410,7 @@ function PhoneMockup({
           {/* Screen */}
           <div
             className={`bg-black rounded-[2.5rem] overflow-hidden relative ${
-              isMobile ? "w-[164px] h-[344px] pt-6" : "w-full h-full pt-8"
+              isMobile ? "w-[224px] h-[464px] pt-6" : "w-full h-full pt-8"
             }`}
           >
             {/* Chat messages */}
@@ -418,17 +418,17 @@ function PhoneMockup({
               ref={chatContainerRef}
               className={`chat-container overflow-y-auto overflow-x-hidden ${
                 isMobile
-                  ? "w-[164px] h-[312px] p-3 space-y-2"
+                  ? "w-[224px] h-[432px] p-4 space-y-3"
                   : "h-full p-4 space-y-3"
               }`}
               style={{
                 scrollbarWidth: "none" /* Firefox */,
                 msOverflowStyle: "none" /* Internet Explorer 10+ */,
                 ...(isMobile && {
-                  maxWidth: "164px",
-                  maxHeight: "312px",
-                  minWidth: "164px",
-                  minHeight: "312px",
+                  maxWidth: "224px",
+                  maxHeight: "432px",
+                  minWidth: "224px",
+                  minHeight: "432px",
                 }),
               }}
             >
