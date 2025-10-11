@@ -982,9 +982,9 @@ export default function ArchitectingExcellence() {
         </div>
 
         {/* Main Grid - 3 Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-6 mb-6">
           {/* Left Column - 2 Stacked Cards */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-8 md:gap-6">
             {/* Yellow Philosophy Card with Enhanced Animations - No animations on mobile */}
             {isMobile ? (
               <div className="bg-[#FFC107] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group">
