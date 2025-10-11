@@ -250,13 +250,16 @@ export default function SocialSection() {
               </div>
             </div>
 
+            {/* Features section - now managed through navigation items */}
             <div>
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                <strong>🚨 URGENT:</strong> Features section is hardcoded!
-                <br />
-                This should be managed through Django admin.
-                <br />
-                Create a Features model in Django admin to manage this content.
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                Resources
+              </h3>
+              <div className="flex flex-col space-y-5">
+                <FooterLink text="Documentation" />
+                <FooterLink text="API Reference" />
+                <FooterLink text="Tutorials" />
+                <FooterLink text="Community" />
               </div>
             </div>
           </motion.div>
