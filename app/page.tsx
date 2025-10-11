@@ -241,7 +241,7 @@ function HomePageContent() {
           </nav>
 
           {/* Mobile Navigation Bar */}
-          <nav className="lg:hidden mx-auto mt-4 bg-white/90 backdrop-blur-md rounded-full px-4 py-3 shadow-lg max-w-md">
+          <nav className="lg:hidden mx-auto mt-4 bg-white/95 backdrop-blur-lg rounded-full px-5 py-3.5 shadow-xl border border-white/20 max-w-sm">
             <div className="flex items-center justify-between">
               {/* Logo */}
               <div className="flex items-center">
@@ -261,7 +261,7 @@ function HomePageContent() {
 
               {/* Contact Sales Button - Mobile */}
               <button
-                className="bg-[#2C2C2E] text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-[#1C1C1E] transition-colors"
+                className="bg-[#2C2C2E] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#1C1C1E] transition-all duration-200 hover:scale-105 active:scale-95"
                 onClick={openModal}
               >
                 Contact Sales
@@ -270,22 +270,22 @@ function HomePageContent() {
               {/* Yellow Hamburger Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="w-12 h-12 bg-[#FFC107] rounded-full flex flex-col items-center justify-center gap-1.5 hover:bg-[#FFB300] transition-colors active:scale-95"
+                className="w-11 h-11 bg-[#FFC107] rounded-full flex flex-col items-center justify-center gap-1.5 hover:bg-[#FFB300] transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
                 aria-label="Toggle menu"
               >
                 <span
-                  className={`w-6 h-0.5 bg-black transition-all duration-300 ${
-                    isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                  className={`w-5 h-0.5 bg-black transition-all duration-300 ${
+                    isMobileMenuOpen ? "rotate-45 translate-y-1.5" : ""
                   }`}
                 />
                 <span
-                  className={`w-6 h-0.5 bg-black transition-all duration-300 ${
+                  className={`w-5 h-0.5 bg-black transition-all duration-300 ${
                     isMobileMenuOpen ? "opacity-0" : ""
                   }`}
                 />
                 <span
-                  className={`w-6 h-0.5 bg-black transition-all duration-300 ${
-                    isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+                  className={`w-5 h-0.5 bg-black transition-all duration-300 ${
+                    isMobileMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
                   }`}
                 />
               </button>
@@ -296,50 +296,33 @@ function HomePageContent() {
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 right-0 mt-3 mx-4 mobile-menu-enter mobile-menu-container">
-            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-gray-200">
-              <div className="flex flex-col gap-3">
-                <a
-                  href="#about"
-                  className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-colors text-base font-medium py-3 px-4 rounded-xl hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  About Us
-                </a>
-                <a
-                  href="#features"
-                  className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-colors text-base font-medium py-3 px-4 rounded-xl hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Features
-                </a>
-                <a
-                  href="#services"
-                  className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-colors text-base font-medium py-3 px-4 rounded-xl hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Services
-                </a>
-                <a
-                  href="#analytics"
-                  className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-colors text-base font-medium py-3 px-4 rounded-xl hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Analytics
-                </a>
-                <a
-                  href="#pricing"
-                  className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-colors text-base font-medium py-3 px-4 rounded-xl hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Pricing
-                </a>
-                <a
-                  href="#help"
-                  className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-colors text-base font-medium py-3 px-4 rounded-xl hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Help Center
-                </a>
+            <div className="bg-white/98 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/30">
+              <div className="flex flex-col gap-2">
+                {navItems
+                  .filter((item) => item.is_active)
+                  .map((item, index) => (
+                    <a
+                      key={index}
+                      href={item.href}
+                      className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-all duration-200 text-base font-medium py-3.5 px-5 rounded-2xl hover:bg-gray-50 active:bg-gray-100 active:scale-95"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+
+                {/* Additional Contact Button in Menu */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <button
+                    className="w-full bg-[#FFC107] text-black py-3.5 px-5 rounded-2xl font-semibold text-base hover:bg-[#FFB300] transition-all duration-200 active:scale-95"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openModal();
+                    }}
+                  >
+                    Get Started
+                  </button>
+                </div>
               </div>
             </div>
           </div>

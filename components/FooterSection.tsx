@@ -40,7 +40,7 @@ export default function FooterSection() {
           className="text-center mb-16 sm:mb-32"
         >
           <h1
-            className="text-[22rem] sm:text-[14rem] md:text-[22rem] lg:text-[28rem] font-bold text-[#0D1B2A] leading-none"
+            className="text-[22rem] sm:text-[14rem] md:text-[22rem] lg:text-[28rem]  text-[#0D1B2A] leading-none"
             style={{ fontFamily: "'Surgena semibold', sans-serif" }}
           >
             {data.company_name}

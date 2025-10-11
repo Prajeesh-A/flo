@@ -126,7 +126,7 @@ function DarkGradientCard({
   return (
     <motion.div
       {...(isMobile ? mobileStaticProps : desktopAnimatedProps)}
-      className="bg-gradient-to-br from-[#0a1f1f] via-[#0d3d3d] to-[#2ecc71] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group"
+      className="bg-gradient-to-br from-[#0a1f1f] via-[#0d3d3d] to-[#2ecc71] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[420px] sm:min-h-[450px] lg:min-h-[450px] relative overflow-hidden group"
     >
       {/* Animated decorative circles with floating effect - Static on mobile */}
       <motion.div
@@ -409,7 +409,7 @@ function PhoneMockupCard({
   return (
     <motion.div
       {...(isMobile ? mobileStaticProps : desktopAnimatedProps)}
-      className="bg-gradient-to-br from-[#1a1a2e] via-[#2d2d44] to-[#16213e] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[760px] lg:min-h-[900px] relative overflow-hidden group"
+      className="bg-gradient-to-br from-[#1a1a2e] via-[#2d2d44] to-[#16213e] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[600px] sm:min-h-[700px] md:min-h-[760px] lg:min-h-[900px] relative overflow-hidden group"
     >
       {/* Animated background gradient overlay - Static on mobile */}
       <motion.div
@@ -507,7 +507,7 @@ function PhoneMockupCard({
         >
           {/* Top section - Description */}
           <p
-            className="text-white text-sm font-normal mb-5 leading-relaxed drop-shadow-lg"
+            className="text-white text-sm sm:text-base font-normal mb-5 leading-relaxed drop-shadow-lg"
             style={{ textShadow: "0 2px 8px rgba(0, 0, 0, 0.5)" }}
           >
             floneo is co-created on the front lines with ops, business, delivery
@@ -585,7 +585,7 @@ function StepCarousel({
 
   if (isMobile) {
     return (
-      <div className="bg-[#0066ff] rounded-3xl p-10 md:p-12 lg:p-16 relative overflow-hidden group">
+      <div className="bg-[#0066ff] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 relative overflow-hidden group">
         {/* Static background gradient on mobile */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
 
@@ -618,7 +618,7 @@ function StepCarousel({
           {/* Left side - Number and details - static on mobile */}
           <div className="flex items-start gap-8">
             <div
-              className="text-[#FFC107] font-semibold text-7xl md:text-8xl lg:text-9xl"
+              className="text-[#FFC107] font-semibold text-5xl sm:text-6xl md:text-8xl lg:text-9xl"
               style={{
                 textShadow: "0 0 30px rgba(255, 193, 7, 0.5)",
               }}
@@ -629,10 +629,10 @@ function StepCarousel({
               <div className="text-white/80 text-base uppercase tracking-wider mb-3 font-normal">
                 STEP {step.number}
               </div>
-              <h3 className="text-white font-semibold text-2xl md:text-3xl mb-5">
+              <h3 className="text-white font-semibold text-xl sm:text-2xl md:text-3xl mb-4 sm:mb-5">
                 {step.title}
               </h3>
-              <p className="text-white/90 text-base md:text-lg leading-relaxed font-normal">
+              <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-normal">
                 {step.description}
               </p>
             </div>
@@ -640,12 +640,12 @@ function StepCarousel({
 
           {/* Right side - Subtitle and CTA - static on mobile */}
           <div className="text-left md:text-right">
-            <h3 className="text-white font-semibold text-4xl md:text-5xl lg:text-6xl mb-8 leading-tight">
+            <h3 className="text-white font-semibold text-2xl sm:text-3xl md:text-5xl lg:text-6xl mb-6 sm:mb-8 leading-tight">
               {step.subtitle}
             </h3>
             <button
               onClick={() => onStepClick((currentStep + 1) % steps.length)}
-              className="bg-white text-[#0066ff] px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-100 transition-colors"
+              className="bg-white text-[#0066ff] px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base hover:bg-gray-100 transition-colors"
             >
               Operational Freedom Starts Here →
             </button>
@@ -987,12 +987,12 @@ export default function ArchitectingExcellence() {
           <div className="flex flex-col gap-8 md:gap-6">
             {/* Yellow Philosophy Card with Enhanced Animations - No animations on mobile */}
             {isMobile ? (
-              <div className="bg-[#FFC107] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group">
+              <div className="bg-[#FFC107] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[420px] sm:min-h-[450px] lg:min-h-[450px] relative overflow-hidden group">
                 {/* Static background gradient on mobile */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
 
                 <div className="relative z-10">
-                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-white mb-8 leading-tight">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-normal text-white mb-6 sm:mb-8 leading-tight">
                     {data.philosophy_title.split("\n").map((line, index) => (
                       <React.Fragment key={index}>
                         {line}
@@ -1006,7 +1006,7 @@ export default function ArchitectingExcellence() {
                 </div>
 
                 <button
-                  className="bg-black text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-900 transition-colors self-start relative z-10"
+                  className="bg-black text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base hover:bg-gray-900 transition-colors self-start relative z-10"
                   onClick={openModal}
                 >
                   {data.philosophy_button_text}
