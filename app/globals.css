@@ -989,7 +989,41 @@ html {
   #features .phone-mockup-container > div {
     width: 180px !important; /* Fixed phone frame width */
     height: 360px !important; /* Fixed height maintaining aspect ratio */
-    max-width: none !important;
+    max-width: 180px !important;
+    max-height: 360px !important;
+    min-width: 180px !important;
+    min-height: 360px !important;
+    overflow: hidden !important; /* Prevent any expansion */
+  }
+
+  /* Strict screen container dimensions */
+  #features .phone-mockup-container .w-full.h-full.bg-black {
+    width: 164px !important; /* Account for 8px padding (180-16) */
+    height: 344px !important; /* Account for 8px padding (360-16) */
+    max-width: 164px !important;
+    max-height: 344px !important;
+    overflow: hidden !important;
+  }
+
+  /* Strict chat container dimensions and scrolling */
+  #features .phone-mockup-container .chat-container {
+    width: 164px !important;
+    height: 312px !important; /* Account for top padding (344-32) */
+    max-width: 164px !important;
+    max-height: 312px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    font-size: 0.75rem !important;
+    /* Hide scrollbar completely */
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* Internet Explorer 10+ */
+  }
+
+  /* Hide webkit scrollbar */
+  #features .phone-mockup-container .chat-container::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   /* Adjust Human Touch section mobile text sizing */
@@ -998,14 +1032,23 @@ html {
     line-height: 1.1 !important;
   }
 
-  /* Ensure phone content doesn't overflow */
-  #features .phone-mockup-container .chat-container {
-    font-size: 0.75rem !important; /* Smaller text inside phone */
-  }
-
+  /* Ensure chat bubbles don't overflow */
   #features .phone-mockup-container .chat-container .px-4 {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
+  }
+
+  /* Prevent chat bubble overflow and ensure proper sizing */
+  #features .phone-mockup-container .chat-container > div {
+    max-width: 140px !important; /* Ensure bubbles fit within container */
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Ensure flex containers don't expand beyond bounds */
+  #features .phone-mockup-container .chat-container .flex {
+    max-width: 140px !important;
+    width: 100% !important;
   }
 
   /* CTA buttons mobile */

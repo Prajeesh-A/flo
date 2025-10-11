@@ -408,16 +408,28 @@ function PhoneMockup({
           </div>
 
           {/* Screen */}
-          <div className="w-full h-full bg-black rounded-[2.5rem] overflow-hidden relative pt-8">
+          <div
+            className={`bg-black rounded-[2.5rem] overflow-hidden relative ${
+              isMobile ? "w-[164px] h-[344px] pt-6" : "w-full h-full pt-8"
+            }`}
+          >
             {/* Chat messages */}
             <div
               ref={chatContainerRef}
-              className={`chat-container h-full overflow-y-auto space-y-3 ${
-                isMobile ? "p-3 space-y-2" : "p-4 space-y-3"
+              className={`chat-container overflow-y-auto overflow-x-hidden ${
+                isMobile
+                  ? "w-[164px] h-[312px] p-3 space-y-2"
+                  : "h-full p-4 space-y-3"
               }`}
               style={{
                 scrollbarWidth: "none" /* Firefox */,
                 msOverflowStyle: "none" /* Internet Explorer 10+ */,
+                ...(isMobile && {
+                  maxWidth: "164px",
+                  maxHeight: "312px",
+                  minWidth: "164px",
+                  minHeight: "312px",
+                }),
               }}
             >
               {chatMessages.map((message: any) => (
