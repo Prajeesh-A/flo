@@ -30,6 +30,23 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if os.getenv("CORS_ALLOWED_ORIGINS") else []
 
+# Add common frontend domains for development
+if not CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://floneo.netlify.app',
+        'https://flo-red.vercel.app',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000'
+    ]
+
+if not CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS = [
+        'https://floneo.netlify.app',
+        'https://flo-red.vercel.app',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000'
+    ]
+
 # Temporary: Allow all origins for testing (remove in production)
 CORS_ALLOW_ALL_ORIGINS = True
 
