@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useRef, useEffect, useState } from "react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
 import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 
@@ -54,6 +54,13 @@ export default function AboutTablet() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Track if the section is in view for auto-pause functionality
+  const isInView = useInView(containerRef, {
+    threshold: 0.3, // Section needs to be 30% visible
+    margin: "-10% 0px -10% 0px", // Add some margin for better UX
+  });
 
   // Set up scroll-based animation
   const { scrollYProgress } = useScroll({
@@ -78,6 +85,30 @@ export default function AboutTablet() {
 
   // Y position moves up during reveal - reduced distance for mobile
   const y = useTransform(scrollYProgress, [0, 0.4, 1], [60, 0, 0]);
+
+  // Auto-pause/play video based on section visibility
+  useEffect(() => {
+    const video = videoRef.current;
+    const iframe = iframeRef.current;
+
+    if (isInView) {
+      // Section is in view - play video
+      if (video && data.video_autoplay) {
+        video.play().catch(() => {
+          // Ignore autoplay errors (browser restrictions)
+        });
+      }
+      // For YouTube iframes, we can't control play/pause directly
+      // The iframe will handle autoplay based on its parameters
+    } else {
+      // Section is out of view - pause video
+      if (video) {
+        video.pause();
+      }
+      // For YouTube iframes, we can't pause them directly
+      // This is a limitation of YouTube embeds for security reasons
+    }
+  }, [isInView, data.video_autoplay]);
 
   return (
     <section id="about">
@@ -140,6 +171,7 @@ export default function AboutTablet() {
                 // YouTube embed
                 <div className="w-full h-full">
                   <iframe
+                    ref={iframeRef}
                     className="w-full h-full"
                     src={`https://www.youtube.com/embed/${getYouTubeVideoId(
                       data.video_url

@@ -31,6 +31,14 @@ const getMobileDuration = (
   return isMobile ? Math.max(0.3, desktopDuration * 0.4) : desktopDuration;
 };
 
+// Helper function to get mobile-optimized chat timing (slower for mobile)
+const getMobileChatTiming = (
+  desktopTiming: number,
+  isMobile: boolean
+): number => {
+  return isMobile ? desktopTiming * 1.8 : desktopTiming; // 80% slower on mobile
+};
+
 /**
  * HumanTouchSection - Animated section with sliding text and chat mockup
  *
@@ -289,7 +297,10 @@ function PhoneMockup({
       setShowTyping(true);
 
       // Typing indicator duration: 1.2-1.8 seconds (realistic typing time)
-      const typingDuration = 1200 + Math.random() * 600; // 1.2-1.8s
+      const typingDuration = getMobileChatTiming(
+        1200 + Math.random() * 600,
+        isMobile
+      ); // 1.2-1.8s (slower on mobile)
 
       const typingTimeout = setTimeout(() => {
         setShowTyping(false);
@@ -297,7 +308,10 @@ function PhoneMockup({
 
         // Wait for message to settle before next message
         if (index + 1 < chatMessages.length) {
-          const nextMessageDelay = 1800 + Math.random() * 400; // 1.8-2.2s delay for bot messages
+          const nextMessageDelay = getMobileChatTiming(
+            1800 + Math.random() * 400,
+            isMobile
+          ); // 1.8-2.2s delay for bot messages (slower on mobile)
           const nextTimeout = setTimeout(
             () => animateNextMessage(index + 1),
             nextMessageDelay
@@ -312,7 +326,10 @@ function PhoneMockup({
 
       // Wait before next message for natural conversation flow
       if (index + 1 < chatMessages.length) {
-        const nextMessageDelay = 1200 + Math.random() * 600; // 1.2-1.8s delay for user messages
+        const nextMessageDelay = getMobileChatTiming(
+          1200 + Math.random() * 600,
+          isMobile
+        ); // 1.2-1.8s delay for user messages (slower on mobile)
         const nextTimeout = setTimeout(
           () => animateNextMessage(index + 1),
           nextMessageDelay
@@ -366,6 +383,7 @@ function PhoneMockup({
         style={{
           filter: "drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15))",
           willChange: isInView ? "transform, opacity" : "auto",
+          zIndex: isMobile ? 10 : "auto", // Ensure phone appears above decorative elements on mobile
         }}
       >
         {/* Phone frame - iPhone style */}
@@ -501,6 +519,7 @@ function PhoneMockup({
           className="absolute -left-32 top-12"
           style={{
             willChange: "transform",
+            zIndex: isMobile ? -1 : "auto", // Move behind phone on mobile
           }}
         >
           <div className="relative">
@@ -528,6 +547,7 @@ function PhoneMockup({
           className="absolute -right-32 bottom-28"
           style={{
             willChange: "transform",
+            zIndex: isMobile ? -1 : "auto", // Move behind phone on mobile
           }}
         >
           <div className="relative">

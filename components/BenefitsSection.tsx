@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
 import { useCTAModal } from "@/contexts/CTAModalContext";
+import { useToast } from "@/components/ui/notification-toast";
 import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 
 // Hook to detect mobile viewport
@@ -83,6 +84,7 @@ export default function BenefitsSection() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
   const isMobile = useIsMobile();
   const { openModal } = useCTAModal();
+  const { showDemoToast } = useToast();
 
   // Position mapping for floating benefits - matching reference image
   const getPositionClasses = (position: string) => {
@@ -312,7 +314,7 @@ export default function BenefitsSection() {
           </motion.button>
 
           <motion.button
-            onClick={openModal}
+            onClick={() => showDemoToast("Learn More")}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-black/60 hover:bg-black/80 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm"

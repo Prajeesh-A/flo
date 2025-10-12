@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { api, useApiData } from "@/lib/api";
 import { useCTAModal } from "@/contexts/CTAModalContext";
+import { useToast } from "@/components/ui/notification-toast";
 
 export default function ContactSection() {
   const { openModal } = useCTAModal();
+  const { showDemoToast } = useToast();
 
   // Fetch section data from API
   const {
@@ -186,7 +188,7 @@ export default function ContactSection() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={openModal}
+                onClick={() => showDemoToast("Join Our Community")}
                 className="w-full bg-[#1A2332] hover:bg-[#2A3442] text-white py-4 rounded-[24px] font-medium transition-colors duration-200"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >

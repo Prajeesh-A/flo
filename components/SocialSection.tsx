@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useApiData } from "../lib/api";
 import { api } from "../lib/api";
+import { useToast } from "@/components/ui/notification-toast";
 
 // Helper function to get social media icons
 const getSocialIcon = (platform: string, iconClass?: string) => {
@@ -83,6 +84,8 @@ const FooterLink = ({
 );
 
 export default function SocialSection() {
+  const { showDemoToast } = useToast();
+
   // Fetch social media section data from API
   const {
     data: sectionData,
@@ -188,11 +191,13 @@ export default function SocialSection() {
           >
             {/* Dynamic Social Media Links */}
             {links.slice(0, 3).map((link) => (
-              <motion.a
+              <motion.div
                 key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() =>
+                  showDemoToast(
+                    `${link.platform_name || link.platform} Social Media`
+                  )
+                }
                 whileHover={{ scale: 1.1, y: -5 }}
                 whileTap={{ scale: 0.95 }}
                 className="flex flex-col items-center gap-2 cursor-pointer group"
@@ -221,7 +226,7 @@ export default function SocialSection() {
                     {link.platform_name}
                   </motion.span>
                 )}
-              </motion.a>
+              </motion.div>
             ))}
           </motion.div>
 

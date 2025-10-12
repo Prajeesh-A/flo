@@ -26,9 +26,11 @@ import { api, useApiData } from "@/lib/api";
 import { useNavigationItems } from "@/lib/api-swr";
 import { loadCriticalPageData } from "@/lib/api-batch";
 import { CTAModalProvider, useCTAModal } from "@/contexts/CTAModalContext";
+import { useToast } from "@/components/ui/notification-toast";
 
 function HomePageContent() {
   const { openModal } = useCTAModal();
+  const { showDemoToast } = useToast();
   const [isVisible, setIsVisible] = useState(false);
   const [logoRotation, setLogoRotation] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -238,7 +240,10 @@ function HomePageContent() {
               </div>
 
               {/* Contact Sales Button */}
-              <button className="contact-sales-btn" onClick={openModal}>
+              <button
+                className="contact-sales-btn"
+                onClick={() => showDemoToast("Contact Sales")}
+              >
                 Contact Sales
               </button>
             </div>
