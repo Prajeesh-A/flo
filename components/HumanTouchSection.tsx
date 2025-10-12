@@ -524,10 +524,9 @@ function PhoneMockup({
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute -left-32 top-12"
+          className="absolute -left-32 top-12 hidden md:block"
           style={{
             willChange: "transform",
-            zIndex: isMobile ? -1 : "auto", // Move behind phone on mobile
           }}
         >
           <div className="relative">
@@ -552,10 +551,9 @@ function PhoneMockup({
             ease: "easeInOut",
             delay: getMobileDuration(1, isMobile),
           }}
-          className="absolute -right-32 bottom-28"
+          className="absolute -right-32 bottom-28 hidden md:block"
           style={{
             willChange: "transform",
-            zIndex: isMobile ? -1 : "auto", // Move behind phone on mobile
           }}
         >
           <div className="relative">
@@ -582,8 +580,8 @@ export default function HumanTouchSection() {
 
   // Fallback data
   const fallbackData = {
-    title: "Human Touch",
-    subtitle: "Personal Support",
+    title: "Easy Workflow",
+    subtitle: "Management",
     description:
       "Experience personalized support with our dedicated team of experts",
     benefit_1_title: "24/7 Support",
@@ -664,7 +662,7 @@ export default function HumanTouchSection() {
         {/* Mobile Layout */}
         <div className="md:hidden">
           <div className="flex flex-col items-center gap-6">
-            {/* Top Text - "Human" */}
+            {/* Top Text - "Management" (subtitle first on mobile) */}
             <motion.h2
               initial={{ opacity: 0, y: -50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -50 }}
@@ -672,10 +670,10 @@ export default function HumanTouchSection() {
                 duration: getMobileDuration(1.2, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-5xl sm:text-6xl font-bold text-black text-center"
+              className="text-5xl sm:text-6xl font-bold text-[#2ecc71] text-center"
               style={{ fontWeight: 700 }}
             >
-              {data.title}
+              {data.subtitle}
             </motion.h2>
 
             {/* Phone Mockup - Fixed size for mobile */}
@@ -685,7 +683,7 @@ export default function HumanTouchSection() {
               isMobile={isMobile}
             />
 
-            {/* Bottom Text - "Touch" */}
+            {/* Bottom Text - "Easy Workflow" (title after phone on mobile) */}
             <motion.h2
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
@@ -694,10 +692,10 @@ export default function HumanTouchSection() {
                 delay: getMobileDuration(0.1, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-5xl sm:text-6xl font-bold text-[#2ecc71] text-center"
+              className="text-5xl sm:text-6xl font-bold text-black text-center"
               style={{ fontWeight: 700 }}
             >
-              {data.subtitle}
+              {data.title}
             </motion.h2>
           </div>
         </div>
