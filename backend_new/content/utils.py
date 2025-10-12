@@ -1,7 +1,8 @@
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+from django.core.mail import get_connection
 import logging
 
 logger = logging.getLogger(__name__)
@@ -145,21 +146,22 @@ def send_contact_notification_email(submission):
         Please respond to the customer directly at: {submission.email}
         """
         
-        # Send email
-        send_mail(
+        # Send email using EmailMultiAlternatives for better HTML support
+        email = EmailMultiAlternatives(
             subject=subject,
-            message=plain_message,
+            body=plain_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=['admin@floneo.co'],
-            html_message=html_message,
-            fail_silently=False,
+            to=[settings.EMAIL_HOST_USER or 'admin@floneo.co'],  # Send to admin
         )
-        
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=False)
+
         logger.info(f"Contact notification email sent for submission from {submission.email}")
         return True
-        
+
     except Exception as e:
         logger.error(f"Failed to send contact notification email: {str(e)}")
+        logger.error(f"Email settings - HOST: {settings.EMAIL_HOST}, PORT: {settings.EMAIL_PORT}, USER: {settings.EMAIL_HOST_USER}")
         # Don't raise the exception - we don't want email failures to break form submission
         return False
 
@@ -267,18 +269,66 @@ def send_contact_confirmation_email(submission):
         If you have any urgent questions, please contact us at admin@floneo.co
         """
         
-        send_mail(
+        # Send confirmation email using EmailMultiAlternatives
+        email = EmailMultiAlternatives(
             subject=subject,
-            message=plain_message,
+            body=plain_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[submission.email],
-            html_message=html_message,
-            fail_silently=False,
+            to=[submission.email],
         )
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=False)
         
         logger.info(f"Contact confirmation email sent to {submission.email}")
         return True
         
     except Exception as e:
         logger.error(f"Failed to send contact confirmation email: {str(e)}")
+        return False
+
+
+def test_email_connection():
+    """
+    Test the email connection and configuration (SendGrid)
+    """
+    try:
+        # Check if SendGrid API key is configured
+        if hasattr(settings, 'SENDGRID_API_KEY') and settings.SENDGRID_API_KEY:
+            logger.info("Testing SendGrid email configuration...")
+
+            # Send a test email using SendGrid
+            email = EmailMultiAlternatives(
+                subject='🧪 Test Email from floneo.co',
+                body='This is a test email to verify SendGrid configuration.\n\nIf you receive this email, your SendGrid setup is working correctly!',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[settings.EMAIL_HOST_USER or 'admin@floneo.co'],
+            )
+
+            # Add HTML version
+            html_content = """
+            <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                    <h2 style="color: #4CAF50;">🧪 SendGrid Test Email</h2>
+                    <p>This is a test email to verify your SendGrid configuration.</p>
+                    <p><strong>If you receive this email, your SendGrid setup is working correctly!</strong></p>
+                    <hr style="border: 1px solid #eee; margin: 20px 0;">
+                    <p style="color: #666; font-size: 12px;">
+                        Sent from floneo.co contact system<br>
+                        Powered by SendGrid
+                    </p>
+                </body>
+            </html>
+            """
+            email.attach_alternative(html_content, "text/html")
+            email.send(fail_silently=False)
+
+            logger.info("✅ SendGrid test email sent successfully!")
+            return True
+        else:
+            logger.error("❌ SENDGRID_API_KEY not configured")
+            return False
+
+    except Exception as e:
+        logger.error(f"❌ SendGrid email test failed: {str(e)}")
+        logger.error(f"Settings - API_KEY: {'SET' if getattr(settings, 'SENDGRID_API_KEY', None) else 'NOT SET'}, FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
         return False
