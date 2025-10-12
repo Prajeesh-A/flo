@@ -982,6 +982,20 @@ html {
     display: flex !important;
     align-items: stretch !important;
     gap: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* General mobile phone field fixes */
+  .country-selector-mobile {
+    flex-shrink: 0 !important;
+    max-width: 90px !important;
+  }
+
+  .phone-input-mobile {
+    flex: 1 !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 90px) !important;
   }
 
   .hero-section {
@@ -1315,6 +1329,24 @@ html {
     grid-template-columns: 1fr !important;
     gap: 0.75rem !important;
   }
+
+  /* Fix phone field overflow on mobile */
+  .contact-form-mobile .flex.w-full {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .contact-form-mobile .country-selector-mobile {
+    flex-shrink: 0 !important;
+    max-width: 80px !important; /* Limit country selector width */
+  }
+
+  .contact-form-mobile .phone-input-mobile {
+    flex: 1 !important;
+    min-width: 0 !important; /* Allow shrinking */
+    max-width: calc(100% - 80px) !important; /* Ensure it fits */
+  }
 }
 
 @media (max-width: 375px) {
@@ -1364,6 +1396,16 @@ html {
   .contact-form-mobile textarea {
     padding: 0.625rem !important; /* Very compact padding */
     font-size: 13px !important;
+  }
+
+  /* Extra compact phone field for iPhone SE */
+  .contact-form-mobile .country-selector-mobile {
+    max-width: 70px !important; /* Even smaller country selector */
+  }
+
+  .contact-form-mobile .phone-input-mobile {
+    max-width: calc(100% - 70px) !important;
+    padding: 0.625rem 0.5rem !important; /* Reduced horizontal padding */
   }
 
   /* Compact spacing */
@@ -1424,6 +1466,22 @@ html {
   .contact-form-mobile input,
   .contact-form-mobile textarea {
     padding: 0.5rem !important; /* Ultra compact padding */
+    font-size: 12px !important;
+  }
+
+  /* Ultra compact phone field for very small screens */
+  .contact-form-mobile .country-selector-mobile {
+    max-width: 60px !important; /* Very small country selector */
+  }
+
+  .contact-form-mobile .country-selector-mobile button {
+    padding: 0.375rem !important; /* Very compact button padding */
+    font-size: 11px !important;
+  }
+
+  .contact-form-mobile .phone-input-mobile {
+    max-width: calc(100% - 60px) !important;
+    padding: 0.5rem 0.375rem !important; /* Minimal horizontal padding */
     font-size: 12px !important;
   }
 
