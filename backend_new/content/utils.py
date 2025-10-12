@@ -151,7 +151,7 @@ def send_contact_notification_email(submission):
             subject=subject,
             body=plain_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[settings.EMAIL_HOST_USER or 'admin@floneo.co'],  # Send to admin
+            to=[getattr(settings, 'CONTACT_EMAIL_RECIPIENT', 'admin@floneo.co')],  # Send to admin
         )
         email.attach_alternative(html_message, "text/html")
         email.send(fail_silently=False)
@@ -301,7 +301,7 @@ def test_email_connection():
                 subject='🧪 Test Email from floneo.co',
                 body='This is a test email to verify SendGrid configuration.\n\nIf you receive this email, your SendGrid setup is working correctly!',
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[settings.EMAIL_HOST_USER or 'admin@floneo.co'],
+                to=[getattr(settings, 'CONTACT_EMAIL_RECIPIENT', 'admin@floneo.co')],
             )
 
             # Add HTML version
