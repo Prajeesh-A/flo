@@ -220,8 +220,11 @@ function PhoneMockup({
   // Auto-scroll when new messages appear with slight delay for natural feel
   useEffect(() => {
     if (visibleMessages.length > 0) {
-      // Longer delay on mobile to prevent jumping during animations
-      scrollToBottom(isMobile ? 500 : 300);
+      // Much longer delay on mobile to prevent jumping during animations
+      // Only scroll if there are enough messages to warrant it
+      if (visibleMessages.length > 2) {
+        scrollToBottom(isMobile ? 800 : 300);
+      }
     }
   }, [visibleMessages, isMobile]);
 
@@ -232,11 +235,12 @@ function PhoneMockup({
     }
   }, [showTyping]);
 
-  // Auto-scroll functionality for mobile - similar to desktop
+  // Disabled auto-scroll functionality on mobile to prevent jumping
+  // Only keep message-triggered scrolling for better UX
   useEffect(() => {
-    if (!isInView || !isMobile) return;
+    if (!isInView || isMobile) return; // Disable auto-scroll on mobile
 
-    // Wait for chat animation to complete before starting auto-scroll
+    // Keep auto-scroll only for desktop
     const startDelay = setTimeout(() => {
       const autoScrollInterval = setInterval(() => {
         if (chatContainerRef.current) {
@@ -261,10 +265,10 @@ function PhoneMockup({
             });
           }
         }
-      }, 3000); // Auto-scroll every 3 seconds on mobile for better UX
+      }, 3000);
 
       return () => clearInterval(autoScrollInterval);
-    }, 8000); // Wait 8 seconds for chat to populate before auto-scrolling
+    }, 8000);
 
     return () => clearTimeout(startDelay);
   }, [isInView, isMobile]);
@@ -376,7 +380,7 @@ function PhoneMockup({
           },
           y: {
             duration: getMobileDuration(3, isMobile),
-            repeat: Infinity,
+            repeat: isMobile ? 0 : Infinity, // Disable floating animation on mobile
             ease: "easeInOut",
             delay: getMobileDuration(2.5, isMobile),
           },
