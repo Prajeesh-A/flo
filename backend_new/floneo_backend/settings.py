@@ -225,7 +225,7 @@ CKEDITOR_CONFIGS = {
 # Email Configuration - SendGrid
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
 EMAIL_BACKEND = 'content.sendgrid_backend.SendGridBackend'
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@floneo.co')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'prajeep6@gmail.com')
 
 # Email recipient for contact form notifications
 CONTACT_EMAIL_RECIPIENT = os.getenv('CONTACT_EMAIL_RECIPIENT', 'admin@floneo.co')
