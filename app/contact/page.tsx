@@ -78,7 +78,7 @@ export default function ContactPage() {
         <span className="sm:hidden">Back</span>
       </Link>
 
-      <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-screen py-16 sm:py-20">
+      <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-screen py-8 sm:py-16 px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

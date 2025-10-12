@@ -1215,13 +1215,105 @@ html {
   }
 }
 
-/* Specific breakpoint fixes for common mobile sizes */
+/* Mobile Contact Form Responsiveness Fixes */
 @media (max-width: 414px) {
   /* iPhone 6/7/8 Plus and similar */
   .flex > .country-selector-mobile,
   .flex > .phone-input-mobile {
     height: 3rem !important;
     min-height: 3rem !important;
+  }
+
+  /* Contact Section Mobile Optimization */
+  #contact {
+    padding: 60px 16px !important; /* Reduced padding */
+  }
+
+  #contact .max-w-\[1200px\] {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  #contact .grid.lg\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important; /* Reduced gap */
+  }
+
+  #contact .bg-slate-800,
+  #contact [style*="background-color: rgb(26, 35, 50)"],
+  #contact [class*="bg-[#1A2332]"] {
+    padding: 1rem !important; /* Reduced padding */
+    margin: 0 !important;
+    border-radius: 16px !important; /* Smaller border radius */
+  }
+
+  #contact .text-2xl {
+    font-size: 1.25rem !important; /* Smaller headings */
+    line-height: 1.4 !important;
+  }
+
+  #contact .space-y-8 {
+    gap: 1rem !important;
+  }
+
+  #contact .space-y-6 {
+    gap: 0.75rem !important;
+  }
+
+  #contact .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+
+  #contact .mb-6 {
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Contact Page Mobile Optimization */
+  .contact-form-mobile {
+    padding: 1rem !important; /* Reduced padding */
+    margin: 0 0.5rem !important; /* Side margins */
+    border-radius: 16px !important; /* Smaller border radius */
+  }
+
+  .contact-form-mobile .text-2xl {
+    font-size: 1.25rem !important; /* Smaller headings */
+    line-height: 1.4 !important;
+  }
+
+  .contact-form-mobile .text-5xl {
+    font-size: 2rem !important; /* Much smaller main heading */
+    line-height: 1.2 !important;
+  }
+
+  .contact-form-mobile .text-lg {
+    font-size: 0.875rem !important; /* Smaller subtitle */
+  }
+
+  .contact-form-mobile .w-16.h-16 {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  .contact-form-mobile .mb-12 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .contact-form-mobile .space-y-6 {
+    gap: 0.75rem !important;
+  }
+
+  /* Form inputs mobile sizing */
+  #contact input,
+  #contact textarea,
+  .contact-form-mobile input,
+  .contact-form-mobile textarea {
+    padding: 0.75rem !important; /* Smaller padding */
+    font-size: 14px !important;
+  }
+
+  #contact .grid.grid-cols-1.sm\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
   }
 }
 
@@ -1238,6 +1330,52 @@ html {
     min-height: 2.75rem !important;
     padding: 0.625rem !important;
   }
+
+  /* Extra small screen optimizations */
+  #contact {
+    padding: 40px 12px !important; /* Even more reduced padding */
+  }
+
+  #contact .bg-slate-800,
+  #contact [style*="background-color: rgb(26, 35, 50)"],
+  #contact [class*="bg-[#1A2332]"] {
+    padding: 0.75rem !important; /* Very compact padding */
+    border-radius: 12px !important; /* Even smaller border radius */
+  }
+
+  .contact-form-mobile {
+    padding: 0.75rem !important; /* Very compact padding */
+    margin: 0 0.25rem !important; /* Minimal side margins */
+    border-radius: 12px !important; /* Smaller border radius */
+  }
+
+  .contact-form-mobile .text-5xl {
+    font-size: 1.75rem !important; /* Even smaller main heading */
+  }
+
+  .contact-form-mobile .text-2xl {
+    font-size: 1.125rem !important; /* Smaller section headings */
+  }
+
+  /* Very compact form inputs */
+  #contact input,
+  #contact textarea,
+  .contact-form-mobile input,
+  .contact-form-mobile textarea {
+    padding: 0.625rem !important; /* Very compact padding */
+    font-size: 13px !important;
+  }
+
+  /* Compact spacing */
+  #contact .space-y-6,
+  .contact-form-mobile .space-y-6 {
+    gap: 0.5rem !important;
+  }
+
+  #contact .mb-6,
+  .contact-form-mobile .mb-6 {
+    margin-bottom: 0.5rem !important;
+  }
 }
 
 @media (max-width: 360px) {
@@ -1252,5 +1390,56 @@ html {
     height: 2.5rem !important;
     min-height: 2.5rem !important;
     padding: 0.5rem !important;
+  }
+
+  /* Ultra compact layout for very small screens */
+  #contact {
+    padding: 30px 8px !important; /* Minimal padding */
+  }
+
+  #contact .bg-slate-800,
+  #contact [style*="background-color: rgb(26, 35, 50)"],
+  #contact [class*="bg-[#1A2332]"] {
+    padding: 0.5rem !important; /* Ultra compact padding */
+    border-radius: 8px !important; /* Very small border radius */
+  }
+
+  .contact-form-mobile {
+    padding: 0.5rem !important; /* Ultra compact padding */
+    margin: 0 !important; /* No side margins */
+    border-radius: 8px !important; /* Very small border radius */
+  }
+
+  .contact-form-mobile .text-5xl {
+    font-size: 1.5rem !important; /* Very small main heading */
+  }
+
+  .contact-form-mobile .text-2xl {
+    font-size: 1rem !important; /* Very small section headings */
+  }
+
+  /* Ultra compact form inputs */
+  #contact input,
+  #contact textarea,
+  .contact-form-mobile input,
+  .contact-form-mobile textarea {
+    padding: 0.5rem !important; /* Ultra compact padding */
+    font-size: 12px !important;
+  }
+
+  /* Ultra compact spacing */
+  #contact .space-y-6,
+  .contact-form-mobile .space-y-6 {
+    gap: 0.375rem !important;
+  }
+
+  #contact .mb-6,
+  .contact-form-mobile .mb-6 {
+    margin-bottom: 0.375rem !important;
+  }
+
+  #contact .mb-8,
+  .contact-form-mobile .mb-8 {
+    margin-bottom: 0.5rem !important;
   }
 }
