@@ -287,7 +287,7 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <input
                     type="email"
@@ -304,6 +304,7 @@ export default function ContactSection() {
                     <CountryCodeSelector
                       selectedCountry={selectedCountry}
                       onCountryChange={setSelectedCountry}
+                      variant="contact-section"
                       className="flex-shrink-0"
                     />
                     <input

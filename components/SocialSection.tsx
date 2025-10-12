@@ -246,7 +246,7 @@ export default function SocialSection() {
           >
             <div>
               <h3
-                className="text-2xl  text-black mb-8"
+                className="text-2xl text-black mb-8 font-bold"
                 style={{ fontFamily: "'Poppins'" }}
               >
                 Company
@@ -305,11 +305,70 @@ export default function SocialSection() {
                 Resources
               </h3>
               <div className="flex flex-col space-y-5">
-                <FooterLink text="Documentation" />
-                <FooterLink text="API Reference" />
-                <FooterLink text="Tutorials" />
-                <FooterLink text="Community" />
-                <FooterLink text="Privacy Policy" href="/privacy-policy" />
+                <motion.a
+                  href="#"
+                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  style={{
+                    color: "#666666",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Documentation
+                </motion.a>
+
+                {/* <motion.a
+                  href="#"
+                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  style={{
+                    color: "#666666",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  API Reference
+                </motion.a> */}
+
+                <motion.a
+                  href="#"
+                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  style={{
+                    color: "#666666",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Tutorials
+                </motion.a>
+
+                <motion.a
+                  href="#"
+                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  style={{
+                    color: "#666666",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Community
+                </motion.a>
+
+                <motion.a
+                  href="/privacy-policy"
+                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  style={{
+                    color: "#666666",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Privacy Policy
+                </motion.a>
               </div>
             </div>
           </motion.div>

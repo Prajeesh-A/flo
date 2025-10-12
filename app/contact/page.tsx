@@ -5,6 +5,10 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft, Send } from "lucide-react";
 import { api } from "@/lib/api";
+import CountryCodeSelector, {
+  defaultCountry,
+  Country,
+} from "@/components/CountryCodeSelector";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -15,9 +19,15 @@ export default function ContactPage() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [selectedCountry, setSelectedCountry] =
+    useState<Country>(defaultCountry);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -33,7 +43,9 @@ export default function ContactPage() {
     try {
       const submissionData = {
         ...formData,
-        phone: formData.phone ? `+1 ${formData.phone}` : "",
+        phone: formData.phone
+          ? `${selectedCountry.dialCode} ${formData.phone}`
+          : "",
       };
 
       await api.submitContactForm(submissionData);
@@ -74,7 +86,7 @@ export default function ContactPage() {
           <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
             <span className="text-white font-bold text-xl">F</span>
           </div>
-          
+
           <h1 className="text-5xl font-bold text-white mb-2">floneo</h1>
           <p className="text-gray-400 text-lg">Get in touch with us</p>
         </motion.div>
@@ -89,7 +101,9 @@ export default function ContactPage() {
             <div className="w-8 h-8 bg-gray-600/50 rounded-full flex items-center justify-center">
               <Send className="w-4 h-4 text-gray-300" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Contact our sales team</h2>
+            <h2 className="text-2xl font-bold text-white">
+              Contact our sales team
+            </h2>
           </div>
 
           {submitStatus === "success" && (
@@ -111,14 +125,18 @@ export default function ContactPage() {
               className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl"
             >
               <p className="text-red-400 text-center">
-                Sorry, there was an error sending your message. Please try again.
+                Sorry, there was an error sending your message. Please try
+                again.
               </p>
             </motion.div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
                 Name
               </label>
               <input
@@ -133,9 +151,12 @@ export default function ContactPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -151,23 +172,37 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Phone
                 </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="123-456-7890"
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200"
-                />
+                <div className="flex">
+                  <CountryCodeSelector
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                    variant="contact-page"
+                    className="flex-shrink-0"
+                  />
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="123-456-7890"
+                    className="flex-1 px-4 py-3 bg-gray-700/50 border border-gray-600/50 border-l-0 rounded-r-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200"
+                  />
+                </div>
               </div>
             </div>
 
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+              <label
+                htmlFor="message"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
                 Message
               </label>
               <textarea

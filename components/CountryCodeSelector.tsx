@@ -67,6 +67,8 @@ interface CountryCodeSelectorProps {
   onCountryChange: (country: Country) => void;
   className?: string;
   disabled?: boolean;
+  theme?: "light" | "dark";
+  variant?: "default" | "contact-section" | "contact-page";
 }
 
 export default function CountryCodeSelector({
@@ -74,6 +76,8 @@ export default function CountryCodeSelector({
   onCountryChange,
   className = "",
   disabled = false,
+  theme = "light",
+  variant = "default",
 }: CountryCodeSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,7 +95,10 @@ export default function CountryCodeSelector({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
         setSearchTerm("");
       }
@@ -114,6 +121,43 @@ export default function CountryCodeSelector({
     setSearchTerm("");
   };
 
+  // Get theme-specific styles
+  const getButtonStyles = () => {
+    const baseStyles =
+      "flex items-center gap-2 px-3 py-3 border transition-colors duration-200";
+
+    if (variant === "contact-section") {
+      return `${baseStyles} bg-black/20 border-white/10 rounded-l-lg text-white hover:bg-black/30 ${
+        isOpen ? "border-white/30" : ""
+      } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`;
+    }
+
+    if (variant === "contact-page") {
+      return `${baseStyles} bg-gray-700/50 border-gray-600/50 rounded-l-xl text-white hover:bg-gray-600/50 ${
+        isOpen ? "border-[#2ECC71] ring-1 ring-[#2ECC71]" : ""
+      } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`;
+    }
+
+    // Default light theme
+    return `${baseStyles} bg-white border-gray-300 rounded-l-lg hover:bg-gray-50 ${
+      isOpen ? "border-blue-500 ring-1 ring-blue-500" : ""
+    } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`;
+  };
+
+  const getTextStyles = () => {
+    if (variant === "contact-section" || variant === "contact-page") {
+      return "text-white/90";
+    }
+    return "text-gray-700";
+  };
+
+  const getIconStyles = () => {
+    if (variant === "contact-section" || variant === "contact-page") {
+      return "text-white/60";
+    }
+    return "text-gray-400";
+  };
+
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       {/* Selected Country Button */}
@@ -121,19 +165,14 @@ export default function CountryCodeSelector({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`
-          flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-l-lg
-          bg-white hover:bg-gray-50 transition-colors duration-200
-          ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-          ${isOpen ? "border-blue-500 ring-1 ring-blue-500" : ""}
-        `}
+        className={getButtonStyles()}
       >
         <span className="text-lg">{selectedCountry.flag}</span>
-        <span className="text-sm font-medium text-gray-700">
+        <span className={`text-sm font-medium ${getTextStyles()}`}>
           {selectedCountry.dialCode}
         </span>
         <ChevronDown
-          className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+          className={`h-4 w-4 transition-transform duration-200 ${getIconStyles()} ${
             isOpen ? "rotate-180" : ""
           }`}
         />
@@ -147,19 +186,39 @@ export default function CountryCodeSelector({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 z-50 w-80 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg"
+            className={`absolute top-full left-0 z-50 w-80 sm:w-80 max-w-[90vw] mt-1 rounded-lg shadow-lg ${
+              variant === "contact-section" || variant === "contact-page"
+                ? "bg-gray-800 border border-gray-600"
+                : "bg-white border border-gray-300"
+            }`}
           >
             {/* Search Input */}
-            <div className="p-3 border-b border-gray-200">
+            <div
+              className={`p-3 ${
+                variant === "contact-section" || variant === "contact-page"
+                  ? "border-b border-gray-600"
+                  : "border-b border-gray-200"
+              }`}
+            >
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                    variant === "contact-section" || variant === "contact-page"
+                      ? "text-gray-400"
+                      : "text-gray-400"
+                  }`}
+                />
                 <input
                   ref={searchInputRef}
                   type="text"
                   placeholder="Search countries..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                    variant === "contact-section" || variant === "contact-page"
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-[#2ECC71] focus:border-[#2ECC71]"
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                  }`}
                 />
               </div>
             </div>
@@ -172,15 +231,20 @@ export default function CountryCodeSelector({
                     key={country.code}
                     type="button"
                     onClick={() => handleCountrySelect(country)}
-                    className={`
-                      w-full flex items-center gap-3 px-4 py-3 text-left
-                      hover:bg-gray-50 transition-colors duration-150
-                      ${
-                        selectedCountry.code === country.code
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-gray-700"
-                      }
-                    `}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-150 ${
+                      variant === "contact-section" ||
+                      variant === "contact-page"
+                        ? `hover:bg-gray-700 ${
+                            selectedCountry.code === country.code
+                              ? "bg-[#2ECC71]/20 text-[#2ECC71]"
+                              : "text-gray-300"
+                          }`
+                        : `hover:bg-gray-50 ${
+                            selectedCountry.code === country.code
+                              ? "bg-blue-50 text-blue-700"
+                              : "text-gray-700"
+                          }`
+                    }`}
                   >
                     <span className="text-lg">{country.flag}</span>
                     <div className="flex-1 min-w-0">
@@ -188,13 +252,26 @@ export default function CountryCodeSelector({
                         {country.name}
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-gray-500">
+                    <span
+                      className={`text-sm font-medium ${
+                        variant === "contact-section" ||
+                        variant === "contact-page"
+                          ? "text-gray-400"
+                          : "text-gray-500"
+                      }`}
+                    >
                       {country.dialCode}
                     </span>
                   </button>
                 ))
               ) : (
-                <div className="px-4 py-6 text-center text-gray-500">
+                <div
+                  className={`px-4 py-6 text-center ${
+                    variant === "contact-section" || variant === "contact-page"
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }`}
+                >
                   No countries found
                 </div>
               )}
