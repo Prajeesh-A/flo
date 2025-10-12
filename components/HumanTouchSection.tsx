@@ -153,8 +153,8 @@ const ChatBubble = React.memo(
         transition={{
           duration: getMobileDuration(0.6, isMobile),
           ease: "easeOut",
-          type: "spring",
-          stiffness: 100,
+          type: isMobile ? "tween" : "spring", // Use tween on mobile for more stable animations
+          stiffness: isMobile ? undefined : 100,
         }}
         className={`flex ${isUser ? "justify-end" : "justify-start"} mb-3`}
         style={{ willChange: isVisible ? "transform, opacity" : "auto" }}
@@ -192,7 +192,7 @@ function PhoneMockup({
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Function to smoothly scroll to bottom with delay
+  // Function to smoothly scroll to bottom with delay - improved for mobile stability
   const scrollToBottom = (delay = 0) => {
     setTimeout(() => {
       if (chatContainerRef.current) {
@@ -205,9 +205,12 @@ function PhoneMockup({
 
         // Only scroll if we're near the bottom or if there are many messages
         if (isNearBottom || visibleMessages.length > 3) {
-          container.scrollTo({
-            top: container.scrollHeight,
-            behavior: "smooth",
+          // Use requestAnimationFrame for smoother scrolling on mobile
+          requestAnimationFrame(() => {
+            container.scrollTo({
+              top: container.scrollHeight,
+              behavior: isMobile ? "auto" : "smooth", // Use instant scroll on mobile to prevent jumping
+            });
           });
         }
       }
@@ -217,9 +220,10 @@ function PhoneMockup({
   // Auto-scroll when new messages appear with slight delay for natural feel
   useEffect(() => {
     if (visibleMessages.length > 0) {
-      scrollToBottom(300); // Small delay to let message animation settle
+      // Longer delay on mobile to prevent jumping during animations
+      scrollToBottom(isMobile ? 500 : 300);
     }
-  }, [visibleMessages]);
+  }, [visibleMessages, isMobile]);
 
   // Scroll when typing indicator appears/disappears
   useEffect(() => {

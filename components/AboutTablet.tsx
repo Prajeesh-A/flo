@@ -55,6 +55,7 @@ export default function AboutTablet() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [youtubeVideoId, setYoutubeVideoId] = useState<string>("");
 
   // Track if the section is in view for auto-pause functionality
   const isInView = useInView(containerRef, {
@@ -86,29 +87,54 @@ export default function AboutTablet() {
   // Y position moves up during reveal - reduced distance for mobile
   const y = useTransform(scrollYProgress, [0, 0.4, 1], [60, 0, 0]);
 
+  // Extract YouTube video ID when data changes
+  useEffect(() => {
+    if (
+      data.video_url &&
+      (data.video_url.includes("youtube.com") ||
+        data.video_url.includes("youtu.be"))
+    ) {
+      const videoId = getYouTubeVideoId(data.video_url);
+      setYoutubeVideoId(videoId);
+    }
+  }, [data.video_url]);
+
   // Auto-pause/play video based on section visibility
   useEffect(() => {
     const video = videoRef.current;
     const iframe = iframeRef.current;
 
     if (isInView) {
-      // Section is in view - play video
+      // Section is in view - play/unmute video
       if (video && data.video_autoplay) {
         video.play().catch(() => {
           // Ignore autoplay errors (browser restrictions)
         });
       }
+
       // For YouTube iframes, we can't control play/pause directly
-      // The iframe will handle autoplay based on its parameters
+      // But we can reload the iframe with mute=0 to unmute it
+      if (iframe && youtubeVideoId) {
+        const currentSrc = iframe.src;
+        if (currentSrc.includes("mute=1")) {
+          iframe.src = currentSrc.replace("mute=1", "mute=0");
+        }
+      }
     } else {
-      // Section is out of view - pause video
+      // Section is out of view - pause/mute video
       if (video) {
         video.pause();
       }
-      // For YouTube iframes, we can't pause them directly
-      // This is a limitation of YouTube embeds for security reasons
+
+      // For YouTube iframes, mute the video by reloading with mute=1
+      if (iframe && youtubeVideoId) {
+        const currentSrc = iframe.src;
+        if (currentSrc.includes("mute=0")) {
+          iframe.src = currentSrc.replace("mute=0", "mute=1");
+        }
+      }
     }
-  }, [isInView, data.video_autoplay]);
+  }, [isInView, data.video_autoplay, youtubeVideoId]);
 
   return (
     <section id="about">

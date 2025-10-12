@@ -10,6 +10,17 @@ export default function ContactSection() {
   const { openModal } = useCTAModal();
   const { showDemoToast } = useToast();
 
+  // Fetch social media links to get LinkedIn URL
+  const { data: socialLinks } = useApiData(api.getSocialMediaLinks);
+
+  // Find LinkedIn URL from social links
+  const linkedInLink = socialLinks?.find(
+    (link) =>
+      link.platform.toLowerCase() === "linkedin" ||
+      link.platform_name.toLowerCase().includes("linkedin")
+  );
+  const linkedInUrl = linkedInLink?.url || "#";
+
   // Fetch section data from API
   const {
     data: sectionData,
@@ -185,15 +196,17 @@ export default function ContactSection() {
                 users.
               </p>
 
-              <motion.button
+              <motion.a
+                href={linkedInUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => showDemoToast("Join Our Community")}
-                className="w-full bg-[#1A2332] hover:bg-[#2A3442] text-white py-4 rounded-[24px] font-medium transition-colors duration-200"
+                className="w-full bg-[#1A2332] hover:bg-[#2A3442] text-white py-4 rounded-[24px] font-medium transition-colors duration-200 inline-block text-center"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
                 Join Our Community
-              </motion.button>
+              </motion.a>
             </motion.div>
           </div>
 

@@ -1017,6 +1017,10 @@ html {
     /* Hide scrollbar completely */
     scrollbar-width: none !important; /* Firefox */
     -ms-overflow-style: none !important; /* Internet Explorer 10+ */
+    /* Prevent layout shifts during animations */
+    contain: layout style !important;
+    will-change: scroll-position !important;
+    scroll-behavior: auto !important; /* Disable smooth scrolling on mobile to prevent jumping */
   }
 
   /* Hide webkit scrollbar */
@@ -1043,6 +1047,9 @@ html {
     max-width: 190px !important; /* Increased for larger phone container */
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
+    /* Improve animation stability on mobile */
+    transform: translateZ(0) !important; /* Force hardware acceleration */
+    backface-visibility: hidden !important; /* Prevent flickering */
   }
 
   /* Ensure flex containers don't expand beyond bounds */

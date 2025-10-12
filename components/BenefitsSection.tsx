@@ -86,6 +86,17 @@ export default function BenefitsSection() {
   const { openModal } = useCTAModal();
   const { showDemoToast } = useToast();
 
+  // Fetch social media links to get LinkedIn URL
+  const { data: socialLinks } = useApiData(api.getSocialMediaLinks);
+
+  // Find LinkedIn URL from social links
+  const linkedInLink = socialLinks?.find(
+    (link) =>
+      link.platform.toLowerCase() === "linkedin" ||
+      link.platform_name.toLowerCase().includes("linkedin")
+  );
+  const linkedInUrl = linkedInLink?.url || "#";
+
   // Position mapping for floating benefits - matching reference image
   const getPositionClasses = (position: string) => {
     switch (position) {
@@ -313,15 +324,17 @@ export default function BenefitsSection() {
             {data.cta_primary_text}
           </motion.button>
 
-          <motion.button
-            onClick={() => showDemoToast("Learn More")}
+          <motion.a
+            href={linkedInUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-black/60 hover:bg-black/80 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm"
+            className="bg-black/60 hover:bg-black/80 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm inline-block text-center"
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             {data.cta_secondary_text}
-          </motion.button>
+          </motion.a>
         </motion.div>
       </div>
 

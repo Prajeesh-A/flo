@@ -66,13 +66,17 @@ const getSocialIcon = (platform: string, iconClass?: string) => {
 const FooterLink = ({
   text,
   color = "#FF4FCB",
+  href = "#",
 }: {
   text: string;
   color?: string;
+  href?: string;
 }) => (
   <motion.div className="block">
     <motion.a
-      href="#"
+      href={href}
+      target={href !== "#" ? "_blank" : undefined}
+      rel={href !== "#" ? "noopener noreferrer" : undefined}
       className="text-lg font-medium transition-colors duration-200 hover:opacity-80 block"
       style={{ color, fontFamily: "'Poppins',  " }}
       whileHover={{ x: 5 }}
@@ -141,6 +145,14 @@ export default function SocialSection() {
   // Use API data or fallback
   const section = sectionData || fallbackSection;
   const links = socialLinks || fallbackLinks;
+
+  // Find LinkedIn URL from social links
+  const linkedInLink = links.find(
+    (link) =>
+      link.platform.toLowerCase() === "linkedin" ||
+      link.platform_name.toLowerCase().includes("linkedin")
+  );
+  const linkedInUrl = linkedInLink?.url || "#";
 
   // Don't render if not visible
   if (!section.is_visible) {
@@ -245,9 +257,9 @@ export default function SocialSection() {
                 Company
               </h3>
               <div className="flex flex-col space-y-5">
-                <FooterLink text="About Us" />
-                <FooterLink text="Features" />
-                <FooterLink text="Services" />
+                <FooterLink text="About Us" href={linkedInUrl} />
+                <FooterLink text="Features" href={linkedInUrl} />
+                <FooterLink text="Services" href={linkedInUrl} />
                 <FooterLink text="Analytics" />
                 <FooterLink text="Pricing" />
                 <FooterLink text="Help Center" />
