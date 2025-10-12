@@ -83,12 +83,11 @@ export default function ContactSection() {
       const fullName =
         `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
 
-      // Prepare data for API submission
+      // Prepare data for API submission (matching new ContactSubmission model)
       const submissionData = {
         name: fullName,
         email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject || "Contact Form Submission",
+        company: formData.phone, // Using phone field as company for now
         message: formData.message,
       };
 

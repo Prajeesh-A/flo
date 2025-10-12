@@ -12,7 +12,7 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem
+    BenefitsSection, BenefitItem, ContactSubmission
 )
 from .serializers import (
     HeroSectionSerializer, AboutSectionSerializer, ServiceCardSerializer,
@@ -25,7 +25,7 @@ from .serializers import (
     ArchitectingExcellenceSectionSerializer, WhyChooseUsSectionSerializer, HumanTouchSectionSerializer, VideoTabsSectionSerializer,
     VideoTabSerializer, CountryDataSerializer, MetricsDisplaySectionSerializer,
     PricingFeaturesSectionSerializer, VideoTabsDemoSectionSerializer, DemoTabSerializer,
-    BenefitsSectionSerializer
+    BenefitsSectionSerializer, ContactSubmissionSerializer
 )
 
 
@@ -456,3 +456,35 @@ def benefits_section_detail(request):
         return Response(serializer.data)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def contact_submissions(request):
+    """Handle contact form submissions"""
+    if request.method == 'POST':
+        serializer = ContactSubmissionSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            try:
+                # Save the contact submission
+                submission = serializer.save()
+
+                # Send email notification
+                from .utils import send_contact_notification_email
+                send_contact_notification_email(submission)
+
+                return Response({
+                    'message': 'Contact form submitted successfully',
+                    'success': True
+                }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    'error': 'Failed to process submission',
+                    'message': str(e),
+                    'success': False
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({
+                'error': 'Invalid form data',
+                'errors': serializer.errors,
+                'success': False
+            }, status=status.HTTP_400_BAD_REQUEST)

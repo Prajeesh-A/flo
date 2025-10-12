@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from colorfield.fields import ColorField
 from ckeditor.fields import RichTextField
+from django.utils import timezone
 
 
 class HeroSection(models.Model):
@@ -1029,3 +1030,31 @@ class BenefitItem(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.position})"
+
+
+class ContactSubmission(models.Model):
+    """Contact form submissions from website"""
+    name = models.CharField(max_length=255, help_text="Full name of the person submitting the form")
+    email = models.EmailField(help_text="Email address of the person submitting the form")
+    company = models.CharField(max_length=255, blank=True, null=True, help_text="Company name (optional)")
+    message = models.TextField(help_text="Message content from the contact form")
+    submitted_at = models.DateTimeField(default=timezone.now, help_text="When the form was submitted")
+    ip_address = models.GenericIPAddressField(blank=True, null=True, help_text="IP address of the submitter")
+    user_agent = models.TextField(blank=True, null=True, help_text="Browser user agent string")
+    is_read = models.BooleanField(default=False, help_text="Mark as read/unread")
+    notes = models.TextField(blank=True, null=True, help_text="Internal notes about this submission")
+
+    class Meta:
+        verbose_name = "Contact Submission"
+        verbose_name_plural = "Contact Submissions"
+        ordering = ['-submitted_at']
+
+    def __str__(self):
+        return f"{self.name} ({self.email}) - {self.submitted_at.strftime('%Y-%m-%d %H:%M')}"
+
+    @property
+    def short_message(self):
+        """Return truncated message for admin list display"""
+        if len(self.message) > 100:
+            return f"{self.message[:100]}..."
+        return self.message

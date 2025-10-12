@@ -9,7 +9,7 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem
+    BenefitsSection, BenefitItem, ContactSubmission
 )
 
 
@@ -742,6 +742,53 @@ class BenefitItemAdmin(admin.ModelAdmin):
     list_editable = ['is_active', 'order']
     ordering = ['section', 'order', 'id']
     search_fields = ['title']
+
+
+@admin.register(ContactSubmission)
+class ContactSubmissionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'company', 'short_message', 'submitted_at', 'is_read']
+    list_filter = ['is_read', 'submitted_at', 'company']
+    search_fields = ['name', 'email', 'company', 'message']
+    readonly_fields = ['submitted_at', 'ip_address', 'user_agent']
+    list_editable = ['is_read']
+    date_hierarchy = 'submitted_at'
+    ordering = ['-submitted_at']
+
+    fieldsets = (
+        ('Contact Information', {
+            'fields': ('name', 'email', 'company')
+        }),
+        ('Message', {
+            'fields': ('message',)
+        }),
+        ('Submission Details', {
+            'fields': ('submitted_at', 'ip_address', 'user_agent'),
+            'classes': ('collapse',)
+        }),
+        ('Admin Notes', {
+            'fields': ('is_read', 'notes'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def short_message(self, obj):
+        return obj.short_message
+    short_message.short_description = 'Message Preview'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related()
+
+    actions = ['mark_as_read', 'mark_as_unread']
+
+    def mark_as_read(self, request, queryset):
+        updated = queryset.update(is_read=True)
+        self.message_user(request, f'{updated} submissions marked as read.')
+    mark_as_read.short_description = "Mark selected submissions as read"
+
+    def mark_as_unread(self, request, queryset):
+        updated = queryset.update(is_read=False)
+        self.message_user(request, f'{updated} submissions marked as unread.')
+    mark_as_unread.short_description = "Mark selected submissions as unread"
 
 
 # Customize admin site header and title
