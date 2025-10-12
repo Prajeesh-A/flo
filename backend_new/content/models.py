@@ -1037,6 +1037,7 @@ class ContactSubmission(models.Model):
     name = models.CharField(max_length=255, help_text="Full name of the person submitting the form")
     email = models.EmailField(help_text="Email address of the person submitting the form")
     company = models.CharField(max_length=255, blank=True, null=True, help_text="Company name (optional)")
+    phone = models.CharField(max_length=20, blank=True, null=True, help_text="Phone number with country code (e.g., +1 555-123-4567)")
     message = models.TextField(help_text="Message content from the contact form")
     submitted_at = models.DateTimeField(default=timezone.now, help_text="When the form was submitted")
     ip_address = models.GenericIPAddressField(blank=True, null=True, help_text="IP address of the submitter")
@@ -1058,3 +1059,53 @@ class ContactSubmission(models.Model):
         if len(self.message) > 100:
             return f"{self.message[:100]}..."
         return self.message
+
+
+class PrivacyPolicy(models.Model):
+    """Privacy Policy content management"""
+    title = models.CharField(max_length=200, default="Privacy Policy", help_text="Page title")
+    subtitle = models.CharField(max_length=300, blank=True, help_text="Optional subtitle")
+    content = RichTextField(
+        default="""
+        <h2>Information We Collect</h2>
+        <p>We collect information you provide directly to us, such as when you create an account, use our services, or contact us.</p>
+
+        <h2>How We Use Your Information</h2>
+        <p>We use the information we collect to provide, maintain, and improve our services.</p>
+
+        <h2>Information Sharing</h2>
+        <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent.</p>
+
+        <h2>Data Security</h2>
+        <p>We implement appropriate security measures to protect your personal information.</p>
+
+        <h2>Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us.</p>
+        """,
+        help_text="Privacy policy content (supports HTML formatting)"
+    )
+    last_updated = models.DateTimeField(auto_now=True, help_text="When the privacy policy was last updated")
+    effective_date = models.DateField(help_text="When this privacy policy became effective")
+    is_active = models.BooleanField(default=True, help_text="Whether this privacy policy is currently active")
+
+    # SEO fields
+    meta_title = models.CharField(max_length=60, blank=True, help_text="SEO meta title (leave blank to use title)")
+    meta_description = models.CharField(max_length=160, blank=True, help_text="SEO meta description")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Privacy Policy"
+        verbose_name_plural = "Privacy Policies"
+        ordering = ['-effective_date']
+
+    def __str__(self):
+        return f"{self.title} (Effective: {self.effective_date})"
+
+    def save(self, *args, **kwargs):
+        # Set effective_date to today if not set
+        if not self.effective_date:
+            from datetime import date
+            self.effective_date = date.today()
+        super().save(*args, **kwargs)

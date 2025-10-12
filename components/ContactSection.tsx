@@ -5,6 +5,10 @@ import { useState } from "react";
 import { api, useApiData } from "@/lib/api";
 import { useCTAModal } from "@/contexts/CTAModalContext";
 import { useToast } from "@/components/ui/notification-toast";
+import CountryCodeSelector, {
+  defaultCountry,
+  Country,
+} from "@/components/CountryCodeSelector";
 
 export default function ContactSection() {
   const { openModal } = useCTAModal();
@@ -55,6 +59,8 @@ export default function ContactSection() {
     message: "",
   });
 
+  const [selectedCountry, setSelectedCountry] =
+    useState<Country>(defaultCountry);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error" | null;
@@ -83,11 +89,17 @@ export default function ContactSection() {
       const fullName =
         `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
 
+      // Combine country code with phone number
+      const fullPhoneNumber = formData.phone
+        ? `${selectedCountry.dialCode} ${formData.phone}`
+        : "";
+
       // Prepare data for API submission (matching new ContactSubmission model)
       const submissionData = {
         name: fullName,
         email: formData.email,
-        company: formData.phone, // Using phone field as company for now
+        company: "", // Company field (optional)
+        phone: fullPhoneNumber,
         message: formData.message,
       };
 
@@ -111,6 +123,7 @@ export default function ContactSection() {
         subject: "",
         message: "",
       });
+      setSelectedCountry(defaultCountry);
     } catch (error) {
       console.error("Form submission error:", error);
       setSubmitStatus({
@@ -287,14 +300,21 @@ export default function ContactSection() {
                   />
                 </div>
                 <div>
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
-                  />
+                  <div className="flex">
+                    <CountryCodeSelector
+                      selectedCountry={selectedCountry}
+                      onCountryChange={setSelectedCountry}
+                      className="flex-shrink-0"
+                    />
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="123-456-7890"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="flex-1 bg-black/20 border border-white/10 border-l-0 rounded-r-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
+                    />
+                  </div>
                 </div>
               </div>
 

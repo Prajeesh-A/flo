@@ -12,7 +12,7 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem, ContactSubmission
+    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy
 )
 from .serializers import (
     HeroSectionSerializer, AboutSectionSerializer, ServiceCardSerializer,
@@ -25,7 +25,7 @@ from .serializers import (
     ArchitectingExcellenceSectionSerializer, WhyChooseUsSectionSerializer, HumanTouchSectionSerializer, VideoTabsSectionSerializer,
     VideoTabSerializer, CountryDataSerializer, MetricsDisplaySectionSerializer,
     PricingFeaturesSectionSerializer, VideoTabsDemoSectionSerializer, DemoTabSerializer,
-    BenefitsSectionSerializer, ContactSubmissionSerializer
+    BenefitsSectionSerializer, ContactSubmissionSerializer, PrivacyPolicySerializer
 )
 
 
@@ -488,3 +488,21 @@ def contact_submissions(request):
                 'errors': serializer.errors,
                 'success': False
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def privacy_policy_detail(request):
+    """Get active privacy policy content"""
+    try:
+        privacy_policy = PrivacyPolicy.objects.filter(is_active=True).first()
+        if not privacy_policy:
+            # Create a default privacy policy if none exists
+            privacy_policy = PrivacyPolicy.objects.create(
+                title="Privacy Policy",
+                subtitle="How we protect your information",
+                is_active=True
+            )
+        serializer = PrivacyPolicySerializer(privacy_policy, context={'request': request})
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

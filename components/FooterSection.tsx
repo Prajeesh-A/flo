@@ -53,7 +53,7 @@ export default function FooterSection() {
           className="flex justify-end items-center gap-8"
         >
           <motion.a
-            href="#"
+            href="/privacy-policy"
             className="text-lg font-medium text-[#FF4FCB] hover:opacity-80 transition-opacity duration-200"
             style={{ fontFamily: "'Poppins', sans-serif" }}
             whileHover={{ x: 5 }}

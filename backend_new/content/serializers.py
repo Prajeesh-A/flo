@@ -8,7 +8,7 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem, ContactSubmission
+    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy
 )
 
 
@@ -338,7 +338,7 @@ class VideoTabsDemoSectionSerializer(serializers.ModelSerializer):
 class ContactSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactSubmission
-        fields = ['name', 'email', 'company', 'message']
+        fields = ['name', 'email', 'company', 'phone', 'message']
 
     def validate_name(self, value):
         if len(value.strip()) < 2:
@@ -370,3 +370,12 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
+
+
+class PrivacyPolicySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrivacyPolicy
+        fields = [
+            'id', 'title', 'subtitle', 'content', 'last_updated',
+            'effective_date', 'meta_title', 'meta_description'
+        ]

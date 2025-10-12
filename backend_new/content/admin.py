@@ -9,7 +9,7 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem, ContactSubmission
+    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy
 )
 
 
@@ -744,11 +744,50 @@ class BenefitItemAdmin(admin.ModelAdmin):
     search_fields = ['title']
 
 
+@admin.register(PrivacyPolicy)
+class PrivacyPolicyAdmin(admin.ModelAdmin):
+    list_display = ['title', 'effective_date', 'last_updated', 'is_active']
+    list_filter = ['is_active', 'effective_date', 'last_updated']
+    list_editable = ['is_active']
+    readonly_fields = ['last_updated', 'created_at', 'updated_at']
+    search_fields = ['title', 'subtitle']
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'subtitle', 'effective_date', 'is_active')
+        }),
+        ('Content', {
+            'fields': ('content',),
+            'description': 'Use the rich text editor to format your privacy policy content'
+        }),
+        ('SEO Settings', {
+            'fields': ('meta_title', 'meta_description'),
+            'classes': ('collapse',),
+            'description': 'Optional SEO optimization fields'
+        }),
+        ('Timestamps', {
+            'fields': ('last_updated', 'created_at', 'updated_at'),
+            'classes': ('collapse',),
+            'description': 'Automatic timestamp tracking'
+        }),
+    )
+
+    def has_add_permission(self, request):
+        # Only allow one active privacy policy at a time
+        return not PrivacyPolicy.objects.filter(is_active=True).exists()
+
+    def save_model(self, request, obj, form, change):
+        # If this privacy policy is being set as active, deactivate others
+        if obj.is_active:
+            PrivacyPolicy.objects.filter(is_active=True).update(is_active=False)
+        super().save_model(request, obj, form, change)
+
+
 @admin.register(ContactSubmission)
 class ContactSubmissionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email', 'company', 'short_message', 'submitted_at', 'is_read']
+    list_display = ['name', 'email', 'phone', 'company', 'short_message', 'submitted_at', 'is_read']
     list_filter = ['is_read', 'submitted_at', 'company']
-    search_fields = ['name', 'email', 'company', 'message']
+    search_fields = ['name', 'email', 'phone', 'company', 'message']
     readonly_fields = ['submitted_at', 'ip_address', 'user_agent']
     list_editable = ['is_read']
     date_hierarchy = 'submitted_at'
@@ -756,7 +795,7 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Contact Information', {
-            'fields': ('name', 'email', 'company')
+            'fields': ('name', 'email', 'phone', 'company')
         }),
         ('Message', {
             'fields': ('message',)

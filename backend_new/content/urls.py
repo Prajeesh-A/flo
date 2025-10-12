@@ -48,6 +48,9 @@ urlpatterns = [
     # Contact form submissions
     path('contact-submissions/', views.contact_submissions, name='contact-submissions'),
 
+    # Privacy Policy
+    path('privacy-policy/', views.privacy_policy_detail, name='privacy-policy-detail'),
+
     # Combined endpoint for all website data
     path('website-data/', views.website_data, name='website-data'),
 ]

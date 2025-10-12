@@ -155,6 +155,17 @@ export interface ContactSection {
   background_color: string;
 }
 
+export interface PrivacyPolicy {
+  id: number;
+  title: string;
+  subtitle: string;
+  content: string;
+  last_updated: string;
+  effective_date: string;
+  meta_title: string;
+  meta_description: string;
+}
+
 export interface SocialMediaSection {
   id: number;
   is_visible: boolean;
@@ -502,6 +513,9 @@ export const api = {
 
   getContactSection: (): Promise<ContactSection> =>
     apiFetch<ContactSection>("/contact/"),
+
+  getPrivacyPolicy: (): Promise<PrivacyPolicy> =>
+    apiFetch<PrivacyPolicy>("/privacy-policy/"),
 
   getSocialMediaSection: (): Promise<SocialMediaSection> =>
     apiFetch<SocialMediaSection>("/social/"),

@@ -299,7 +299,7 @@ export default function SocialSection() {
             {/* Features section - now managed through navigation items */}
             <div>
               <h3
-                className="text-lg text-gray-900 mb-6"
+                className="text-lg text-gray-900 mb-6 font-bold"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
                 Resources
@@ -309,6 +309,7 @@ export default function SocialSection() {
                 <FooterLink text="API Reference" />
                 <FooterLink text="Tutorials" />
                 <FooterLink text="Community" />
+                <FooterLink text="Privacy Policy" href="/privacy-policy" />
               </div>
             </div>
           </motion.div>
