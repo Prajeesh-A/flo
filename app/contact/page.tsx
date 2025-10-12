@@ -69,26 +69,17 @@ export default function ContactPage() {
     setSubmitStatus("idle");
 
     try {
-      const response = await fetch("/api/contact-submissions/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Use the same API client as other components
+      await api.submitContactForm(formData);
 
-      if (response.ok) {
-        // Reset form on success
-        setFormData({
-          name: "",
-          email: "",
-          company: "",
-          message: "",
-        });
-        setSubmitStatus("success");
-      } else {
-        throw new Error("Failed to submit form");
-      }
+      // Reset form on success
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        message: "",
+      });
+      setSubmitStatus("success");
     } catch (error) {
       console.error("Form submission error:", error);
       setSubmitStatus("error");
