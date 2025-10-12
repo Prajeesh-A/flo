@@ -287,35 +287,34 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email Address"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
+                />
+              </div>
+
+              <div>
+                <div className="flex w-full">
+                  <CountryCodeSelector
+                    selectedCountry={selectedCountry}
+                    onCountryChange={setSelectedCountry}
+                    variant="contact-section"
+                    className="flex-shrink-0 country-selector-mobile"
                   />
-                </div>
-                <div>
-                  <div className="flex">
-                    <CountryCodeSelector
-                      selectedCountry={selectedCountry}
-                      onCountryChange={setSelectedCountry}
-                      variant="contact-section"
-                      className="flex-shrink-0 country-selector-mobile"
-                    />
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="123-456-7890"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="flex-1 bg-black/20 border border-white/10 border-l-0 rounded-r-lg px-3 sm:px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors phone-input-mobile h-12 min-h-[3rem]"
-                    />
-                  </div>
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="123-456-7890"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="flex-1 bg-black/20 border border-white/10 border-l-0 rounded-r-lg px-3 sm:px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors phone-input-mobile h-12 min-h-[3rem]"
+                  />
                 </div>
               </div>
 

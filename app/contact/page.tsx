@@ -159,50 +159,48 @@ export default function ContactPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="your@email.com"
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200"
-                />
-              </div>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                placeholder="your@email.com"
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200"
+              />
+            </div>
 
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Phone
-                </label>
-                <div className="flex">
-                  <CountryCodeSelector
-                    selectedCountry={selectedCountry}
-                    onCountryChange={setSelectedCountry}
-                    variant="contact-page"
-                    className="flex-shrink-0 country-selector-mobile"
-                  />
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="123-456-7890"
-                    className="flex-1 px-3 sm:px-4 py-3 bg-gray-700/50 border border-gray-600/50 border-l-0 rounded-r-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200 phone-input-mobile h-12 min-h-[3rem]"
-                  />
-                </div>
+            <div>
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
+                Phone
+              </label>
+              <div className="flex w-full">
+                <CountryCodeSelector
+                  selectedCountry={selectedCountry}
+                  onCountryChange={setSelectedCountry}
+                  variant="contact-page"
+                  className="flex-shrink-0 country-selector-mobile"
+                />
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="123-456-7890"
+                  className="flex-1 px-3 sm:px-4 py-3 bg-gray-700/50 border border-gray-600/50 border-l-0 rounded-r-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200 phone-input-mobile h-12 min-h-[3rem]"
+                />
               </div>
             </div>
 
