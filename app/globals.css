@@ -957,6 +957,24 @@ html {
     padding: 0.875rem !important; /* Larger touch targets */
   }
 
+  /* Phone Input Alignment Fixes */
+  .flex > .country-selector-mobile,
+  .flex > .phone-input-mobile {
+    height: 3rem !important;
+    min-height: 3rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* Ensure country selector button has proper alignment */
+  .country-selector-mobile button {
+    height: 3rem !important;
+    min-height: 3rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
   .hero-section {
     padding-top: 6rem !important;
     padding-bottom: 8rem !important; /* Increased bottom padding for more space */
@@ -1141,5 +1159,73 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Desktop and larger screens - ensure perfect phone input alignment */
+@media (min-width: 768px) {
+  /* Phone Input Perfect Alignment for Desktop */
+  .flex > .country-selector-mobile,
+  .flex > .phone-input-mobile {
+    height: 3rem !important;
+    min-height: 3rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* Country selector button desktop alignment */
+  .country-selector-mobile button {
+    height: 3rem !important;
+    min-height: 3rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Phone input desktop alignment */
+  .phone-input-mobile {
+    padding: 0.75rem 1rem !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* Specific breakpoint fixes for common mobile sizes */
+@media (max-width: 414px) {
+  /* iPhone 6/7/8 Plus and similar */
+  .flex > .country-selector-mobile,
+  .flex > .phone-input-mobile {
+    height: 3rem !important;
+    min-height: 3rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  /* iPhone SE and similar small screens */
+  .flex > .country-selector-mobile,
+  .flex > .phone-input-mobile {
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
+  }
+
+  .country-selector-mobile button {
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
+    padding: 0.625rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Very small mobile screens */
+  .flex > .country-selector-mobile,
+  .flex > .phone-input-mobile {
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+  }
+
+  .country-selector-mobile button {
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    padding: 0.5rem !important;
   }
 }

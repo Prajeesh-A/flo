@@ -200,7 +200,7 @@ export default function ContactPage() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="123-456-7890"
-                    className="flex-1 px-3 sm:px-4 py-3 bg-gray-700/50 border border-gray-600/50 border-l-0 rounded-r-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200 phone-input-mobile"
+                    className="flex-1 px-3 sm:px-4 py-3 bg-gray-700/50 border border-gray-600/50 border-l-0 rounded-r-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200 phone-input-mobile h-12 min-h-[3rem]"
                   />
                 </div>
               </div>

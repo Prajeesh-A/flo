@@ -313,7 +313,7 @@ export default function ContactSection() {
                       placeholder="123-456-7890"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="flex-1 bg-black/20 border border-white/10 border-l-0 rounded-r-lg px-3 sm:px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors phone-input-mobile"
+                      className="flex-1 bg-black/20 border border-white/10 border-l-0 rounded-r-lg px-3 sm:px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors phone-input-mobile h-12 min-h-[3rem]"
                     />
                   </div>
                 </div>

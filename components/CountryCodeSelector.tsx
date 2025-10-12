@@ -124,7 +124,7 @@ export default function CountryCodeSelector({
   // Get theme-specific styles
   const getButtonStyles = () => {
     const baseStyles =
-      "flex items-center gap-2 px-3 py-3 border transition-colors duration-200";
+      "flex items-center gap-2 px-3 py-3 border transition-colors duration-200 h-12 min-h-[3rem]";
 
     if (variant === "contact-section") {
       return `${baseStyles} bg-black/20 border-white/10 rounded-l-lg text-white hover:bg-black/30 ${
