@@ -84,8 +84,8 @@ const FooterLink = ({
           onClick();
         }
       }}
-      className="text-lg font-medium transition-colors duration-200 hover:opacity-80 block cursor-pointer"
-      style={{ color, fontFamily: "'Poppins',  " }}
+      className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+      style={{ color, fontFamily: "'Poppins', sans-serif" }}
       whileHover={{ x: 5 }}
       transition={{ duration: 0.2 }}
     >
@@ -246,8 +246,8 @@ export default function SocialSection() {
           >
             <div>
               <h3
-                className="text-2xl text-black mb-8 font-bold"
-                style={{ fontFamily: "'Poppins'" }}
+                className="text-2xl text-black mb-8 font-semibold"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
               >
                 Company
               </h3>
@@ -299,7 +299,7 @@ export default function SocialSection() {
             {/* Features section - now managed through navigation items */}
             <div>
               <h3
-                className="text-lg text-gray-900 mb-6 font-bold"
+                className="text-2xl text-black mb-8 font-semibold"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
                 Resources
@@ -307,7 +307,7 @@ export default function SocialSection() {
               <div className="flex flex-col space-y-5">
                 <motion.a
                   href="#"
-                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
                   style={{
                     color: "#666666",
                     fontFamily: "'Poppins', sans-serif",
@@ -333,7 +333,7 @@ export default function SocialSection() {
 
                 <motion.a
                   href="#"
-                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
                   style={{
                     color: "#666666",
                     fontFamily: "'Poppins', sans-serif",
@@ -346,7 +346,7 @@ export default function SocialSection() {
 
                 <motion.a
                   href="#"
-                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
                   style={{
                     color: "#666666",
                     fontFamily: "'Poppins', sans-serif",
@@ -359,7 +359,7 @@ export default function SocialSection() {
 
                 <motion.a
                   href="/privacy-policy"
-                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
                   style={{
                     color: "#666666",
                     fontFamily: "'Poppins', sans-serif",

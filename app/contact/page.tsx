@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Send } from "lucide-react";
 import { api } from "@/lib/api";
 import CountryCodeSelector, {
@@ -67,24 +68,31 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 sm:p-6 relative contact-page-container">
       <Link
         href="/"
-        className="fixed top-6 left-6 z-50 flex items-center gap-2 text-gray-300 hover:text-white transition-colors bg-gray-800/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-700/50"
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 z-50 flex items-center gap-2 text-gray-300 hover:text-white transition-colors bg-gray-800/50 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2 rounded-full border border-gray-700/50 text-sm sm:text-base"
       >
-        <ArrowLeft size={20} />
-        <span>Back to Home</span>
+        <ArrowLeft size={16} className="sm:w-5 sm:h-5" />
+        <span className="hidden sm:inline">Back to Home</span>
+        <span className="sm:hidden">Back</span>
       </Link>
 
-      <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-screen py-20">
+      <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-screen py-16 sm:py-20">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-            <span className="text-white font-bold text-xl">F</span>
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+            <Image
+              src="/logo.png"
+              alt="Floneo Logo"
+              width={64}
+              height={64}
+              className="w-full h-full object-contain"
+            />
           </div>
 
           <h1 className="text-5xl font-bold text-white mb-2">floneo</h1>
@@ -95,7 +103,7 @@ export default function ContactPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="w-full bg-gray-800/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-gray-700/50"
+          className="w-full bg-gray-800/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl border border-gray-700/50 contact-form-mobile"
         >
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 bg-gray-600/50 rounded-full flex items-center justify-center">
@@ -183,7 +191,7 @@ export default function ContactPage() {
                     selectedCountry={selectedCountry}
                     onCountryChange={setSelectedCountry}
                     variant="contact-page"
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 country-selector-mobile"
                   />
                   <input
                     type="tel"
@@ -192,7 +200,7 @@ export default function ContactPage() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="123-456-7890"
-                    className="flex-1 px-4 py-3 bg-gray-700/50 border border-gray-600/50 border-l-0 rounded-r-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200"
+                    className="flex-1 px-3 sm:px-4 py-3 bg-gray-700/50 border border-gray-600/50 border-l-0 rounded-r-xl text-white placeholder-gray-400 focus:border-[#2ECC71] focus:ring-1 focus:ring-[#2ECC71] transition-all duration-200 phone-input-mobile"
                   />
                 </div>
               </div>

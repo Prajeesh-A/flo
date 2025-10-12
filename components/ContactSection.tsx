@@ -262,7 +262,7 @@ export default function ContactSection() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <input
                     type="text"
@@ -305,7 +305,7 @@ export default function ContactSection() {
                       selectedCountry={selectedCountry}
                       onCountryChange={setSelectedCountry}
                       variant="contact-section"
-                      className="flex-shrink-0"
+                      className="flex-shrink-0 country-selector-mobile"
                     />
                     <input
                       type="tel"
@@ -313,7 +313,7 @@ export default function ContactSection() {
                       placeholder="123-456-7890"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="flex-1 bg-black/20 border border-white/10 border-l-0 rounded-r-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
+                      className="flex-1 bg-black/20 border border-white/10 border-l-0 rounded-r-lg px-3 sm:px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors phone-input-mobile"
                     />
                   </div>
                 </div>

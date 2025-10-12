@@ -920,6 +920,43 @@ html {
     padding-right: 1rem !important;
   }
 
+  /* Contact Form Mobile Optimizations */
+  .contact-form-mobile {
+    padding: 1.5rem !important;
+    margin: 0 1rem !important;
+  }
+
+  /* Contact Page Mobile Optimizations */
+  .contact-page-container {
+    padding: 1rem !important;
+    min-height: 100vh !important;
+  }
+
+  /* Contact Section Mobile Grid Fix */
+  .contact-section .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Country Code Selector Mobile Improvements */
+  .country-selector-mobile {
+    min-width: 120px !important;
+    max-width: 140px !important;
+  }
+
+  /* Phone Input Mobile Improvements */
+  .phone-input-mobile {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+
+  /* Form Input Mobile Improvements */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  textarea {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+    padding: 0.875rem !important; /* Larger touch targets */
+  }
+
   .hero-section {
     padding-top: 6rem !important;
     padding-bottom: 8rem !important; /* Increased bottom padding for more space */
@@ -956,15 +993,21 @@ html {
     opacity: 0.8 !important; /* Slightly faded for minimal look */
   }
 
-  /* Make hero tagline more minimal */
+  /* Make hero tagline more visible and readable on mobile */
   .hero-section .flex.items-center.justify-center.gap-0 {
-    margin-bottom: 1rem !important; /* Reduce space below tagline */
+    margin-bottom: 1.5rem !important; /* More space below tagline for better separation */
+    padding: 0 1rem !important; /* Add horizontal padding for better mobile spacing */
   }
 
   .hero-section .flex.items-center.justify-center.gap-0 span {
-    font-size: 0.9rem !important; /* Smaller tagline */
-    opacity: 0.7 !important; /* More subtle */
-    font-weight: 300 !important; /* Lighter weight */
+    font-size: 1.1rem !important; /* Larger, more readable tagline */
+    opacity: 0.9 !important; /* More visible */
+    font-weight: 400 !important; /* Medium weight for better readability */
+    line-height: 1.4 !important; /* Better line height for readability */
+    text-align: center !important; /* Center align on mobile */
+    min-width: auto !important; /* Remove fixed width constraint on mobile */
+    max-width: 100% !important; /* Ensure it doesn't overflow */
+    word-wrap: break-word !important; /* Handle long text gracefully */
   }
 
   /* Ensure trusted by section is pushed down and not visible without scrolling */
@@ -1073,6 +1116,12 @@ html {
   .hero-section {
     padding-top: 4rem !important;
     padding-bottom: 2rem !important;
+  }
+
+  /* Ensure tagline remains readable on very small screens */
+  .hero-section .flex.items-center.justify-center.gap-0 span {
+    font-size: 1rem !important; /* Slightly smaller but still readable */
+    padding: 0 0.5rem !important; /* Reduce padding on very small screens */
   }
 
   /* Smaller buttons on very small screens */
