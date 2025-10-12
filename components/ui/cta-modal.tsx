@@ -3,23 +3,15 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface CTAModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const scrollToContact = () => {
-  const contactSection = document.getElementById("contact");
-  if (contactSection) {
-    contactSection.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }
-};
-
 export default function CTAModal({ isOpen, onClose }: CTAModalProps) {
+  const router = useRouter();
   // Close modal on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -112,7 +104,7 @@ export default function CTAModal({ isOpen, onClose }: CTAModalProps) {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
-                      scrollToContact();
+                      router.push("/contact");
                       onClose();
                     }}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition-colors"

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import AboutTablet from "@/components/AboutTablet";
 import ArchitectingExcellence from "@/components/ArchitectingExcellence";
@@ -29,6 +30,7 @@ import { CTAModalProvider, useCTAModal } from "@/contexts/CTAModalContext";
 
 function HomePageContent() {
   const { openModal } = useCTAModal();
+  const router = useRouter();
 
   const [isVisible, setIsVisible] = useState(false);
   const [logoRotation, setLogoRotation] = useState(0);
@@ -241,12 +243,7 @@ function HomePageContent() {
               {/* Contact Sales Button */}
               <button
                 className="contact-sales-btn"
-                onClick={() => {
-                  const contactSection = document.getElementById("contact");
-                  if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
+                onClick={() => router.push("/contact")}
               >
                 Contact Sales
               </button>

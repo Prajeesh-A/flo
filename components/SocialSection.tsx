@@ -66,17 +66,25 @@ const FooterLink = ({
   text,
   color = "#FF4FCB",
   href = "#",
+  onClick,
 }: {
   text: string;
   color?: string;
   href?: string;
+  onClick?: () => void;
 }) => (
   <motion.div className="block">
     <motion.a
       href={href}
-      target={href !== "#" ? "_blank" : undefined}
-      rel={href !== "#" ? "noopener noreferrer" : undefined}
-      className="text-lg font-medium transition-colors duration-200 hover:opacity-80 block"
+      target={href !== "#" && !onClick ? "_blank" : undefined}
+      rel={href !== "#" && !onClick ? "noopener noreferrer" : undefined}
+      onClick={(e) => {
+        if (onClick) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      className="text-lg font-medium transition-colors duration-200 hover:opacity-80 block cursor-pointer"
       style={{ color, fontFamily: "'Poppins',  " }}
       whileHover={{ x: 5 }}
       transition={{ duration: 0.2 }}
@@ -142,14 +150,6 @@ export default function SocialSection() {
   // Use API data or fallback
   const section = sectionData || fallbackSection;
   const links = socialLinks || fallbackLinks;
-
-  // Find LinkedIn URL from social links
-  const linkedInLink = links.find(
-    (link) =>
-      link.platform.toLowerCase() === "linkedin" ||
-      link.platform_name.toLowerCase().includes("linkedin")
-  );
-  const linkedInUrl = linkedInLink?.url || "#";
 
   // Don't render if not visible
   if (!section.is_visible) {
@@ -252,12 +252,47 @@ export default function SocialSection() {
                 Company
               </h3>
               <div className="flex flex-col space-y-5">
-                <FooterLink text="About Us" href={linkedInUrl} />
-                <FooterLink text="Features" href={linkedInUrl} />
-                <FooterLink text="Services" href={linkedInUrl} />
-                <FooterLink text="Analytics" />
-                <FooterLink text="Pricing" />
-                <FooterLink text="Help Center" />
+                <FooterLink
+                  text="About Us"
+                  href="#about"
+                  onClick={() => {
+                    const aboutSection = document.getElementById("about");
+                    if (aboutSection) {
+                      aboutSection.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                />
+                <FooterLink
+                  text="Features"
+                  href="#services"
+                  onClick={() => {
+                    const benefitsSection = document.getElementById("services");
+                    if (benefitsSection) {
+                      benefitsSection.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                />
+                <FooterLink
+                  text="Analytics"
+                  href="#analytics"
+                  onClick={() => {
+                    const analyticsSection =
+                      document.querySelector('[id*="analytics"]');
+                    if (analyticsSection) {
+                      analyticsSection.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                />
+                <FooterLink
+                  text="Help Center"
+                  href="#help"
+                  onClick={() => {
+                    const faqSection = document.getElementById("help");
+                    if (faqSection) {
+                      faqSection.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                />
               </div>
             </div>
 
