@@ -68,7 +68,7 @@ const FAQCard = ({ faq, index }: { faq: FAQItem; index: number }) => {
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="w-full bg-[#2C2C2E] hover:bg-[#FFC107] rounded-[32px] px-8 py-6 text-left transition-colors duration-200 group"
+        className="w-full bg-[#2C2C2E] hover:bg-[#FFC107] rounded-3xl px-8 py-6 text-left transition-colors duration-200 group"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -124,26 +124,29 @@ export default function FAQSection() {
     const fetchFAQs = async () => {
       try {
         setFaqItemsLoading(true);
-        const response = await fetch(
-          "https://flo-do2v.onrender.com/api/faq-items/"
-        );
+        const response = await fetch("http://localhost:8000/api/faq-items/", {
+          signal: AbortSignal.timeout(5000) // Add timeout
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         console.log("🎯 DIRECT API RESPONSE:", data);
         setFaqItems(data.results || []);
-        setFaqItemsError(null);
+        setFaqItemsError("");
       } catch (error) {
         console.error("❌ FAQ API Error:", error);
-        setFaqItemsError(
-          error instanceof Error ? error.message : "Unknown error"
-        );
-        setFaqItems([]);
+        setFaqItemsError(error instanceof Error ? error.message : "Unknown error");
+        setFaqItems([]); // This triggers fallback
       } finally {
-        setFaqItemsLoading(false);
+        setFaqItemsLoading(false); // This MUST run
       }
     };
 
     fetchFAQs();
-  }, []);
+  }, []); // Empty dependency array
 
   // Fallback data for FAQ section
   const defaultFaqSection = {
@@ -157,26 +160,50 @@ export default function FAQSection() {
   const defaultFaqItems: FAQItem[] = [
     {
       id: 1,
-      question: "What is FloNeo?",
+      question: "How to view the demo?",
       answer:
-        "FloNeo is a comprehensive Low-Code/No-Code platform that helps businesses turn manual processes into instant, powerful applications.",
+        "Demo will be ready by Nov 20'th 2025. Please reserve your slot in contact details.",
       order: 1,
       is_active: true,
     },
     {
       id: 2,
-      question: "How do I get started?",
+      question: "How AI assists floneo?",
       answer:
-        "Getting started is simple! Click the 'Get Started' button, create your account, and you'll be ready to start building applications in minutes.",
+        "With floneo, the workflow includes AI blocks that empower users to build and integrate custom functionalities.",
       order: 2,
       is_active: true,
     },
     {
       id: 3,
-      question: "Is my data secure?",
+      question: "Is floneo designed for a non-technical audience?",
       answer:
-        "Absolutely! We use enterprise-grade security, encryption, and comply with industry standards to keep your data safe and secure.",
+        "Floneo is exceptionally user-friendly, allowing users to create or manage applications without requiring any technical skills.",
       order: 3,
+      is_active: true,
+    },
+    {
+      id: 4,
+      question: "Is floneo optimized for particular market sectors?",
+      answer:
+        "floneo is highly versatile, capable of building applications for any type of business, including Startups, FinTech, BFSI, Energy, Manufacturing, Retail, and more.",
+      order: 4,
+      is_active: true,
+    },
+    {
+      id: 5,
+      question: "What are the floneo licensing models?",
+      answer:
+        "Currently, we are offering floneo under three subscription based licensing models: Basic, Pro, and Enterprise.",
+      order: 5,
+      is_active: true,
+    },
+    {
+      id: 6,
+      question: "How about on-premise deployment?",
+      answer:
+        "Yes, floneo has the flexibility of deploying on premises, private cloud, and as service also.",
+      order: 6,
       is_active: true,
     },
   ];
@@ -186,15 +213,15 @@ export default function FAQSection() {
   const shouldUseApiData = faqItems && faqItems.length > 0;
   const finalFaqItems = shouldUseApiData ? faqItems : defaultFaqItems;
 
-  console.log("🎯 SIMPLE FAQ DEBUG:", {
-    apiItemsCount: faqItems?.length || 0,
-    shouldUseApiData,
-    finalItemsCount: finalFaqItems.length,
-    source: shouldUseApiData ? "✅ API" : "⚠️ FALLBACK",
-    firstApiItem: faqItems?.[0]?.question,
-    loading: faqItemsLoading,
-    error: faqItemsError,
-  });
+  // console.log("🎯 SIMPLE FAQ DEBUG:", {
+  //   apiItemsCount: faqItems?.length || 0,
+  //   shouldUseApiData,
+  //   finalItemsCount: finalFaqItems.length,
+  //   source: shouldUseApiData ? "✅ API" : "⚠️ FALLBACK",
+  //   firstApiItem: faqItems?.[0]?.question,
+  //   loading: faqItemsLoading,
+  //   error: faqItemsError,
+  // });
 
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
@@ -262,18 +289,11 @@ export default function FAQSection() {
         </motion.div>
 
         {/* FAQ Grid */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-[900px] mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 md:items-start max-w-full mx-auto">
           {faqItemsLoading ? (
             // Loading state
             <div className="col-span-full text-center py-12">
               <div className="text-gray-600 text-lg">Loading FAQ items...</div>
-            </div>
-          ) : faqItemsError ? (
-            // Error state
-            <div className="col-span-full text-center py-12">
-              <div className="text-red-600 text-lg">
-                Failed to load FAQ items. Using default content.
-              </div>
             </div>
           ) : finalFaqItems.length === 0 ? (
             // Empty state
@@ -283,10 +303,25 @@ export default function FAQSection() {
               </div>
             </div>
           ) : (
-            // FAQ items
-            finalFaqItems.map((faq: any, index: number) => (
-              <FAQCard key={faq.id || index} faq={faq} index={index} />
-            ))
+            <>
+              {/* Left Column - Even indices (0, 2, 4, ...) */}
+              <div className="flex flex-col gap-6">
+                {finalFaqItems
+                  .filter((_: any, index: number) => index % 2 === 0)
+                  .map((faq: any, index: number) => (
+                    <FAQCard key={faq.id || index * 2} faq={faq} index={index * 2} />
+                  ))}
+              </div>
+
+              {/* Right Column - Odd indices (1, 3, 5, ...) */}
+              <div className="flex flex-col gap-6">
+                {finalFaqItems
+                  .filter((_: any, index: number) => index % 2 === 1)
+                  .map((faq: any, index: number) => (
+                    <FAQCard key={faq.id || index * 2 + 1} faq={faq} index={index * 2 + 1} />
+                  ))}
+              </div>
+            </>
           )}
         </div>
       </div>

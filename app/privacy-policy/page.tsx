@@ -34,6 +34,34 @@ export default function PrivacyPolicyPage() {
       <h2>Contact Us</h2>
       <p>If you have any questions about this Privacy Policy, please contact us.</p>
     `,
+    privacySections: [
+      {
+        title: "Information We Collect",
+        content:
+          "We collect information you provide directly to us, such as when you create an account, use our services, or contact us.",
+      },
+      {
+        title: "How We Use Your Information",
+        content:
+          "We use the information we collect to provide, maintain, and improve our services.",
+      },
+      {
+        title: "Information Sharing",
+        content:
+          "We do not sell, trade, or otherwise transfer your personal information to third parties without your consent.",
+      },
+      {
+        title: "Data Security",
+        content:
+          "We implement appropriate security measures to protect your personal information.",
+      },
+      {
+        title: "Contact Us",
+        content:
+          "If you have any questions about this Privacy Policy, please contact us.",
+      },
+    ],
+
     effective_date: new Date().toISOString().split("T")[0],
     last_updated: new Date().toISOString(),
     meta_title: "Privacy Policy - Floneo",
@@ -42,7 +70,8 @@ export default function PrivacyPolicyPage() {
   };
 
   // Use API data or fallback
-  const data = privacyData || fallbackData;
+  // const data = privacyData || fallbackData;
+  const data = fallbackData;
 
   // Format dates
   const formatDate = (dateString: string) => {
@@ -64,23 +93,23 @@ export default function PrivacyPolicyPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <p className="text-gray-700 mb-4">Failed to load Privacy Policy</p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-[#2ECC71] hover:text-green-600 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50 to-blue-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
+  //         <p className="text-gray-700 mb-4">Failed to load Privacy Policy</p>
+  //         <Link
+  //           href="/"
+  //           className="inline-flex items-center gap-2 text-[#2ECC71] hover:text-green-600 transition-colors"
+  //         >
+  //           <ArrowLeft className="h-4 w-4" />
+  //           Back to Home
+  //         </Link>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50 to-blue-50">
@@ -139,13 +168,16 @@ export default function PrivacyPolicyPage() {
           className="max-w-4xl mx-auto"
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg">
-            <div
-              className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: data.content }}
-              style={{
-                color: "#374151",
-              }}
-            />
+            {data?.privacySections?.map((section, index) => (
+              <div key={index} className="border-b border-gray-100 pb-6 last:border-0">
+                <h2 className="text-2xl font-semibold text-[#030f08] mb-1">
+                  <span>• </span>{section.title}
+                </h2>
+                <p className="text-gray-700 leading-relaxed text-lg pl-4">
+                  {section.content}
+                </p>
+              </div>
+            ))}
           </div>
         </motion.div>
 

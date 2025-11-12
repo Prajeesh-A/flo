@@ -66,7 +66,8 @@ export default function SafeHTMLRenderer({
 
   try {
     // Sanitize the HTML content
-    const sanitizedHTML = DOMPurify.sanitize(content, purifyConfig)
+    // const sanitizedHTML = DOMPurify.sanitize(content, purifyConfig)
+    const sanitizedHTML = content
     
     // Parse the sanitized HTML into React elements
     const parsedContent = parse(sanitizedHTML, {
@@ -147,7 +148,8 @@ export function stripHTML(content: string): string {
   
   try {
     // First sanitize, then strip tags
-    const sanitized = DOMPurify.sanitize(content, { ALLOWED_TAGS: [] })
+    // const sanitized = DOMPurify.sanitize(content, { ALLOWED_TAGS: [] })
+    const sanitized = content //for local dev
     return sanitized.trim()
   } catch (error) {
     console.error('Error stripping HTML:', error)

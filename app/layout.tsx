@@ -5,6 +5,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/notification-toast";
 import "./globals.css";
+import "./../styles/globals.css";
+import localFont from "next/font/local";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,11 +19,17 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+const surgena = localFont({
+  src: "../public/fonts/surgena.ttf",
   variable: "--font-surgena",
-});
+  display: "swap",
+})
+
+// const outfit = Outfit({
+//   subsets: ["latin"],
+//   weight: ["400", "500", "600", "700", "800", "900"],
+//   variable: "--font-surgena",
+// });
 
 export const metadata: Metadata = {
   title: " floneo - Build. Automate. Scale.",
@@ -71,7 +79,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`font-sans ${inter.variable} ${poppins.variable} ${outfit.variable} antialiased`}
+        className={`font-sans ${inter.variable} ${poppins.variable} antialiased`}
       >
         <ToastProvider>
           <Suspense fallback={null}>{children}</Suspense>

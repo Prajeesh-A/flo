@@ -586,9 +586,22 @@ function StepCarousel({
               <h3 className="text-white font-semibold text-xl sm:text-2xl md:text-3xl mb-4 sm:mb-5">
                 {step.title}
               </h3>
-              <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-normal">
+              {/* <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-normal">
                 {step.description}
-              </p>
+                
+                
+              </p> */}
+              <div className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-normal">
+              {step.description
+                .split("•") // Split the string at each bullet
+                .filter((point) => point.trim() !== "") // Remove empty entries
+                .map((point, index) => (
+                  <div key={index} className="mb-2">
+                    • {point.trim()}
+                  </div>
+                ))}
+            </div>
+
             </div>
           </div>
 
@@ -672,7 +685,7 @@ function StepCarousel({
         className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative z-10"
       >
         {/* Left side - Number and details */}
-        <div className="flex items-start gap-8">
+        <div className="flex items-center gap-8">
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -701,14 +714,21 @@ function StepCarousel({
             >
               {step.title}
             </motion.h3>
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-white/90 text-base md:text-lg leading-relaxed font-normal"
+              className="text-white/90 text-base md:text-lg leading-relaxed font-normal flex flex-wrap gap-x-4"
             >
-              {step.description}
-            </motion.p>
+              {step.description
+                .split("•") // Split the string at each bullet
+                .filter((point) => point.trim() !== "") // Remove empty entries
+                .map((point, index) => (
+                  <div key={index} className="whitespace-nowrap">
+                    • {point.trim()}
+                  </div>
+                ))}
+            </motion.div>
           </div>
         </div>
 
@@ -781,10 +801,8 @@ export default function ArchitectingExcellence() {
     badge_text: "ABOUT US",
     main_title_line1: "Architecting",
     main_title_line2: "Excellence",
-    subtitle:
-      "Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks.",
-    philosophy_title:
-      "OUR philosophy is simple: workflow creation must be visual, instant, and effortlessly scalable, empowering you to build the future of your operations—fast.",
+    subtitle: "Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks.",
+    philosophy_title: "At FloNeo, we've redefined workflow creation. We believe it should be as simple as stacking blocks—visual, instant, and accessible to everyone. FloNeo turns every user into a builder.",
     philosophy_button_text: "View Services",
     philosophy_button_url: "#",
     counter_1_value: 70,
@@ -794,16 +812,14 @@ export default function ArchitectingExcellence() {
     team_name: "Team floneo",
     team_role: "CCO & Co-Founder",
     team_image: null,
-    step_1_title: "Drag & Drop",
-    step_1_description:
-      "Build workflows visually with our intuitive drag-and-drop interface",
-    step_2_title: "Connect",
-    step_2_description:
-      "Seamlessly integrate with your existing tools and systems",
-    step_3_title: "Automate",
-    step_3_description: "Deploy and scale your automated workflows instantly",
-    step_4_title: "Scale",
-    step_4_description: "Grow your operations without technical limitations",
+    step_1_title: "Define requirements.",
+    step_1_description: "Define application scope, goal, users type, data strategy in scope.",
+    step_2_title: "Design Prototype (floneo builder)",
+    step_2_description: "• Configure templates, select pre built templates & modify them. • Design user interfaces by drag and drop in Visual builder. • Data Modeling with Databases or connect to existing data . • Set the functional properties by FloNeo Workflow Blocks.",
+    step_3_title: "Test the newly built app.",
+    step_3_description: "• Functional Testing • Integration Testing • Performance Testing (In case of users & transactions count is high) • Security & Compliance Review",
+    step_4_title: "Deploy and manage.",
+    step_4_description: "• One click Deployment (Publish app in the web for users access) • Define user access & roles • Live Monitoring (Production)",
     background_color: "#FFFFFF",
   };
 
@@ -838,11 +854,11 @@ export default function ArchitectingExcellence() {
     },
   ];
 
-  // Auto-advance carousel every 5 seconds
+  // Auto-advance carousel every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStep((prev) => (prev + 1) % steps.length);
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);
@@ -944,7 +960,7 @@ export default function ArchitectingExcellence() {
         {/* Main Grid - 3 Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-6 mb-6 px-2 sm:px-0">
           {/* Left Column - 2 Stacked Cards */}
-          <div className="flex flex-col gap-6 sm:gap-8 md:gap-6 w-full">
+          <div className="flex flex-col gap-8 sm:gap-8 md:gap-6 w-full">
             {/* Yellow Philosophy Card with Enhanced Animations - No animations on mobile */}
             {isMobile ? (
               <div className="bg-[#FFC107] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[420px] sm:min-h-[450px] lg:min-h-[450px] relative overflow-hidden group">
@@ -1035,7 +1051,8 @@ export default function ArchitectingExcellence() {
                 </motion.button>
               </motion.div>
             )}
-
+            <div className="mb-3 mt-3">
+            </div>
             {/* Dark Gradient Card - Faster Process Cycles */}
             <DarkGradientCard
               isInView={isInView}

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { api, useApiData } from "@/lib/api";
 
 interface ServiceCard {
   id: number;
@@ -11,6 +10,23 @@ interface ServiceCard {
   image_url?: string;
   color: string;
 }
+
+// Mock API hook for demonstration
+const useApiData = (apiCall: any) => {
+  const [data, setData] = useState<ServiceCard[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setData(null); // Simulate no data to use fallback
+      setLoading(false);
+    }, 100);
+  }, []);
+
+  return { data, loading, error };
+};
 
 const StackingCard = ({
   card,
@@ -24,6 +40,7 @@ const StackingCard = ({
   scrollProgress: number;
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [imageError, setImageError] = useState(false);
 
   // Calculate padding top (20 + index * 20)
   const offsetTop = 20 + index * 20;
@@ -35,7 +52,6 @@ const StackingCard = ({
   const isLastCard = index === totalCards - 1;
 
   // Calculate the progress range for this card
-  // Each card gets 1/totalCards of the total scroll progress
   const cardStartProgress = index / totalCards;
   const cardEndProgress = (index + 1) / totalCards;
 
@@ -75,6 +91,9 @@ const StackingCard = ({
   // Calculate opacity - fade in as card appears
   const opacity = Math.min(1, cardProgress * 2);
 
+  // Get the correct image URL - prioritize image_url, then image
+  const imageUrl = card.image_url || card.image;
+
   return (
     <div
       ref={cardRef}
@@ -97,41 +116,66 @@ const StackingCard = ({
           willChange: "transform",
           transition: "transform 0.1s ease-out, filter 0.1s ease-out",
         }}
-        className="w-full max-w-4xl mx-auto card-inner"
+        className="w-full max-w-6xl mx-auto card-inner"
       >
         <div
-          className="bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row"
+          className="rounded-2xl overflow-hidden flex flex-col md:flex-row"
           style={{
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.35)",
+            backgroundColor: "#1a1a2e",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.6)",
           }}
         >
           {/* Image Container */}
-          <div className="w-full md:w-2/5 flex-shrink-0">
-            <img
-              src={card.image}
-              alt={card.title}
-              className="w-full h-full object-cover aspect-square md:aspect-auto"
-            />
+          <div 
+            className="w-full md:w-2/5 flex-shrink-0 relative"
+            style={{
+              backgroundColor: imageError || !imageUrl ? card.color : 'transparent'
+            }}
+          >
+            {imageUrl && !imageError ? (
+              <img
+                src={imageUrl}
+                alt={card.title}
+                className="w-full h-full object-cover aspect-square md:aspect-auto"
+                onError={() => setImageError(true)}
+                style={{ minHeight: '300px' }}
+              />
+            ) : (
+              <div 
+                className="w-full h-full flex items-center justify-center aspect-square md:aspect-auto"
+                style={{ 
+                  backgroundColor: card.color,
+                  minHeight: '300px'
+                }}
+              >
+                <div className="text-white text-6xl font-bold opacity-30">
+                  {card.title.charAt(0)}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Content */}
           <div className="p-8 md:p-12 flex flex-col justify-center">
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-4"
+              className="text-4xl md:text-5xl lg:text-6xl mb-6"
               style={{
-                color: "#16263a",
+                color: "#ffffff",
                 fontFamily: "'Poppins', sans-serif",
-                fontWeight: 600,
+                fontWeight: 300,
+                lineHeight: 1.3,
+                letterSpacing: '-0.02em',
               }}
             >
               {card.title}
             </h1>
             <p
-              className="text-lg md:text-xl lg:text-2xl leading-relaxed"
+              className="text-lg md:text-xl lg:text-2xl"
               style={{
-                color: "#16263a",
+                color: "#b8b8b8",
                 fontFamily: "'Poppins', sans-serif",
-                lineHeight: 1.4,
+                lineHeight: 1.8,
+                fontWeight: 300,
               }}
             >
               {card.description}
@@ -151,15 +195,16 @@ export default function ServicesScrollSection() {
   const [cardHeight, setCardHeight] = useState(500);
 
   // Fetch services from API
-  const { data: apiServices, loading, error } = useApiData(api.getServiceCards);
+  const { data: apiServices, loading, error } = useApiData(null);
 
-  // Fallback services if API fails
+  // Fallback services with placeholder images
   const fallbackServices: ServiceCard[] = [
     {
       id: 1,
-      title: "Process Automation",
+      title: "Seamless Workflow Integration",
       description:
-        "Automate repetitive tasks and workflows to increase efficiency and reduce errors.",
+        "Effortlessly design, connect, and automate workflows across teams and systems. With floneo's drag-and-drop builder and AI-powered recommendations, your operations run smoother without IT bottlenecks.",
+      image: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=800&h=800&fit=crop",
       color: "#0066ff",
     },
     {
@@ -167,6 +212,7 @@ export default function ServicesScrollSection() {
       title: "Data Analytics",
       description:
         "Transform your data into actionable insights with powerful analytics tools.",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=800&fit=crop",
       color: "#2ecc71",
     },
     {
@@ -174,6 +220,7 @@ export default function ServicesScrollSection() {
       title: "Workflow Management",
       description:
         "Streamline your business processes with intelligent workflow automation.",
+      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=800&fit=crop",
       color: "#9b59b6",
     },
     {
@@ -181,6 +228,7 @@ export default function ServicesScrollSection() {
       title: "Integration Platform",
       description:
         "Connect all your tools and systems with seamless integrations.",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=800&fit=crop",
       color: "#FFC107",
     },
   ];
@@ -197,7 +245,7 @@ export default function ServicesScrollSection() {
         setCardHeight(height);
       }
     }
-  }, []);
+  }, [servicesData]);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -217,7 +265,6 @@ export default function ServicesScrollSection() {
 
         // Only hijack scroll if animation is not complete
         if (currentProgress < 1) {
-          // We're in the services section and animation not complete - hijack the scroll
           e.preventDefault();
 
           // Accumulate scroll delta
@@ -238,12 +285,6 @@ export default function ServicesScrollSection() {
         } else {
           // Animation complete - allow normal scroll to pass through
           setIsScrollLocked(false);
-
-          // If scrolling down, allow the page to scroll past this section
-          if (e.deltaY > 0) {
-            // Don't prevent default - let normal scroll happen
-            // This allows scrolling to the next section
-          }
         }
       } else if (rect.top > 0) {
         // Section is below viewport - reset
@@ -279,7 +320,7 @@ export default function ServicesScrollSection() {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [scrollProgress]);
+  }, [scrollProgress, servicesData.length]);
 
   // Lock body scroll when in animation
   useEffect(() => {
@@ -298,26 +339,27 @@ export default function ServicesScrollSection() {
     <section
       ref={sectionRef}
       id="services"
-      className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white relative"
+      className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative"
       style={{
+        backgroundColor: "#0f0f1e",
         fontFamily: "'Poppins', sans-serif",
-        minHeight: "120vh", // Further reduced from 200vh to 120vh for better integration
+        minHeight: "120vh",
       }}
     >
       <div className="container mx-auto max-w-6xl">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
-            Our Services
+          <h2 className="text-3xl md:text-4xl font-light text-white mb-4">
+            All in One Place
           </h2>
-          <p className="text-gray-600 text-lg">
-            Discover how we help you build, automate, and scale
+          <p className="text-gray-400 text-lg font-light">
+            Discover how we help you build, automate, and scale your ideas into applications without juggling between different tabs.
           </p>
         </div>
 
         {/* Scroll-jacking animation area */}
         <div className="relative" style={{ minHeight: "60vh" }}>
-          {/* Stacking Cards Container - Fixed position during animation */}
+          {/* Stacking Cards Container */}
           <div
             ref={cardsContainerRef}
             className="relative w-full max-w-4xl mx-auto"

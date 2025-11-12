@@ -38,8 +38,8 @@ export default function ContactSection() {
     subtitle: "Contact Us",
     description:
       "Ready to transform your business? Let's talk about how we can help you achieve your goals.",
-    email: "contact@ floneo.com",
-    phone: "+1 (555) 123-4567",
+    email: "admin@floneo.co",
+    phone: "+91 7994147201",
     address: "123 Business St, Suite 100, City, State 12345",
     form_title: "Send us a message",
     form_submit_text: "Send Message",
@@ -142,16 +142,16 @@ export default function ContactSection() {
       className="bg-gray-100 py-16 sm:py-[100px] px-4 sm:px-6"
     >
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid lg:grid-cols-2 gap-8">
+  <div className="grid lg:grid-cols-2 gap-8 items-stretch">
           {/* Left Column */}
-          <div className="space-y-8">
+          <div className="flex flex-col h-full gap-8">
             {/* Get in touch card */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, ease: [0.2, 0.6, 0.2, 1] }}
-              className="bg-[#1A2332] rounded-[24px] p-8 text-white"
+              className="bg-[#1A2332] rounded-[24px] p-8 text-white flex-1 flex flex-col"
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center">
@@ -191,21 +191,21 @@ export default function ContactSection() {
                 delay: 0.2,
                 ease: [0.2, 0.6, 0.2, 1],
               }}
-              className="bg-[#2563EB] rounded-[24px] p-8 text-white"
+              className="bg-[#2563EB] rounded-[24px] p-8 text-white flex-1 flex flex-col"
             >
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-3 ">
                 <div className="w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center">
                   <div className="w-3 h-3 bg-white/60 rounded-full"></div>
                 </div>
                 <h3
-                  className="text-2xl font-semibold"
+                  className="text-2xl font-semibold "
                   style={{ fontFamily: "'Poppins', sans-serif" }}
                 >
                   Community support
                 </h3>
               </div>
 
-              <p className="text-white/90 text-sm leading-relaxed mb-8">
+              <p className="text-white/90 text-sm leading-relaxed mb-20 mt-8">
                 Join our Community to share tips, ask questions, and learn from
                 others. This is the place to connect and get advice from fellow
                 users.
@@ -231,7 +231,7 @@ export default function ContactSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.2, 0.6, 0.2, 1] }}
-            className="bg-[#1A2332] rounded-[24px] p-8 text-white"
+            className="bg-[#1A2332] rounded-[24px] p-8 text-white h-full"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center">

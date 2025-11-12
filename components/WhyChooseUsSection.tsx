@@ -112,7 +112,7 @@ export default function WhyChooseUsSection() {
     badge_text: "WHY CHOOSE US",
     title: "Architecting Excellence",
     subtitle:
-      "that puts you in charge of your operations without IT bottlenecks",
+      "that puts you in charge of your operations without IT bottlenecks.",
     stat_1_value: "75",
     stat_1_label: "spending habits",
     stat_2_value: "60",
@@ -211,7 +211,12 @@ export default function WhyChooseUsSection() {
         </motion.div>
 
         {/* Three Column Layout */}
+        {/* Three Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start relative">
+          {/* Desktop Vertical Lines */}
+          <div className="hidden lg:block absolute top-0 bottom-0 w-px bg-gray-700" style={{ left: 'calc(32% + 1rem)' }} />
+          <div className="hidden lg:block absolute top-0 bottom-0 w-px bg-gray-700" style={{ left: 'calc(65% + 1rem)' }} />
+
           {/* Left Column - AI-Powered Analytics */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -220,7 +225,7 @@ export default function WhyChooseUsSection() {
               duration: getMobileDuration(0.6, isMobile),
               delay: getMobileDuration(0.3, isMobile),
             }}
-            className="z-10 bg-white"
+            className="z-10 bg-white pb-8 lg:pb-0"
           >
             <div className="space-y-6">
               {/* Tag */}
@@ -260,6 +265,9 @@ export default function WhyChooseUsSection() {
                 Explore
               </motion.button>
             </div>
+            
+            {/* Mobile Horizontal Line */}
+            <div className="lg:hidden w-full h-px bg-gray-700 mt-8" />
           </motion.div>
 
           {/* Middle Column - 140+ with Two-Way Scrolling Tickers */}
@@ -270,7 +278,7 @@ export default function WhyChooseUsSection() {
               duration: getMobileDuration(0.6, isMobile),
               delay: getMobileDuration(0.4, isMobile),
             }}
-            className="relative overflow-hidden"
+            className="relative overflow-hidden pb-8 lg:pb-0"
           >
             {/* Counter */}
             <div className="text-center mb-4">
@@ -320,13 +328,10 @@ export default function WhyChooseUsSection() {
                       key={idx}
                       className="flex items-center gap-2 px-4 py-2 rounded-full bg-black text-white whitespace-nowrap flex-shrink-0"
                     >
-                      <span className="text-lg">{country.flag}</span>
-                      <span
-                        className="text-xs font-medium"
-                        style={{ fontWeight: 500 }}
-                      >
-                        {country.name}
-                      </span>
+                      <div className="text-sm font-medium flex items-center space-x-2 truncate">
+                        <span className="mr-2">{country.flag}</span>
+                        <span>{country.name}</span>
+                      </div>
                     </div>
                   ))}
                 </motion.div>
@@ -353,18 +358,18 @@ export default function WhyChooseUsSection() {
                       key={idx}
                       className="flex items-center gap-2 px-4 py-2 rounded-full bg-black text-white whitespace-nowrap flex-shrink-0"
                     >
-                      <span className="text-lg">{country.flag}</span>
-                      <span
-                        className="text-xs font-medium"
-                        style={{ fontWeight: 500 }}
-                      >
-                        {country.name}
-                      </span>
+                      <div className="text-sm font-medium flex items-center space-x-2 truncate">
+                        <span className="mr-2">{country.flag}</span>
+                        <span>{country.name}</span>
+                      </div>
                     </div>
                   ))}
                 </motion.div>
               </div>
             </div>
+            
+            {/* Mobile Horizontal Line */}
+            <div className="lg:hidden w-full h-px bg-gray-700 mt-8" />
           </motion.div>
 
           {/* Right Column - Key Statistics with Gradient Progress Bars */}

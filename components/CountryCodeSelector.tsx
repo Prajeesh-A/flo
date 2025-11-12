@@ -167,10 +167,11 @@ export default function CountryCodeSelector({
         disabled={disabled}
         className={getButtonStyles()}
       >
-        <span className="text-lg">{selectedCountry.flag}</span>
-        <span className={`text-sm font-medium ${getTextStyles()}`}>
-          {selectedCountry.dialCode}
-        </span>
+        <div className="text-sm font-medium flex items-center space-x-2 truncate">
+          <span className="mr-2">{selectedCountry.flag}</span>
+          <span>{selectedCountry.name}</span>
+        </div>
+
         <ChevronDown
           className={`h-4 w-4 transition-transform duration-200 ${getIconStyles()} ${
             isOpen ? "rotate-180" : ""
@@ -246,10 +247,10 @@ export default function CountryCodeSelector({
                           }`
                     }`}
                   >
-                    <span className="text-lg">{country.flag}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate">
-                        {country.name}
+                      <div className="text-sm font-medium flex items-center space-x-2 truncate">
+                        <span className="mr-2">{country.flag}</span>
+                        <span>{country.name}</span>
                       </div>
                     </div>
                     <span

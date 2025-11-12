@@ -27,6 +27,7 @@ import { api, useApiData } from "@/lib/api";
 import { useNavigationItems } from "@/lib/api-swr";
 import { loadCriticalPageData } from "@/lib/api-batch";
 import { CTAModalProvider, useCTAModal } from "@/contexts/CTAModalContext";
+import Link from "next/link";
 
 function HomePageContent() {
   const { openModal } = useCTAModal();
@@ -66,11 +67,11 @@ function HomePageContent() {
 
   // Fallback navigation items
   const fallbackNavItems = [
+    { label: "Home", href: "#", is_active: true },
     { label: "About Us", href: "#about-us", is_active: true },
     { label: "Features", href: "#features", is_active: true },
-    { label: "Services", href: "#services", is_active: true },
-    { label: "Analytics", href: "#analytics", is_active: true },
-    { label: "Help Center", href: "#help", is_active: true },
+    { label: "Blogs", href: "/blogs", is_active: true },
+    { label: "Help", href: "#help", is_active: true },
     { label: "Contact", href: "#contact", is_active: true },
   ];
 
@@ -207,33 +208,30 @@ function HomePageContent() {
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Desktop Navigation Bar */}
-          <nav className="nav-black-transparent mx-auto mt-4 hidden lg:block">
+          <nav className="nav-black-transparent mx-auto mt-4 hidden lg:block ">
             <div className="flex items-center justify-between h-full px-8">
               {/* Logo */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-10 h-10 logo-rotate"
-                  style={{ transform: `rotate(${logoRotation}deg)` }}
-                >
+              <div className="flex items-center gap-2 relative z-50">
+                <Link href="/" className="w-10 h-10 logo-rotate block" style={{ transform: `rotate(${logoRotation}deg)` }}>
                   <Image
                     src="/logo.png"
-                    alt=" floneo Logo"
+                    alt="Floneo Logo"
                     width={40}
                     height={40}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain cursor-pointer"
                   />
-                </div>
+                </Link>
               </div>
 
               {/* Navigation Links */}
               <div className="flex items-center gap-8">
                 {navItems
-                  .filter((item) => item.is_active)
-                  .map((item, index) => (
+                  .filter((item:any) => item.is_active)
+                  .map((item:any, index:number) => (
                     <a
                       key={index}
                       href={item.href}
-                      className="nav-link text-white hover:text-[#FFC107] transition-colors text-sm font-medium"
+                      className="nav-link text-white hover:text-[#FFC107] transition-colors text-lg font-normal"
                     >
                       {item.label}
                     </a>
@@ -242,7 +240,7 @@ function HomePageContent() {
 
               {/* Contact Sales Button */}
               <button
-                className="contact-sales-btn"
+                className="contact-sales-btn ml-2 font-normal text-lg"
                 onClick={() => router.push("/contact")}
               >
                 Contact Sales
@@ -309,8 +307,8 @@ function HomePageContent() {
             <div className="bg-white/98 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/30">
               <div className="flex flex-col gap-2">
                 {navItems
-                  .filter((item) => item.is_active)
-                  .map((item, index) => (
+                  .filter((item:any) => item.is_active)
+                  .map((item:any, index:number) => (
                     <a
                       key={index}
                       href={item.href}
@@ -348,6 +346,7 @@ function HomePageContent() {
             opacity: customCursor.visible ? 1 : 0,
             transform: "translate(-50%, -50%)",
             transition: "opacity 0.2s ease-in-out",
+            filter: "drop-shadow(0 0 8px rgba(0, 0, 0, 0.6))",
           }}
         >
           <div className="flex items-center gap-3">
@@ -360,14 +359,15 @@ function HomePageContent() {
               xmlns="http://www.w3.org/2000/svg"
               style={{
                 display: "block",
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
               }}
             >
               <path d="M3 2L21 12L13 14L11 22L3 2Z" fill="currentColor" />
             </svg>
-            <div className="custom-cursor-pill bg-[#2ECC71] text-white shadow-xl border border-gray-200 px-4 py-2 rounded-full font-poppins font-normal text-sm backdrop-blur-sm">
+            {/* dont uncomment this */}
+            {/* <div className="custom-cursor-pill bg-[#2ECC71] text-white shadow-xl border border-gray-500 px-4 py-2 rounded-full font-poppins font-normal text-sm backdrop-blur-sm">
               Here we go!
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -375,7 +375,7 @@ function HomePageContent() {
       <section
         id="home"
         ref={heroRef}
-        className="hero-section pt-40 pb-32 md:pt-48 md:pb-40 px-6 sm:px-8 lg:px-12"
+        className="hero-section pt-36 md:pt-40 pb-32 md:pb-40 px-6 sm:px-8 lg:px-12"
       >
         <div className="container mx-auto max-w-6xl">
           <div
@@ -386,17 +386,26 @@ function HomePageContent() {
             }`}
           >
             {/* Small tagline with emoji */}
-            <div className="flex items-center justify-center gap-0 mb-0">
-              <span
-                className="text-black text-lg font-light font-poppins"
-                style={{ minWidth: 290 }}
-              >
+            <div className="flex items-center justify-center gap-2 mb-0 mt-20 md:mt-24">
+              <Image
+                src="/favicon-32x32.png"
+                alt="FloNeo Logo"
+                width={20}
+                height={20}
+                className="flex-shrink-0"
+              />
+              <span className="text-lg font-light font-poppins text-gray-700">
                 {heroLoading
                   ? "Loading..."
                   : heroError
                   ? "Build. Automate. Scale."
                   : heroData?.tagline || "Build. Automate. Scale."}
               </span>
+              {!heroLoading && (
+                <span className="text-lg font-medium font-poppins text-gray-900">
+                  Without the IT bottleneck
+                </span>
+              )}
             </div>
 
             {/* Large  floneo brand name */}
@@ -418,15 +427,15 @@ function HomePageContent() {
               ) : heroError ? (
                 <p>
                   FloNeo's Low-Code/No-Code platform turns manual processes into
-                  instant, powerful applications.
+                  instant, powerful applications.It gives teams the agility to build and deploy real business solutions in hours, not months.
                 </p>
               ) : (
                 <RichTextRenderer
                   content={
                     heroData?.description ||
-                    "FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications."
+                    "FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications.It gives teams the agility to build and deploy real business solutions in hours, not months."
                   }
-                  fallback="FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications."
+                  fallback="FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications.It gives teams the agility to build and deploy real business solutions in hours, not months."
                 />
               )}
             </div>
@@ -483,7 +492,7 @@ function HomePageContent() {
       {/* Benefits Section - More than Automation */}
       <BenefitsSection />
       {/* Services Scroll Section - Stacking Card Animation */}
-      {/* <ServicesScrollSection /> */}
+      <ServicesScrollSection />
       {/* Metrics Section - Animated Counter Boxes */}
       <MetricsSection />
       {/* Why Choose Us Section - AI Analytics & Country Flags Ticker */}

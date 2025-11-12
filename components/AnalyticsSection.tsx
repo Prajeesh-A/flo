@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { JSX, useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
+import { se } from "date-fns/locale";
 
 // Hook to detect mobile viewport
 const useIsMobile = () => {
@@ -276,14 +277,16 @@ export default function AnalyticsSection() {
       zIndex: isMobile ? "z-10" : "z-30", // Behind main card on mobile
       delay: 0.8,
       size: "w-40 h-40",
+      secondColor: "bg-green-400",
     },
     {
       icon: "chart",
       position: "-bottom-8 -left-16",
       color: "bg-gradient-to-br from-blue-500 to-blue-600",
-      zIndex: isMobile ? "z-10" : "z-10", // Already behind main card
+      zIndex: isMobile ? "z-10" : "z-30", //  behind main card on mobile
       delay: 0.9,
       size: "w-36 h-36",
+      secondColor: "bg-yellow-400",
     },
   ];
 
@@ -291,8 +294,7 @@ export default function AnalyticsSection() {
     <section
       id="analytics"
       ref={sectionRef}
-      className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden"
-      className="font-surgena"
+      className="font-surgena py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden"
     >
       <div className="container mx-auto max-w-6xl">
         {/* Top - Centered Animated Heading */}
@@ -317,7 +319,7 @@ export default function AnalyticsSection() {
         <div className="flex justify-center">
           <div className="relative max-w-md w-full">
             {/* Floating Elements */}
-            {floatingElements.map((element, index) => (
+            {/* {floatingElements.map((element, index) => (
               <motion.div
                 key={index}
                 initial={{ scale: 0, rotate: -180 }}
@@ -346,7 +348,41 @@ export default function AnalyticsSection() {
                   <FloatingIcon icon={element.icon} className="text-white" />
                 </motion.div>
               </motion.div>
-            ))}
+            ))} */}
+            {floatingElements.map((element, index) => (
+              <motion.div
+                key={index}
+                initial={{ scale: 0, rotate: -180 }}
+                animate={isInView ? { scale: 1, rotate: 0 } : {}}
+                transition={{
+                  duration: 0.6,
+                  delay: element.delay,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+                className={`absolute ${element.position} ${element.zIndex}`}
+              >
+                <motion.div
+                  animate={{
+                    y: [0, -10, 0],
+                    rotate: [0, 5, -5, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: element.delay,
+                  }}
+                  className={`${element.color} ${element.size} rounded-full flex items-center justify-center shadow-xl backdrop-blur-sm border-2 border-white border-opacity-30`}
+                >
+                  {/* Inner Circle */}
+                  <div className={`${element.secondColor} w-1/2 h-1/2 rounded-full flex items-center justify-center shadow-inner border border-white/40`}>
+                    <FloatingIcon icon={element.icon} className="text-white text-2xl" />
+                  </div>
+                </motion.div>
+              </motion.div>
+))}
+
 
             {/* Main Chart Card - Smaller and Cleaner */}
             <motion.div

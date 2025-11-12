@@ -122,7 +122,7 @@ export default function SocialSection() {
       id: 1,
       platform: "linkedin",
       platform_name: "LinkedIn",
-      url: "#",
+      url: "https://www.linkedin.com/company/floneo-tech/",
       icon_class: "fab fa-linkedin-in",
       is_active: true,
       order: 1,
@@ -130,8 +130,8 @@ export default function SocialSection() {
     {
       id: 2,
       platform: "x",
-      platform_name: "", // Optional platform name
-      url: "#",
+      platform_name: "X", // Optional platform name
+      url: "https://x.com/Floneotech",
       icon_class: "fab fa-x-twitter",
       is_active: true,
       order: 2,
@@ -140,7 +140,7 @@ export default function SocialSection() {
       id: 3,
       platform: "youtube",
       platform_name: "YouTube",
-      url: "#",
+      url: "https://www.youtube.com/@FloneoTechnologies",
       icon_class: "fab fa-youtube",
       is_active: true,
       order: 3,

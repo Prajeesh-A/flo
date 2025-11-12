@@ -627,7 +627,7 @@ export default function HumanTouchSection() {
                 duration: getMobileDuration(1.2, isMobile),
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-6xl lg:text-7xl xl:text-8xl font-bold text-black leading-tight"
+              className="font-surgena text-6xl lg:text-7xl xl:text-8xl font-bold text-black leading-tight"
               style={{ fontWeight: 700 }}
             >
               {data.title}
@@ -662,6 +662,20 @@ export default function HumanTouchSection() {
         {/* Mobile Layout */}
         <div className="md:hidden">
           <div className="flex flex-col items-center gap-6">
+            {/* Bottom Text - "Easy Workflow" (title after phone on mobile) */}
+            <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+              transition={{
+                duration: getMobileDuration(1.2, isMobile),
+                delay: getMobileDuration(0.1, isMobile),
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
+              className="text-5xl sm:text-6xl font-bold text-black text-center"
+              style={{ fontWeight: 700 }}
+            >
+              {data.title}
+            </motion.h2>
             {/* Top Text - "Management" (subtitle first on mobile) */}
             <motion.h2
               initial={{ opacity: 0, y: -50 }}
@@ -683,20 +697,7 @@ export default function HumanTouchSection() {
               isMobile={isMobile}
             />
 
-            {/* Bottom Text - "Easy Workflow" (title after phone on mobile) */}
-            <motion.h2
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-              transition={{
-                duration: getMobileDuration(1.2, isMobile),
-                delay: getMobileDuration(0.1, isMobile),
-                ease: [0.25, 0.1, 0.25, 1],
-              }}
-              className="text-5xl sm:text-6xl font-bold text-black text-center"
-              style={{ fontWeight: 700 }}
-            >
-              {data.title}
-            </motion.h2>
+            
           </div>
         </div>
 
@@ -708,18 +709,18 @@ export default function HumanTouchSection() {
             duration: getMobileDuration(0.8, isMobile),
             delay: getMobileDuration(1.5, isMobile),
           }}
-          className="mt-16 text-center max-w-2xl mx-auto space-y-3"
+          className="mt-16 max-w-full space-y-4 text-left"
         >
-          <p className="text-lg text-black font-normal">
+          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
             Prototype in hours, launch in weeks.
           </p>
-          <p className="text-lg text-black font-normal">
+          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
             Drag-and-drop UI, no steep learning curve.
           </p>
-          <p className="text-lg text-black font-normal">
+          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
             Real-time monitoring and alerts.
           </p>
-          <p className="text-lg text-black font-normal">
+          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
             AI assistant to answer questions instantly.
           </p>
         </motion.div>

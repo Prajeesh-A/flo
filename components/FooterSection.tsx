@@ -62,7 +62,7 @@ export default function FooterSection() {
             Privacy Policy
           </motion.a>
           <motion.a
-            href="#"
+            href="/terms/"
             className="text-lg font-medium text-black hover:opacity-80 transition-opacity duration-200"
             style={{ fontFamily: "'Poppins', sans-serif" }}
             whileHover={{ x: 5 }}

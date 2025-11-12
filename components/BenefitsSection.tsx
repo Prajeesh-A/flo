@@ -42,6 +42,10 @@ export default function BenefitsSection() {
     error,
   } = useApiData(api.getBenefitsSection);
 
+  // const imageURL = [
+  //   "/gavel.p"
+  // ]
+
   // Fallback data
   const fallbackData = {
     badge_text: "BENEFITS",
@@ -56,22 +60,52 @@ export default function BenefitsSection() {
     background_color:
       "radial-gradient(circle at center, #2ECC71 0%, #2ECC71 40%, #ffffffff 100%, #ffffffff 100%)",
     benefits: [
-      { id: 1, title: "Cloud Sync", icon: "cloud", position: "top-center" },
-      { id: 2, title: "Top Security", icon: "shield", position: "top-left" },
-      { id: 3, title: "Top Security", icon: "shield", position: "top-right" },
-      { id: 4, title: "Cloud Sync", icon: "cloud", position: "middle-left" },
+      {
+        id: 1,
+        title: "Ironclad Compliance",
+        icon: "/gavel.png", // symbolizing laws and compliance
+        position: "top-center",
+      },
+      {
+        id: 2,
+        title: "Total Deployment Control",
+        icon: "/cloud.png", // control/settings-like icon
+        position: "top-left",
+      },
+      {
+        id: 3,
+        title: "Accelerated Time-to-Value",
+        icon: "/speed.png", // represents acceleration and efficiency
+        position: "top-right",
+      },
+      {
+        id: 4,
+        title: "Cross Platform",
+        icon: "/devices.png", // desktop + mobile — perfect for cross-platform
+        position: "middle-left",
+      },
       {
         id: 5,
-        title: "Top Security",
-        icon: "shield",
+        title: "Risk Management",
+        icon: "/security.png", // shield icon for safety and risk protection
         position: "middle-right",
       },
-      { id: 6, title: "Top Security", icon: "shield", position: "bottom-left" },
-      { id: 7, title: "Cloud Sync", icon: "cloud", position: "bottom-right" },
+      {
+        id: 6,
+        title: "Actionable Intelligence",
+        icon: "/graph.png", // analytics bulb icon
+        position: "bottom-left",
+      },
+      {
+        id: 7,
+        title: "Advanced Analytics",
+        icon: "/analytics.png", // graph-like analytics symbol
+        position: "bottom-right",
+      },
       {
         id: 8,
         title: "Customizable Dashboards",
-        icon: "dashboard",
+        icon: "/dashboard.png", // dashboard customization icon
         position: "bottom-center",
       },
     ],
@@ -170,14 +204,15 @@ export default function BenefitsSection() {
             <div className="relative rounded-full h-16 px-8 flex items-center gap-4 shadow-lg border border-white/10 overflow-hidden bg-black/80 backdrop-blur-sm min-w-[180px]">
               {/* Icon container */}
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                  <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center p-1">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center p-1">
                     <Image
-                      src="/favicon-32x32.png"
-                      alt="FloNeo Logo"
-                      width={20}
-                      height={20}
+                      src={benefit.icon}
+                      alt={benefit.title}
+                      width={24}
+                      height={24}
                       className="object-contain"
+                      priority
                     />
                   </div>
                 </div>
@@ -208,7 +243,7 @@ export default function BenefitsSection() {
           >
             <div className="relative rounded-full h-16 px-6 flex items-center gap-4 shadow-lg border border-white/10 overflow-hidden bg-black/80 backdrop-blur-sm w-full">
               {/* Icon container */}
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 flex items-center">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center">
                   <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center p-1">
                     <Image
@@ -223,9 +258,11 @@ export default function BenefitsSection() {
               </div>
 
               {/* Text content */}
-              <span className="text-white text-sm font-medium flex-1 text-center">
-                {benefit.title}
-              </span>
+              <div className="flex-1 flex items-center justify-center">
+                <span className="text-white text-sm font-medium">
+                  {benefit.title}
+                </span>
+              </div>
             </div>
           </motion.div>
         ))}

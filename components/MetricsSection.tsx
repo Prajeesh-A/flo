@@ -65,11 +65,11 @@ interface MetricBox {
 const fallbackMetricsData: MetricBox[] = [
   {
     id: 1,
-    value: "3.5",
-    suffix: "M",
-    label: "trusted users",
+    value: "68",
+    suffix: "%",
+    label: "Faster Process Developments",
     description:
-      "Our users healthily people take control of their financial and make smarter financial decisions.",
+      "Teams build, test, and roll out workflows 68% faster compared to traditional development.",
     color: "#FFC107", // Yellow
     position: {
       top: "8%",
@@ -78,11 +78,11 @@ const fallbackMetricsData: MetricBox[] = [
   },
   {
     id: 2,
-    value: "85",
+    value: "72",
     suffix: "%",
-    label: "retention rate",
+    label: "Less Operational Overheads",
     description:
-      "85% of our users stay engaged with the app, relying on its features to track spending.",
+      "By automating approvals, handoffs, and reporting, organizations cut repetitive manual work by 72%. FloNeo optimizes team time and resources — allowing talent to focus on innovation, not administration.",
     color: "#00D084", // Green
     position: {
       top: "30%",
@@ -91,11 +91,11 @@ const fallbackMetricsData: MetricBox[] = [
   },
   {
     id: 3,
-    value: "4.8",
-    suffix: "+",
-    label: "average rating",
+    value: "99",
+    suffix: "%",
+    label: "Accuracy and Compliance",
     description:
-      "Our users consistently rate our app highly for its ease of use and powerful financial insights.",
+      "Each workflow built on FloNeo runs with 99.3% data accuracy across integrated systems. Every action is tracked, logged, and audit-ready — ensuring full governance without friction.",
     color: "#FF1493", // Pink/Magenta
     position: {
       bottom: "11%",
@@ -223,40 +223,44 @@ const MetricCard = ({
       }}
     >
       {/* Counter Value */}
-      <div className="mb-1">
-        <span
-          className="text-6xl md:text-7xl text-white"
+      <div className="mb-1 flex flex-col items-start">
+        <div className="mb-2 w-full flex justify-between items-end">
+          <span
+            className="text-6xl md:text-7xl text-white"
+            style={{
+              fontFamily: "'Poppins'",
+              fontWeight: 300,
+            }}
+          >
+            {formattedValue}
+            {metric.suffix}
+          </span>
+
+          <span
+            className="text-lg text-white text-right"
+            style={{
+              fontFamily: "'Poppins'",
+              fontWeight: 400,
+              fontSize: 23
+            }}
+          >
+            {metric.label}
+          </span>
+        </div>
+
+        {/* Description */}
+        <p
+          className="text-xs md:text-sm text-white/90 leading-relaxed mt-8"
           style={{
-            fontFamily: "'Poppins',  ",
+            fontFamily: "'Poppins'",
             fontWeight: 300,
+            fontSize: 22
           }}
         >
-          {formattedValue}
-          {metric.suffix}
-        </span>
+          {metric.description}
+        </p>
       </div>
-
-      {/* Label */}
-      <h3
-        className="text-base md:text-lg text-white mb-3 text-right"
-        style={{
-          fontFamily: "'Poppins',  ",
-          fontWeight: 300,
-        }}
-      >
-        {metric.label}
-      </h3>
-
-      {/* Description */}
-      <p
-        className="text-xs md:text-sm text-white/90 leading-relaxed"
-        style={{
-          fontFamily: "'Poppins',  ",
-          fontWeight: 300,
-        }}
-      >
-        {metric.description}
-      </p>
+        
     </motion.div>
   );
 };

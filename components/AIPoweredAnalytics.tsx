@@ -85,13 +85,13 @@ export default function AIPoweredAnalytics() {
     metric_4_color: "#60A5FA", // blue-400
     feature_1_title: "Predict Financial Trends",
     feature_1_description:
-      "Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth.",
+      "Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve.",
     feature_2_title: "Enhance Operational Strategy",
     feature_2_description:
-      "floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter.",
+      "floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks.",
     feature_3_title: "Real-time Monitoring",
     feature_3_description:
-      "Monitor your systems and processes in real-time with advanced analytics and instant alerts for optimal performance.",
+      "Monitor your systems and processes in real-time with advanced analytics",
     is_visible: true,
   };
 
@@ -174,132 +174,377 @@ export default function AIPoweredAnalytics() {
   return (
     <section id="ai-analytics" ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        {/* Section Header */}
-        <motion.div
-          initial={{ y: -30, opacity: 0 }}
-          animate={isInView ? { y: 0, opacity: 1 } : {}}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center mb-16"
-        >
-          <h2
-            className="text-3xl md:text-4xl font-bold mb-4"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 700,
-              color: "#00FF3C",
-              letterSpacing: "0.5px",
-            }}
-          >
-            {loading ? "Loading..." : data.title}
-          </h2>
-
-          <RichTextRenderer
-            content={loading ? "Loading description..." : data.description}
-            fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
-            className="text-sm md:text-base leading-relaxed max-w-2xl mx-auto"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 400,
-              color: "#444444",
-              lineHeight: "1.5",
-            }}
-          />
-        </motion.div>
-
-        {/* 2x2 Grid Layout for Circles - Using API Data */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-10 gap-y-6 sm:gap-y-8 items-center max-w-4xl mx-auto mb-16">
-          {metrics.results &&
-            metrics.results.slice(0, 4).map((metric, index) => {
-              const colors = [
-                "bg-pink-400",
-                "bg-green-400",
-                "bg-yellow-400",
-                "bg-blue-400",
-              ];
-              return (
-                <motion.div
-                  key={metric.id}
-                  initial={{ scale: 0, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{
-                    duration: 0.6,
-                    delay: 0.1 + index * 0.1,
-                    type: "spring",
-                    stiffness: 100,
+        {/* Desktop Layout - Hidden on Mobile */}
+        <div className="hidden lg:block">
+          {/* First row */}
+          <div className="flex ">
+            <div className="flex-1 flex items-center justify-center">
+              <motion.div
+                initial={{ y: -30, opacity: 0 }}
+                animate={isInView ? { y: 0, opacity: 1 } : {}}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="text-left mb-16"
+              >
+                <h2
+                  className="text-3xl md:text-4xl font-bold mb-4"
+                  style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 700,
+                    color: "#00FF3C",
+                    letterSpacing: "0.5px",
                   }}
                 >
-                  <CircularMetric
-                    percentage={`${metric.value}${metric.suffix || ""}`}
-                    description={metric.description}
-                    color={colors[index] || "bg-gray-400"}
-                  />
-                </motion.div>
-              );
-            })}
+                  {loading ? "Loading..." : data.title}
+                </h2>
+
+                <RichTextRenderer
+                  content={loading ? "Loading description..." : data.description}
+                  fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
+                  className="text-sm md:text-base leading-relaxed max-w-2xl mx-auto"
+                  style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 400,
+                    color: "#444444",
+                    lineHeight: "1.5",
+                  }}
+                />
+              </motion.div>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+            </div>
+            <div className="flex-1 flex items-center justify-center pb-4 mb-6">
+              <motion.div
+                key={metrics.results[0].id}
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.1 + 0 * 0.1,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+              >
+                <CircularMetric
+                  percentage={`${metrics.results[0].value}${metrics.results[0].suffix || ""}`}
+                  description={metrics.results[0].description}
+                  color={"bg-green-400"}
+                />
+              </motion.div>
+            </div>
+          </div>
+          {/* Second Row */}
+          <div className="flex ">
+            <div className="flex-1 flex items-center justify-center mb-4 pb-4">
+              <motion.div
+                key={metrics.results[1].id}
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.1 + 1 * 0.1,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+              >
+                <CircularMetric
+                  percentage={`${metrics.results[1].value}${metrics.results[1].suffix || ""}`}
+                  description={metrics.results[1].description}
+                  color={"bg-pink-400"}
+                />
+              </motion.div>
+            </div>
+            <div className="flex-1 flex items-center justify-center ">
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="text-center max-w-2xl mx-auto mb-16"
+              >
+                <h3
+                  className="text-xl md:text-2xl font-semibold mt-8"
+                  style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 600,
+                    color: "#333333",
+                  }}
+                >
+                  {data.feature_1_title}
+                </h3>
+                <RichTextRenderer
+                  content={data.feature_1_description}
+                  fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
+                  className="text-sm md:text-base leading-relaxed mt-4"
+                  style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 400,
+                    color: "#555555",
+                    lineHeight: "1.5",
+                  }}
+                />
+              </motion.div>
+            </div>
+            <div className="flex-1 flex items-center justify-center mb-4 pb-4">
+              <motion.div
+                key={metrics.results[2].id}
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.1 + 1 * 0.1,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+              >
+                <CircularMetric
+                  percentage={`${metrics.results[2].value}${metrics.results[2].suffix || ""}`}
+                  description={metrics.results[2].description}
+                  color={"bg-blue-400"}
+                />
+              </motion.div>
+            </div>
+          </div>
+          {/* Third Row */}
+          <div className="flex ">
+            <div className="flex-1 flex items-center justify-center mt-4 pt-4">
+              <motion.div
+                key={metrics.results[3].id}
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.1 + 2 * 0.1,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+              >
+                <CircularMetric
+                  percentage={`${metrics.results[3].value}${metrics.results[3].suffix || ""}`}
+                  description={metrics.results[3].description}
+                  color={"bg-yellow-400"}
+                />
+              </motion.div>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+            </div>
+            <div className="flex-1 flex items-center justify-center ">
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="text-right max-w-2xl mx-auto "
+              >
+                <h3
+                  className="text-xl md:text-2xl font-semibold mb-4"
+                  style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 600,
+                    color: "#3AAFFF",
+                  }}
+                >
+                  {data.feature_2_title}
+                </h3>
+                <RichTextRenderer
+                  content={data.feature_2_description}
+                  fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
+                  className="text-sm md:text-base leading-relaxed"
+                  style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 400,
+                    color: "#555555",
+                    lineHeight: "1.5",
+                  }}
+                />
+              </motion.div>
+            </div>
+          </div>
         </div>
 
-        {/* Center Content - Predict Financial Trends */}
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-center max-w-2xl mx-auto mb-16"
-        >
-          <h3
-            className="text-xl md:text-2xl font-semibold mb-4"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 600,
-              color: "#333333",
-            }}
+        {/* Mobile Layout - Hidden on Desktop */}
+        <div className="lg:hidden space-y-8">
+          {/* Text 1 */}
+          <motion.div
+            initial={{ y: -30, opacity: 0 }}
+            animate={isInView ? { y: 0, opacity: 1 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center"
           >
-            {data.feature_1_title}
-          </h3>
-          <RichTextRenderer
-            content={data.feature_1_description}
-            fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
-            className="text-sm md:text-base leading-relaxed"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 400,
-              color: "#555555",
-              lineHeight: "1.5",
-            }}
-          />
-        </motion.div>
+            <h2
+              className="text-3xl font-bold mb-4"
+              style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 700,
+                color: "#00FF3C",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {loading ? "Loading..." : data.title}
+            </h2>
 
-        {/* Bottom Content - Enhance Operational Strategy */}
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center max-w-2xl mx-auto"
-        >
-          <h3
-            className="text-xl md:text-2xl font-semibold mb-4"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 600,
-              color: "#3AAFFF",
+            <RichTextRenderer
+              content={loading ? "Loading description..." : data.description}
+              fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
+              className="text-sm leading-relaxed"
+              style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 400,
+                color: "#444444",
+                lineHeight: "1.5",
+              }}
+            />
+          </motion.div>
+
+          {/* Circle 1 */}
+          <motion.div
+            key={metrics.results[0].id}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.1,
+              type: "spring",
+              stiffness: 100,
             }}
+            className="flex justify-center"
           >
-            {data.feature_2_title}
-          </h3>
-          <RichTextRenderer
-            content={data.feature_2_description}
-            fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
-            className="text-sm md:text-base leading-relaxed"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 400,
-              color: "#555555",
-              lineHeight: "1.5",
+            <CircularMetric
+              percentage={`${metrics.results[0].value}${metrics.results[0].suffix || ""}`}
+              description={metrics.results[0].description}
+              color={"bg-green-400"}
+            />
+          </motion.div>
+
+          {/* Circle 2 */}
+          <motion.div
+            key={metrics.results[1].id}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.2,
+              type: "spring",
+              stiffness: 100,
             }}
-          />
-        </motion.div>
+            className="flex justify-center"
+          >
+            <CircularMetric
+              percentage={`${metrics.results[1].value}${metrics.results[1].suffix || ""}`}
+              description={metrics.results[1].description}
+              color={"bg-pink-400"}
+            />
+          </motion.div>
+
+          {/* Text 2 */}
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-center"
+          >
+            <h3
+              className="text-xl font-semibold mb-4"
+              style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 600,
+                color: "#333333",
+              }}
+            >
+              {data.feature_1_title}
+            </h3>
+            <RichTextRenderer
+              content={data.feature_1_description}
+              fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
+              className="text-sm leading-relaxed"
+              style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 400,
+                color: "#555555",
+                lineHeight: "1.5",
+              }}
+            />
+          </motion.div>
+
+          {/* Circle 3 */}
+          <motion.div
+            key={metrics.results[3].id}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.5,
+              type: "spring",
+              stiffness: 100,
+            }}
+            className="flex justify-center"
+          >
+            <CircularMetric
+              percentage={`${metrics.results[3].value}${metrics.results[3].suffix || ""}`}
+              description={metrics.results[3].description}
+              color={"bg-yellow-400"}
+            />
+          </motion.div>
+
+          {/* Circle 4 */}
+          <motion.div
+            key={metrics.results[2].id}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.4,
+              type: "spring",
+              stiffness: 100,
+            }}
+            className="flex justify-center"
+          >
+            <CircularMetric
+              percentage={`${metrics.results[2].value}${metrics.results[2].suffix || ""}`}
+              description={metrics.results[2].description}
+              color={"bg-blue-400"}
+            />
+          </motion.div>
+
+          {/* Text 3 */}
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="text-center"
+          >
+            <h3
+              className="text-xl font-semibold mb-4"
+              style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 600,
+                color: "#3AAFFF",
+              }}
+            >
+              {data.feature_2_title}
+            </h3>
+            <RichTextRenderer
+              content={data.feature_2_description}
+              fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
+              className="text-sm leading-relaxed"
+              style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 400,
+                color: "#555555",
+                lineHeight: "1.5",
+              }}
+            />
+          </motion.div>
+        </div>
       </div>
     </section>
   );
