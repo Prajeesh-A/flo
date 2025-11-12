@@ -33,26 +33,34 @@ CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if os.ge
 # Add common frontend domains for development
 if not CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS = [
+        'https://floneo.co',
+        'https://www.floneo.co',
         'https://floneo.netlify.app',
         'https://flo-red.vercel.app',
         'http://localhost:3000',
         'http://localhost:3001',
         'http://localhost:3002',
+        'http://localhost:3003',
         'http://127.0.0.1:3000',
         'http://127.0.0.1:3001',
-        'http://127.0.0.1:3002'
+        'http://127.0.0.1:3002',
+        'http://127.0.0.1:3003'
     ]
 
 if not CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS = [
+        'https://floneo.co',
+        'https://www.floneo.co',
         'https://floneo.netlify.app',
         'https://flo-red.vercel.app',
         'http://localhost:3000',
         'http://localhost:3001',
         'http://localhost:3002',
+        'http://localhost:3003',
         'http://127.0.0.1:3000',
         'http://127.0.0.1:3001',
-        'http://127.0.0.1:3002'
+        'http://127.0.0.1:3002',
+        'http://127.0.0.1:3003'
     ]
 
 # Security: Only allow specific origins (removed CORS_ALLOW_ALL_ORIGINS for security)
