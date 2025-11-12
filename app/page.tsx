@@ -22,7 +22,6 @@ import ContactSection from "@/components/ContactSection";
 import SocialSection from "@/components/SocialSection";
 import FooterSection from "@/components/FooterSection";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
-import ApiDebugger from "@/components/ApiDebugger";
 import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 import { api, useApiData } from "@/lib/api";
 import { useNavigationItems } from "@/lib/api-swr";
@@ -500,10 +499,6 @@ function HomePageContent() {
           {/* About Us (scroll-triggered tablet) */}
         </div>
       </section>
-
-      {/* API Debugger - Temporary for debugging */}
-      <ApiDebugger />
-
       <AboutTablet />
       {/* Architecting Excellence Section */}
       <ArchitectingExcellence />

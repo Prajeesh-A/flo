@@ -2,7 +2,8 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { api, useApiData } from "@/lib/api";
+import { api } from "@/lib/api";
+import { useClientApiData } from "@/lib/useClientApiData";
 import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
 
 // Helper function to extract YouTube video ID
@@ -23,12 +24,13 @@ function getYouTubeVideoId(url: string): string {
  * - Single-direction animation for better UX
  */
 export default function AboutTablet() {
-  // Fetch section data from API
+  // Fetch section data from API - only on client side
   const {
     data: sectionData,
     loading,
     error,
-  } = useApiData(api.getAboutTabletSection);
+    isClient,
+  } = useClientApiData(api.getAboutTabletSection);
 
   // Fallback data
   const fallbackData = {
@@ -51,6 +53,7 @@ export default function AboutTablet() {
 
   // Debug logging
   console.log("AboutTablet Debug:", {
+    isClient,
     sectionData,
     loading,
     error,
