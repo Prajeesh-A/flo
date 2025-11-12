@@ -25,12 +25,7 @@ function getYouTubeVideoId(url: string): string {
  */
 export default function AboutTablet() {
   // Fetch section data from API - only on client side
-  const {
-    data: sectionData,
-    loading,
-    error,
-    isClient,
-  } = useClientApiData(api.getAboutTabletSection);
+  const { data: sectionData } = useClientApiData(api.getAboutTabletSection);
 
   // Fallback data
   const fallbackData = {
@@ -50,17 +45,6 @@ export default function AboutTablet() {
     video_loop: true,
     video_controls: false,
   };
-
-  // Debug logging
-  console.log("AboutTablet Debug:", {
-    isClient,
-    sectionData,
-    loading,
-    error,
-    hasApiData: !!sectionData,
-    apiVideoUrl: sectionData?.video_url,
-    fallbackVideoUrl: fallbackData.video_url,
-  });
 
   // Use API data or fallback
   const data = sectionData || fallbackData;
