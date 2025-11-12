@@ -46,17 +46,7 @@ function HomePageContent() {
     error: heroError,
   } = useApiData(api.getHeroSection);
 
-  // Debug logging
-  useEffect(() => {
-    console.log("API Debug Info:");
-    console.log(
-      "- API URL:",
-      process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api"
-    );
-    console.log("- Hero Loading:", heroLoading);
-    console.log("- Hero Error:", heroError);
-    console.log("- Hero Data:", heroData);
-  }, [heroLoading, heroError, heroData]);
+  // Debug logging removed for production
 
   // Fetch Navigation Items from Django API with SWR caching
   const {
@@ -212,7 +202,11 @@ function HomePageContent() {
             <div className="flex items-center justify-between h-full px-8">
               {/* Logo */}
               <div className="flex items-center gap-2 relative z-50">
-                <Link href="/" className="w-10 h-10 logo-rotate block" style={{ transform: `rotate(${logoRotation}deg)` }}>
+                <Link
+                  href="/"
+                  className="w-10 h-10 logo-rotate block"
+                  style={{ transform: `rotate(${logoRotation}deg)` }}
+                >
                   <Image
                     src="/logo.png"
                     alt="Floneo Logo"
@@ -226,8 +220,8 @@ function HomePageContent() {
               {/* Navigation Links */}
               <div className="flex items-center gap-8">
                 {navItems
-                  .filter((item:any) => item.is_active)
-                  .map((item:any, index:number) => (
+                  .filter((item: any) => item.is_active)
+                  .map((item: any, index: number) => (
                     <a
                       key={index}
                       href={item.href}
@@ -307,8 +301,8 @@ function HomePageContent() {
             <div className="bg-white/98 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/30">
               <div className="flex flex-col gap-2">
                 {navItems
-                  .filter((item:any) => item.is_active)
-                  .map((item:any, index:number) => (
+                  .filter((item: any) => item.is_active)
+                  .map((item: any, index: number) => (
                     <a
                       key={index}
                       href={item.href}
@@ -427,7 +421,8 @@ function HomePageContent() {
               ) : heroError ? (
                 <p>
                   FloNeo's Low-Code/No-Code platform turns manual processes into
-                  instant, powerful applications.It gives teams the agility to build and deploy real business solutions in hours, not months.
+                  instant, powerful applications.It gives teams the agility to
+                  build and deploy real business solutions in hours, not months.
                 </p>
               ) : (
                 <RichTextRenderer

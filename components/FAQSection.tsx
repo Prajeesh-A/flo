@@ -124,21 +124,26 @@ export default function FAQSection() {
     const fetchFAQs = async () => {
       try {
         setFaqItemsLoading(true);
-        const response = await fetch("http://localhost:8000/api/faq-items/", {
-          signal: AbortSignal.timeout(5000) // Add timeout
+        const API_BASE_URL =
+          process.env.NEXT_PUBLIC_API_URL ||
+          "https://flo-do2v.onrender.com/api";
+        const response = await fetch(`${API_BASE_URL}/faq-items/`, {
+          signal: AbortSignal.timeout(5000), // Add timeout
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log("🎯 DIRECT API RESPONSE:", data);
         setFaqItems(data.results || []);
         setFaqItemsError("");
       } catch (error) {
         console.error("❌ FAQ API Error:", error);
-        setFaqItemsError(error instanceof Error ? error.message : "Unknown error");
+        setFaqItemsError(
+          error instanceof Error ? error.message : "Unknown error"
+        );
         setFaqItems([]); // This triggers fallback
       } finally {
         setFaqItemsLoading(false); // This MUST run
@@ -309,7 +314,11 @@ export default function FAQSection() {
                 {finalFaqItems
                   .filter((_: any, index: number) => index % 2 === 0)
                   .map((faq: any, index: number) => (
-                    <FAQCard key={faq.id || index * 2} faq={faq} index={index * 2} />
+                    <FAQCard
+                      key={faq.id || index * 2}
+                      faq={faq}
+                      index={index * 2}
+                    />
                   ))}
               </div>
 
@@ -318,7 +327,11 @@ export default function FAQSection() {
                 {finalFaqItems
                   .filter((_: any, index: number) => index % 2 === 1)
                   .map((faq: any, index: number) => (
-                    <FAQCard key={faq.id || index * 2 + 1} faq={faq} index={index * 2 + 1} />
+                    <FAQCard
+                      key={faq.id || index * 2 + 1}
+                      faq={faq}
+                      index={index * 2 + 1}
+                    />
                   ))}
               </div>
             </>

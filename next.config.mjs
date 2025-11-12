@@ -3,10 +3,10 @@ const nextConfig = {
   output: "export",
   trailingSlash: true,
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false, // Enable ESLint checks for better code quality
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false, // Enable TypeScript checks for better code quality
   },
   images: {
     unoptimized: true, // Required for static export

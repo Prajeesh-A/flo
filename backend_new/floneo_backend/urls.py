@@ -18,16 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.http import JsonResponse
-
-def health_check(request):
-    return JsonResponse({"status": "healthy", "service": "floneo-backend"})
+from content.health import health_check, ready_check, live_check
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('content.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    path('healthz', health_check, name='health_check'),
+    # Health check endpoints
+    path('health/', health_check, name='health_check'),
+    path('healthz/', health_check, name='health_check_k8s'),  # Kubernetes style
+    path('ready/', ready_check, name='ready_check'),
+    path('live/', live_check, name='live_check'),
 ]
 
 # Serve media files during development

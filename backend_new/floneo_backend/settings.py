@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env helpers
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE_THIS_IN_PROD")
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key-change-in-production-immediately")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else ["*"]
 
 # CSRF / CORS
@@ -36,7 +36,11 @@ if not CSRF_TRUSTED_ORIGINS:
         'https://floneo.netlify.app',
         'https://flo-red.vercel.app',
         'http://localhost:3000',
-        'http://127.0.0.1:3000'
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3001',
+        'http://127.0.0.1:3002'
     ]
 
 if not CORS_ALLOWED_ORIGINS:
@@ -44,11 +48,15 @@ if not CORS_ALLOWED_ORIGINS:
         'https://floneo.netlify.app',
         'https://flo-red.vercel.app',
         'http://localhost:3000',
-        'http://127.0.0.1:3000'
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3001',
+        'http://127.0.0.1:3002'
     ]
 
-# Temporary: Allow all origins for testing (remove in production)
-CORS_ALLOW_ALL_ORIGINS = True
+# Security: Only allow specific origins (removed CORS_ALLOW_ALL_ORIGINS for security)
+# CORS_ALLOW_ALL_ORIGINS = True  # Disabled for security - use CORS_ALLOWED_ORIGINS instead
 
 
 # Application definition
@@ -187,8 +195,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.AllowAny',  # TODO: Implement proper authentication
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',
+        'user': '1000/hour'
+    },
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
@@ -260,6 +276,16 @@ LOGGING = {
         'content.utils': {
             'handlers': ['console'],
             'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+        'django.security': {
+            'handlers': ['console'],
+            'level': 'WARNING',
             'propagate': True,
         },
         'django': {
