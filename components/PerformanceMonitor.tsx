@@ -32,12 +32,11 @@ export default function PerformanceMonitor() {
             serverResponse: navigation.responseEnd - navigation.requestStart,
 
             // Page timing
-            domInteractive:
-              navigation.domInteractive - navigation.navigationStart,
-            domComplete: navigation.domComplete - navigation.navigationStart,
+            domInteractive: navigation.domInteractive - navigation.fetchStart,
+            domComplete: navigation.domComplete - navigation.fetchStart,
 
             // Total page load time
-            totalLoadTime: navigation.loadEventEnd - navigation.navigationStart,
+            totalLoadTime: navigation.loadEventEnd - navigation.fetchStart,
           };
 
           // Performance metrics tracked (console.log removed for production)
@@ -61,10 +60,10 @@ export default function PerformanceMonitor() {
         const apiCalls = performance
           .getEntriesByType("resource")
           .filter(
-            (entry: PerformanceResourceTiming) =>
+            (entry) =>
               entry.name.includes("/api/") ||
               entry.name.includes("flo-do2v.onrender.com")
-          );
+          ) as PerformanceResourceTiming[];
 
         if (apiCalls.length > 0) {
           const apiMetrics = apiCalls.map(

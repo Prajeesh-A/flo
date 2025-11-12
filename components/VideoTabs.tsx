@@ -178,7 +178,9 @@ export default function VideoTabs({ tabs = [], initialId }: VideoTabsProps) {
             <button
               key={t.id}
               role="tab"
-              ref={(el) => (btnRefs.current[t.id] = el)}
+              ref={(el) => {
+                btnRefs.current[t.id] = el;
+              }}
               aria-selected={selected}
               aria-controls={`panel-${t.id}`}
               id={`tab-${t.id}`}

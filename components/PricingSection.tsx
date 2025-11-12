@@ -196,7 +196,7 @@ export default function PricingSection() {
   ];
 
   // Transform API data to component format
-  const transformedPlans =
+  const transformedPlans: PricingCardProps[] =
     pricingPlans?.map((plan, index) => ({
       title: plan.name,
       price: `$${plan.price}`,
@@ -205,8 +205,10 @@ export default function PricingSection() {
       features: plan.features?.map((f) => f.feature_text) || [],
       buttonText: plan.cta_text,
       buttonStyle: plan.is_popular
-        ? "success"
-        : ((index === 0 ? "primary" : "secondary") as const),
+        ? ("success" as const)
+        : index === 0
+        ? ("primary" as const)
+        : ("secondary" as const),
       isPopular: plan.is_popular,
     })) || fallbackPlans;
 

@@ -59,7 +59,6 @@ export default function AboutTablet() {
 
   // Track if the section is in view for auto-pause functionality
   const isInView = useInView(containerRef, {
-    threshold: 0.3, // Section needs to be 30% visible
     margin: "-10% 0px -10% 0px", // Add some margin for better UX
   });
 

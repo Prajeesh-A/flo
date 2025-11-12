@@ -198,20 +198,15 @@ export default function AIPoweredAnalytics() {
                 </h2>
 
                 <RichTextRenderer
-                  content={loading ? "Loading description..." : data.description}
+                  content={
+                    loading ? "Loading description..." : data.description
+                  }
                   fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
-                  className="text-sm md:text-base leading-relaxed max-w-2xl mx-auto"
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 400,
-                    color: "#444444",
-                    lineHeight: "1.5",
-                  }}
+                  className="text-sm md:text-base leading-relaxed max-w-2xl mx-auto text-gray-600"
                 />
               </motion.div>
             </div>
-            <div className="flex-1 flex items-center justify-center">
-            </div>
+            <div className="flex-1 flex items-center justify-center"></div>
             <div className="flex-1 flex items-center justify-center pb-4 mb-6">
               <motion.div
                 key={metrics.results[0].id}
@@ -226,7 +221,9 @@ export default function AIPoweredAnalytics() {
                 }}
               >
                 <CircularMetric
-                  percentage={`${metrics.results[0].value}${metrics.results[0].suffix || ""}`}
+                  percentage={`${metrics.results[0].value}${
+                    metrics.results[0].suffix || ""
+                  }`}
                   description={metrics.results[0].description}
                   color={"bg-green-400"}
                 />
@@ -249,7 +246,9 @@ export default function AIPoweredAnalytics() {
                 }}
               >
                 <CircularMetric
-                  percentage={`${metrics.results[1].value}${metrics.results[1].suffix || ""}`}
+                  percentage={`${metrics.results[1].value}${
+                    metrics.results[1].suffix || ""
+                  }`}
                   description={metrics.results[1].description}
                   color={"bg-pink-400"}
                 />
@@ -276,13 +275,7 @@ export default function AIPoweredAnalytics() {
                 <RichTextRenderer
                   content={data.feature_1_description}
                   fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
-                  className="text-sm md:text-base leading-relaxed mt-4"
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 400,
-                    color: "#555555",
-                    lineHeight: "1.5",
-                  }}
+                  className="text-sm md:text-base leading-relaxed mt-4 text-gray-600"
                 />
               </motion.div>
             </div>
@@ -300,7 +293,9 @@ export default function AIPoweredAnalytics() {
                 }}
               >
                 <CircularMetric
-                  percentage={`${metrics.results[2].value}${metrics.results[2].suffix || ""}`}
+                  percentage={`${metrics.results[2].value}${
+                    metrics.results[2].suffix || ""
+                  }`}
                   description={metrics.results[2].description}
                   color={"bg-blue-400"}
                 />
@@ -323,14 +318,15 @@ export default function AIPoweredAnalytics() {
                 }}
               >
                 <CircularMetric
-                  percentage={`${metrics.results[3].value}${metrics.results[3].suffix || ""}`}
+                  percentage={`${metrics.results[3].value}${
+                    metrics.results[3].suffix || ""
+                  }`}
                   description={metrics.results[3].description}
                   color={"bg-yellow-400"}
                 />
               </motion.div>
             </div>
-            <div className="flex-1 flex items-center justify-center">
-            </div>
+            <div className="flex-1 flex items-center justify-center"></div>
             <div className="flex-1 flex items-center justify-center ">
               <motion.div
                 initial={{ y: 30, opacity: 0 }}
@@ -352,13 +348,7 @@ export default function AIPoweredAnalytics() {
                 <RichTextRenderer
                   content={data.feature_2_description}
                   fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
-                  className="text-sm md:text-base leading-relaxed"
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 400,
-                    color: "#555555",
-                    lineHeight: "1.5",
-                  }}
+                  className="text-sm md:text-base leading-relaxed text-gray-600"
                 />
               </motion.div>
             </div>
@@ -389,13 +379,7 @@ export default function AIPoweredAnalytics() {
             <RichTextRenderer
               content={loading ? "Loading description..." : data.description}
               fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
-              className="text-sm leading-relaxed"
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 400,
-                color: "#444444",
-                lineHeight: "1.5",
-              }}
+              className="text-sm leading-relaxed text-gray-600"
             />
           </motion.div>
 
@@ -414,7 +398,9 @@ export default function AIPoweredAnalytics() {
             className="flex justify-center"
           >
             <CircularMetric
-              percentage={`${metrics.results[0].value}${metrics.results[0].suffix || ""}`}
+              percentage={`${metrics.results[0].value}${
+                metrics.results[0].suffix || ""
+              }`}
               description={metrics.results[0].description}
               color={"bg-green-400"}
             />
@@ -435,7 +421,9 @@ export default function AIPoweredAnalytics() {
             className="flex justify-center"
           >
             <CircularMetric
-              percentage={`${metrics.results[1].value}${metrics.results[1].suffix || ""}`}
+              percentage={`${metrics.results[1].value}${
+                metrics.results[1].suffix || ""
+              }`}
               description={metrics.results[1].description}
               color={"bg-pink-400"}
             />
@@ -462,13 +450,7 @@ export default function AIPoweredAnalytics() {
             <RichTextRenderer
               content={data.feature_1_description}
               fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
-              className="text-sm leading-relaxed"
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 400,
-                color: "#555555",
-                lineHeight: "1.5",
-              }}
+              className="text-sm leading-relaxed text-gray-600"
             />
           </motion.div>
 
@@ -487,7 +469,9 @@ export default function AIPoweredAnalytics() {
             className="flex justify-center"
           >
             <CircularMetric
-              percentage={`${metrics.results[3].value}${metrics.results[3].suffix || ""}`}
+              percentage={`${metrics.results[3].value}${
+                metrics.results[3].suffix || ""
+              }`}
               description={metrics.results[3].description}
               color={"bg-yellow-400"}
             />
@@ -508,7 +492,9 @@ export default function AIPoweredAnalytics() {
             className="flex justify-center"
           >
             <CircularMetric
-              percentage={`${metrics.results[2].value}${metrics.results[2].suffix || ""}`}
+              percentage={`${metrics.results[2].value}${
+                metrics.results[2].suffix || ""
+              }`}
               description={metrics.results[2].description}
               color={"bg-blue-400"}
             />
@@ -535,13 +521,7 @@ export default function AIPoweredAnalytics() {
             <RichTextRenderer
               content={data.feature_2_description}
               fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
-              className="text-sm leading-relaxed"
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 400,
-                color: "#555555",
-                lineHeight: "1.5",
-              }}
+              className="text-sm leading-relaxed text-gray-600"
             />
           </motion.div>
         </div>
