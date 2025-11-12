@@ -39,7 +39,7 @@ export default function AboutTablet() {
     animation_duration: 1.0,
     background_color: "#FFFFFF",
     text_color: "#000000",
-    video_url: "",
+    video_url: "https://youtu.be/9pNIZ0hx7VE?si=g8zn45IbQRXx04fS",
     video_file_url: "",
     poster_image_url: "",
     // Video player settings - unmuted by default as requested
@@ -48,6 +48,16 @@ export default function AboutTablet() {
     video_loop: true,
     video_controls: false,
   };
+
+  // Debug logging
+  console.log("AboutTablet Debug:", {
+    sectionData,
+    loading,
+    error,
+    hasApiData: !!sectionData,
+    apiVideoUrl: sectionData?.video_url,
+    fallbackVideoUrl: fallbackData.video_url,
+  });
 
   // Use API data or fallback
   const data = sectionData || fallbackData;
