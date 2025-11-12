@@ -126,10 +126,11 @@ const StackingCard = ({
           }}
         >
           {/* Image Container */}
-          <div 
+          <div
             className="w-full md:w-2/5 flex-shrink-0 relative"
             style={{
-              backgroundColor: imageError || !imageUrl ? card.color : 'transparent'
+              backgroundColor:
+                imageError || !imageUrl ? card.color : "transparent",
             }}
           >
             {imageUrl && !imageError ? (
@@ -138,14 +139,14 @@ const StackingCard = ({
                 alt={card.title}
                 className="w-full h-full object-cover aspect-square md:aspect-auto"
                 onError={() => setImageError(true)}
-                style={{ minHeight: '300px' }}
+                style={{ minHeight: "300px" }}
               />
             ) : (
-              <div 
+              <div
                 className="w-full h-full flex items-center justify-center aspect-square md:aspect-auto"
-                style={{ 
+                style={{
                   backgroundColor: card.color,
-                  minHeight: '300px'
+                  minHeight: "300px",
                 }}
               >
                 <div className="text-white text-6xl font-bold opacity-30">
@@ -164,7 +165,7 @@ const StackingCard = ({
                 fontFamily: "'Poppins', sans-serif",
                 fontWeight: 300,
                 lineHeight: 1.3,
-                letterSpacing: '-0.02em',
+                letterSpacing: "-0.02em",
               }}
             >
               {card.title}
@@ -204,7 +205,8 @@ export default function ServicesScrollSection() {
       title: "Seamless Workflow Integration",
       description:
         "Effortlessly design, connect, and automate workflows across teams and systems. With floneo's drag-and-drop builder and AI-powered recommendations, your operations run smoother without IT bottlenecks.",
-      image: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=800&h=800&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=800&h=800&fit=crop",
       color: "#0066ff",
     },
     {
@@ -212,7 +214,8 @@ export default function ServicesScrollSection() {
       title: "Data Analytics",
       description:
         "Transform your data into actionable insights with powerful analytics tools.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=800&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=800&fit=crop",
       color: "#2ecc71",
     },
     {
@@ -220,7 +223,8 @@ export default function ServicesScrollSection() {
       title: "Workflow Management",
       description:
         "Streamline your business processes with intelligent workflow automation.",
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=800&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=800&fit=crop",
       color: "#9b59b6",
     },
     {
@@ -228,7 +232,8 @@ export default function ServicesScrollSection() {
       title: "Integration Platform",
       description:
         "Connect all your tools and systems with seamless integrations.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=800&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=800&fit=crop",
       color: "#FFC107",
     },
   ];
@@ -320,7 +325,7 @@ export default function ServicesScrollSection() {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [scrollProgress, servicesData.length]);
+  }, [servicesData.length]);
 
   // Lock body scroll when in animation
   useEffect(() => {
@@ -353,7 +358,8 @@ export default function ServicesScrollSection() {
             All in One Place
           </h2>
           <p className="text-gray-400 text-lg font-light">
-            Discover how we help you build, automate, and scale your ideas into applications without juggling between different tabs.
+            Discover how we help you build, automate, and scale your ideas into
+            applications without juggling between different tabs.
           </p>
         </div>
 

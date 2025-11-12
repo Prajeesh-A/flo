@@ -108,10 +108,15 @@ function HomePageContent() {
 
   // Loading animation effect
   useEffect(() => {
-    // Loading rotation animation
-    const loadingInterval = setInterval(() => {
+    let animationId: number;
+
+    // Loading rotation animation using requestAnimationFrame for better performance
+    const animate = () => {
       setLoadingRotation((prev) => (prev + 2) % 360);
-    }, 16); // ~60fps
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
 
     // Hide loading screen after minimum time and page load
     const loadingTimer = setTimeout(() => {
@@ -119,42 +124,56 @@ function HomePageContent() {
     }, 2000); // Show for 2 seconds minimum
 
     return () => {
-      clearInterval(loadingInterval);
+      cancelAnimationFrame(animationId);
       clearTimeout(loadingTimer);
     };
   }, []);
 
   // Custom cursor effect for hero section
   useEffect(() => {
+    let rafId: number;
+
     const handleMouseMove = (e: MouseEvent) => {
-      if (!heroRef.current) return;
+      if (rafId) return; // Skip if animation frame is already scheduled
 
-      // Only show cursor on desktop devices
-      const isDesktop = window.innerWidth > 768;
-      if (!isDesktop) return;
+      rafId = requestAnimationFrame(() => {
+        if (!heroRef.current) {
+          rafId = 0;
+          return;
+        }
 
-      const heroRect = heroRef.current.getBoundingClientRect();
-      const isInHero =
-        e.clientX >= heroRect.left &&
-        e.clientX <= heroRect.right &&
-        e.clientY >= heroRect.top &&
-        e.clientY <= heroRect.bottom;
+        // Only show cursor on desktop devices
+        const isDesktop = window.innerWidth > 768;
+        if (!isDesktop) {
+          rafId = 0;
+          return;
+        }
 
-      // Check if hovering over interactive elements
-      const target = e.target as Element;
-      const isInteractive =
-        target.closest("button") ||
-        target.closest("a") ||
-        target.closest("nav") ||
-        target.closest('[role="button"]') ||
-        target.closest("input") ||
-        target.closest("select") ||
-        target.closest("textarea");
+        const heroRect = heroRef.current.getBoundingClientRect();
+        const isInHero =
+          e.clientX >= heroRect.left &&
+          e.clientX <= heroRect.right &&
+          e.clientY >= heroRect.top &&
+          e.clientY <= heroRect.bottom;
 
-      setCustomCursor({
-        x: e.clientX,
-        y: e.clientY,
-        visible: isInHero && !isInteractive && isDesktop,
+        // Check if hovering over interactive elements
+        const target = e.target as Element;
+        const isInteractive =
+          target.closest("button") ||
+          target.closest("a") ||
+          target.closest("nav") ||
+          target.closest('[role="button"]') ||
+          target.closest("input") ||
+          target.closest("select") ||
+          target.closest("textarea");
+
+        setCustomCursor({
+          x: e.clientX,
+          y: e.clientY,
+          visible: isInHero && !isInteractive && isDesktop,
+        });
+
+        rafId = 0;
       });
     };
 
@@ -168,6 +187,7 @@ function HomePageContent() {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 

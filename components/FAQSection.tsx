@@ -231,34 +231,6 @@ export default function FAQSection() {
   return (
     <section id="help" className="relative bg-white py-[100px] overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-        {/* Debug banner - only show in development */}
-        {process.env.NODE_ENV === "development" && (
-          <div
-            className={`px-4 py-3 rounded mb-6 text-sm font-bold ${
-              shouldUseApiData
-                ? "bg-green-100 border border-green-400 text-green-700"
-                : "bg-red-100 border border-red-400 text-red-700"
-            }`}
-          >
-            {shouldUseApiData ? (
-              <>
-                ✅ <strong>SUCCESS!</strong> Showing {finalFaqItems.length} FAQ
-                items from Django admin
-                <br />
-                <small>First item: "{faqItems[0]?.question}"</small>
-              </>
-            ) : (
-              <>
-                ❌ <strong>USING FALLBACK DATA</strong> - API not working
-                <br />
-                <small>
-                  Loading: {faqItemsLoading ? "Yes" : "No"} | Error:{" "}
-                  {faqItemsError || "None"} | Items: {faqItems?.length || 0}
-                </small>
-              </>
-            )}
-          </div>
-        )}
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
