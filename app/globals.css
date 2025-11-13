@@ -949,16 +949,6 @@ html {
 
   /* Mobile dropdown improvements */
   @media (max-width: 767px) {
-    .country-selector-mobile [class*="z-[9999]"] {
-      position: fixed !important;
-      top: auto !important;
-      left: 1rem !important;
-      right: 1rem !important;
-      width: auto !important;
-      max-width: none !important;
-      transform: none !important;
-    }
-
     /* Improve touch targets on mobile */
     .country-selector-mobile button {
       min-height: 44px !important;
@@ -970,6 +960,11 @@ html {
     .country-selector-mobile input {
       font-size: 16px !important;
       transform: translateZ(0) !important;
+    }
+
+    /* Ensure dropdown is always visible on mobile */
+    .country-selector-mobile [class*="z-[9999]"] {
+      z-index: 10000 !important;
     }
   }
 

@@ -84,8 +84,10 @@ export default function CountryCodeSelector({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Fetch country data from API
   const { data: apiCountryData, error: countryError } = useCountryData();
@@ -154,10 +156,53 @@ export default function CountryCodeSelector({
     }
   }, [isOpen, isMobile]);
 
+  // Update dropdown position on scroll (mobile only)
+  useEffect(() => {
+    if (!isMobile || !isOpen) return;
+
+    const handleScroll = () => {
+      calculateDropdownPosition();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobile, isOpen]);
+
   const handleCountrySelect = (country: Country) => {
     onCountryChange(country);
     setIsOpen(false);
     setSearchTerm("");
+  };
+
+  // Calculate dropdown position for mobile
+  const calculateDropdownPosition = () => {
+    if (!buttonRef.current || !isMobile) return;
+
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 300; // Approximate dropdown height
+
+    let top = buttonRect.bottom + window.scrollY + 4;
+
+    // If dropdown would go below viewport, position it above the button
+    if (buttonRect.bottom + dropdownHeight > viewportHeight) {
+      top = buttonRect.top + window.scrollY - dropdownHeight - 4;
+    }
+
+    setDropdownPosition({
+      top,
+      left: 16, // 1rem padding from screen edge
+    });
+  };
+
+  // Update dropdown position when opening
+  const handleToggleDropdown = () => {
+    if (!disabled) {
+      if (!isOpen && isMobile) {
+        calculateDropdownPosition();
+      }
+      setIsOpen(!isOpen);
+    }
   };
 
   // Get theme-specific styles
@@ -201,8 +246,9 @@ export default function CountryCodeSelector({
     <div className={`relative ${className}`} ref={dropdownRef}>
       {/* Selected Country Button */}
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={handleToggleDropdown}
         disabled={disabled}
         className={getButtonStyles()}
       >
@@ -217,6 +263,14 @@ export default function CountryCodeSelector({
           }`}
         />
       </button>
+
+      {/* Mobile Backdrop */}
+      {isMobile && isOpen && (
+        <div
+          className="fixed inset-0 bg-black/20 z-[9999]"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
 
       {/* Dropdown */}
       <AnimatePresence>
@@ -236,9 +290,14 @@ export default function CountryCodeSelector({
             style={{
               // Ensure dropdown doesn't go off-screen on mobile
               ...(isMobile && {
-                right: "auto",
-                left: "0",
-                transform: "translateX(0)",
+                position: "fixed",
+                top: `${dropdownPosition.top}px`,
+                left: `${dropdownPosition.left}px`,
+                right: "1rem",
+                width: "auto",
+                maxWidth: "none",
+                transform: "none",
+                zIndex: 10001,
               }),
             }}
           >
