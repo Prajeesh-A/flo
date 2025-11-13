@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Search } from "lucide-react";
 import { useCountryData } from "@/lib/api-swr";
+import type { CountryData } from "@/lib/api";
 
 export interface Country {
   code: string;
@@ -97,7 +98,7 @@ export default function CountryCodeSelector({
 
   // Transform API data to match our Country interface, merging with hardcoded dial codes
   const apiCountries: Country[] =
-    apiCountryData?.map((country) => ({
+    apiCountryData?.map((country: CountryData) => ({
       code: country.country_code,
       name: country.name,
       dialCode: getDialCodeForCountry(country.country_code),
