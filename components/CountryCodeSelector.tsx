@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Search } from "lucide-react";
 import { useCountryData } from "@/lib/api-swr";
@@ -85,7 +84,6 @@ export default function CountryCodeSelector({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -131,13 +129,16 @@ export default function CountryCodeSelector({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, []);
+  }, [isOpen]);
 
   // Detect mobile viewport
   useEffect(() => {
@@ -157,51 +158,14 @@ export default function CountryCodeSelector({
     }
   }, [isOpen, isMobile]);
 
-  // Update dropdown position on scroll (mobile only)
-  useEffect(() => {
-    if (!isMobile || !isOpen) return;
-
-    const handleScroll = () => {
-      calculateDropdownPosition();
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isMobile, isOpen]);
-
   const handleCountrySelect = (country: Country) => {
     onCountryChange(country);
     setIsOpen(false);
     setSearchTerm("");
   };
 
-  // Calculate dropdown position for mobile
-  const calculateDropdownPosition = () => {
-    if (!buttonRef.current || !isMobile) return;
-
-    const buttonRect = buttonRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const dropdownHeight = 300; // Approximate dropdown height
-
-    let top = buttonRect.bottom + window.scrollY + 4;
-
-    // If dropdown would go below viewport, position it above the button
-    if (buttonRect.bottom + dropdownHeight > viewportHeight) {
-      top = buttonRect.top + window.scrollY - dropdownHeight - 4;
-    }
-
-    setDropdownPosition({
-      top,
-      left: 16, // 1rem padding from screen edge
-    });
-  };
-
-  // Update dropdown position when opening
   const handleToggleDropdown = () => {
     if (!disabled) {
-      if (!isOpen && isMobile) {
-        calculateDropdownPosition();
-      }
       setIsOpen(!isOpen);
     }
   };
@@ -268,236 +232,118 @@ export default function CountryCodeSelector({
       {/* Dropdown */}
       <AnimatePresence>
         {isOpen && (
-          <>
-            {isMobile ? (
-              // Mobile: Use portal to render dropdown at document body level
-              createPortal(
-                <>
-                  {/* Mobile Backdrop */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/20"
-                    style={{ zIndex: 999999 }}
-                    onClick={() => setIsOpen(false)}
-                  />
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className={`absolute top-full left-0 mt-1 rounded-lg shadow-2xl ${
+              isMobile
+                ? "w-[calc(100vw-2rem)] max-w-none fixed left-4 right-4 z-[999999]"
+                : "w-80 max-w-[95vw] z-50"
+            } ${
+              variant === "contact-section" || variant === "contact-page"
+                ? "bg-gray-800 border border-gray-600"
+                : "bg-white border border-gray-300"
+            }`}
+            style={
+              isMobile
+                ? {
+                    top: buttonRef.current
+                      ? buttonRef.current.getBoundingClientRect().bottom +
+                        window.scrollY +
+                        4 +
+                        "px"
+                      : "auto",
+                  }
+                : {}
+            }
+          >
+            {/* Search Input */}
+            <div
+              className={`p-3 ${
+                variant === "contact-section" || variant === "contact-page"
+                  ? "border-b border-gray-600"
+                  : "border-b border-gray-200"
+              }`}
+            >
+              <div className="relative">
+                <Search
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                    variant === "contact-section" || variant === "contact-page"
+                      ? "text-gray-400"
+                      : "text-gray-400"
+                  }`}
+                />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search countries..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                    variant === "contact-section" || variant === "contact-page"
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-[#2ECC71] focus:border-[#2ECC71]"
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                  }`}
+                />
+              </div>
+            </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className={`fixed rounded-lg shadow-2xl ${
+            {/* Countries List */}
+            <div className="max-h-60 overflow-y-auto">
+              {filteredCountries.length > 0 ? (
+                filteredCountries.map((country) => (
+                  <button
+                    key={country.code}
+                    type="button"
+                    onClick={() => handleCountrySelect(country)}
+                    className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-colors duration-150 min-h-[44px] touch-manipulation ${
                       variant === "contact-section" ||
                       variant === "contact-page"
-                        ? "bg-gray-800 border border-gray-600"
-                        : "bg-white border border-gray-300"
+                        ? `hover:bg-gray-700 active:bg-gray-600 ${
+                            selectedCountry.code === country.code
+                              ? "bg-[#2ECC71]/20 text-[#2ECC71]"
+                              : "text-gray-300"
+                          }`
+                        : `hover:bg-gray-50 active:bg-gray-100 ${
+                            selectedCountry.code === country.code
+                              ? "bg-blue-50 text-blue-700"
+                              : "text-gray-700"
+                          }`
                     }`}
-                    style={{
-                      top: `${dropdownPosition.top}px`,
-                      left: `${dropdownPosition.left}px`,
-                      right: "1rem",
-                      width: "auto",
-                      maxWidth: "calc(100vw - 2rem)",
-                      zIndex: 1000000,
-                    }}
                   >
-                    {/* Search Input */}
-                    <div
-                      className={`p-3 ${
-                        variant === "contact-section" ||
-                        variant === "contact-page"
-                          ? "border-b border-gray-600"
-                          : "border-b border-gray-200"
-                      }`}
-                    >
-                      <div className="relative">
-                        <Search
-                          className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
-                            variant === "contact-section" ||
-                            variant === "contact-page"
-                              ? "text-gray-400"
-                              : "text-gray-400"
-                          }`}
-                        />
-                        <input
-                          ref={searchInputRef}
-                          type="text"
-                          placeholder="Search countries..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className={`w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                            variant === "contact-section" ||
-                            variant === "contact-page"
-                              ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-[#2ECC71] focus:border-[#2ECC71]"
-                              : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
-                          }`}
-                        />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium flex items-center space-x-2 truncate">
+                        <span className="mr-2">{country.flag}</span>
+                        <span>{country.name}</span>
                       </div>
                     </div>
-
-                    {/* Countries List */}
-                    <div className="max-h-60 overflow-y-auto">
-                      {filteredCountries.length > 0 ? (
-                        filteredCountries.map((country) => (
-                          <button
-                            key={country.code}
-                            type="button"
-                            onClick={() => handleCountrySelect(country)}
-                            className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-colors duration-150 min-h-[44px] touch-manipulation ${
-                              variant === "contact-section" ||
-                              variant === "contact-page"
-                                ? `hover:bg-gray-700 active:bg-gray-600 ${
-                                    selectedCountry.code === country.code
-                                      ? "bg-[#2ECC71]/20 text-[#2ECC71]"
-                                      : "text-gray-300"
-                                  }`
-                                : `hover:bg-gray-50 active:bg-gray-100 ${
-                                    selectedCountry.code === country.code
-                                      ? "bg-blue-50 text-blue-700"
-                                      : "text-gray-700"
-                                  }`
-                            }`}
-                          >
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium flex items-center space-x-2 truncate">
-                                <span className="mr-2">{country.flag}</span>
-                                <span>{country.name}</span>
-                              </div>
-                            </div>
-                            <span
-                              className={`text-sm font-medium ${
-                                variant === "contact-section" ||
-                                variant === "contact-page"
-                                  ? "text-gray-400"
-                                  : "text-gray-500"
-                              }`}
-                            >
-                              {country.dialCode}
-                            </span>
-                          </button>
-                        ))
-                      ) : (
-                        <div
-                          className={`px-4 py-6 text-center ${
-                            variant === "contact-section" ||
-                            variant === "contact-page"
-                              ? "text-gray-400"
-                              : "text-gray-500"
-                          }`}
-                        >
-                          No countries found
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                </>,
-                document.body
-              )
-            ) : (
-              // Desktop: Regular dropdown
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className={`absolute top-full left-0 w-80 max-w-[95vw] mt-1 rounded-lg shadow-2xl z-50 ${
-                  variant === "contact-section" || variant === "contact-page"
-                    ? "bg-gray-800 border border-gray-600"
-                    : "bg-white border border-gray-300"
-                }`}
-              >
-                {/* Search Input */}
-                <div
-                  className={`p-3 ${
-                    variant === "contact-section" || variant === "contact-page"
-                      ? "border-b border-gray-600"
-                      : "border-b border-gray-200"
-                  }`}
-                >
-                  <div className="relative">
-                    <Search
-                      className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
-                        variant === "contact-section" ||
-                        variant === "contact-page"
-                          ? "text-gray-400"
-                          : "text-gray-400"
-                      }`}
-                    />
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      placeholder="Search countries..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className={`w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                        variant === "contact-section" ||
-                        variant === "contact-page"
-                          ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-[#2ECC71] focus:border-[#2ECC71]"
-                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                {/* Countries List */}
-                <div className="max-h-60 overflow-y-auto">
-                  {filteredCountries.length > 0 ? (
-                    filteredCountries.map((country) => (
-                      <button
-                        key={country.code}
-                        type="button"
-                        onClick={() => handleCountrySelect(country)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-150 ${
-                          variant === "contact-section" ||
-                          variant === "contact-page"
-                            ? `hover:bg-gray-700 ${
-                                selectedCountry.code === country.code
-                                  ? "bg-[#2ECC71]/20 text-[#2ECC71]"
-                                  : "text-gray-300"
-                              }`
-                            : `hover:bg-gray-50 ${
-                                selectedCountry.code === country.code
-                                  ? "bg-blue-50 text-blue-700"
-                                  : "text-gray-700"
-                              }`
-                        }`}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium flex items-center space-x-2 truncate">
-                            <span className="mr-2">{country.flag}</span>
-                            <span>{country.name}</span>
-                          </div>
-                        </div>
-                        <span
-                          className={`text-sm font-medium ${
-                            variant === "contact-section" ||
-                            variant === "contact-page"
-                              ? "text-gray-400"
-                              : "text-gray-500"
-                          }`}
-                        >
-                          {country.dialCode}
-                        </span>
-                      </button>
-                    ))
-                  ) : (
-                    <div
-                      className={`px-4 py-6 text-center ${
+                    <span
+                      className={`text-sm font-medium ${
                         variant === "contact-section" ||
                         variant === "contact-page"
                           ? "text-gray-400"
                           : "text-gray-500"
                       }`}
                     >
-                      No countries found
-                    </div>
-                  )}
+                      {country.dialCode}
+                    </span>
+                  </button>
+                ))
+              ) : (
+                <div
+                  className={`px-4 py-6 text-center ${
+                    variant === "contact-section" || variant === "contact-page"
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }`}
+                >
+                  No countries found
                 </div>
-              </motion.div>
-            )}
-          </>
+              )}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
