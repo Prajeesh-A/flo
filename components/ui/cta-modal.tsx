@@ -91,7 +91,7 @@ export default function CTAModal({ isOpen, onClose }: CTAModalProps) {
                   <span className="font-semibold text-blue-600">floneo</span>{" "}
                   will be ready for demo on{" "}
                   <span className="font-semibold text-blue-600">
-                    November 20th
+                    November 30th
                   </span>
                   .
                   <br />

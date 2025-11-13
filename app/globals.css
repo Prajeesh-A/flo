@@ -941,6 +941,38 @@ html {
     max-width: 140px !important;
   }
 
+  /* Ensure dropdown has proper z-index and positioning on mobile */
+  .country-selector-mobile [class*="z-[9999]"] {
+    position: absolute !important;
+    z-index: 9999 !important;
+  }
+
+  /* Mobile dropdown improvements */
+  @media (max-width: 767px) {
+    .country-selector-mobile [class*="z-[9999]"] {
+      position: fixed !important;
+      top: auto !important;
+      left: 1rem !important;
+      right: 1rem !important;
+      width: auto !important;
+      max-width: none !important;
+      transform: none !important;
+    }
+
+    /* Improve touch targets on mobile */
+    .country-selector-mobile button {
+      min-height: 44px !important;
+      touch-action: manipulation !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    /* Prevent iOS zoom on input focus */
+    .country-selector-mobile input {
+      font-size: 16px !important;
+      transform: translateZ(0) !important;
+    }
+  }
+
   /* Phone Input Mobile Improvements */
   .phone-input-mobile {
     font-size: 16px !important; /* Prevent zoom on iOS */
@@ -987,7 +1019,7 @@ html {
   /* General mobile phone field fixes */
   .country-selector-mobile {
     flex-shrink: 0 !important;
-    max-width: 90px !important;
+    max-width: 120px !important; /* Increased from 90px to allow better visibility */
   }
 
   .phone-input-mobile {
@@ -1337,7 +1369,7 @@ html {
 
   .contact-form-mobile .country-selector-mobile {
     flex-shrink: 0 !important;
-    max-width: 80px !important; /* Limit country selector width */
+    max-width: 100px !important; /* Increased from 80px for better usability */
   }
 
   .contact-form-mobile .phone-input-mobile {
@@ -1398,7 +1430,7 @@ html {
 
   /* Extra compact phone field for iPhone SE */
   .contact-form-mobile .country-selector-mobile {
-    max-width: 70px !important; /* Even smaller country selector */
+    max-width: 85px !important; /* Increased from 70px for better touch targets */
   }
 
   .contact-form-mobile .phone-input-mobile {
@@ -1469,12 +1501,13 @@ html {
 
   /* Ultra compact phone field for very small screens */
   .contact-form-mobile .country-selector-mobile {
-    max-width: 60px !important; /* Very small country selector */
+    max-width: 75px !important; /* Increased from 60px for better usability */
   }
 
   .contact-form-mobile .country-selector-mobile button {
-    padding: 0.375rem !important; /* Very compact button padding */
-    font-size: 11px !important;
+    padding: 0.5rem !important; /* Increased padding for better touch targets */
+    font-size: 12px !important; /* Increased from 11px for better readability */
+    min-height: 44px !important; /* Ensure minimum touch target size */
   }
 
   .contact-form-mobile .phone-input-mobile {

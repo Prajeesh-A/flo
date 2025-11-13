@@ -696,8 +696,6 @@ export default function HumanTouchSection() {
               chatMessages={chatMessages}
               isMobile={isMobile}
             />
-
-            
           </div>
         </div>
 
@@ -711,16 +709,16 @@ export default function HumanTouchSection() {
           }}
           className="mt-16 max-w-full space-y-4 text-left"
         >
-          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
+          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
             Prototype in hours, launch in weeks.
           </p>
-          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
+          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
             Drag-and-drop UI, no steep learning curve.
           </p>
-          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
+          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
             Real-time monitoring and alerts.
           </p>
-          <p className="text-4xl text-gray-800 font-normal leading-relaxed">
+          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
             AI assistant to answer questions instantly.
           </p>
         </motion.div>

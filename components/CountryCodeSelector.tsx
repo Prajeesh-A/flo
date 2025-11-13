@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Search } from "lucide-react";
+import { useCountryData } from "@/lib/api-swr";
 
 export interface Country {
   code: string;
@@ -81,20 +82,42 @@ export default function CountryCodeSelector({
 }: CountryCodeSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Fetch country data from API
+  const { data: apiCountryData, error: countryError } = useCountryData();
+
+  // Create a mapping function to get dial code from country code
+  const getDialCodeForCountry = (countryCode: string): string => {
+    const hardcodedCountry = countries.find((c) => c.code === countryCode);
+    return hardcodedCountry?.dialCode || `+${countryCode}`;
+  };
+
+  // Transform API data to match our Country interface, merging with hardcoded dial codes
+  const apiCountries: Country[] =
+    apiCountryData?.map((country) => ({
+      code: country.country_code,
+      name: country.name,
+      dialCode: getDialCodeForCountry(country.country_code),
+      flag: country.flag_emoji,
+    })) || [];
+
+  // Use API data if available, otherwise fallback to hardcoded data
+  const availableCountries = apiCountries.length > 0 ? apiCountries : countries;
+
   // Filter countries based on search term
-  const filteredCountries = countries.filter(
+  const filteredCountries = availableCountries.filter(
     (country) =>
       country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       country.dialCode.includes(searchTerm) ||
       country.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside (handle both mouse and touch events)
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
@@ -105,15 +128,30 @@ export default function CountryCodeSelector({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
-  // Focus search input when dropdown opens
+  // Detect mobile viewport
   useEffect(() => {
-    if (isOpen && searchInputRef.current) {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  // Focus search input when dropdown opens (but not on mobile to prevent keyboard issues)
+  useEffect(() => {
+    if (isOpen && searchInputRef.current && !isMobile) {
       searchInputRef.current.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const handleCountrySelect = (country: Country) => {
     onCountryChange(country);
@@ -187,11 +225,21 @@ export default function CountryCodeSelector({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className={`absolute top-full left-0 z-50 w-80 sm:w-80 max-w-[90vw] mt-1 rounded-lg shadow-lg ${
+            className={`absolute top-full left-0 z-[9999] ${
+              isMobile ? "w-[280px] max-w-[90vw]" : "w-80 sm:w-80 max-w-[95vw]"
+            } mt-1 rounded-lg shadow-2xl ${
               variant === "contact-section" || variant === "contact-page"
                 ? "bg-gray-800 border border-gray-600"
                 : "bg-white border border-gray-300"
             }`}
+            style={{
+              // Ensure dropdown doesn't go off-screen on mobile
+              ...(isMobile && {
+                right: "auto",
+                left: "0",
+                transform: "translateX(0)",
+              }),
+            }}
           >
             {/* Search Input */}
             <div
@@ -232,15 +280,15 @@ export default function CountryCodeSelector({
                     key={country.code}
                     type="button"
                     onClick={() => handleCountrySelect(country)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-150 ${
+                    className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-colors duration-150 min-h-[44px] touch-manipulation ${
                       variant === "contact-section" ||
                       variant === "contact-page"
-                        ? `hover:bg-gray-700 ${
+                        ? `hover:bg-gray-700 active:bg-gray-600 ${
                             selectedCountry.code === country.code
                               ? "bg-[#2ECC71]/20 text-[#2ECC71]"
                               : "text-gray-300"
                           }`
-                        : `hover:bg-gray-50 ${
+                        : `hover:bg-gray-50 active:bg-gray-100 ${
                             selectedCountry.code === country.code
                               ? "bg-blue-50 text-blue-700"
                               : "text-gray-700"
