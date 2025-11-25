@@ -6,7 +6,7 @@
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 /* Optimize scroll performance */
@@ -16,7 +16,7 @@ html {
 }
 
 body {
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
   scroll-behavior: smooth;
 }
 

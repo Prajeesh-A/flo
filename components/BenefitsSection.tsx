@@ -1,14 +1,35 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { api, useApiData } from "@/lib/api";
 import { useCTAModal } from "@/contexts/CTAModalContext";
-import { useToast } from "@/components/ui/notification-toast";
 import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
+import { 
+  Shield, 
+  Cloud, 
+  Zap, 
+  Monitor, 
+  AlertTriangle, 
+  Lightbulb, 
+  BarChart3, 
+  LayoutDashboard 
+} from "lucide-react";
+import { Urbanist, Poppins } from "next/font/google";
 
-// Hook to detect mobile viewport
+// Font configurations
+const urbanist = Urbanist({ 
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
+const poppins = Poppins({ 
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -26,298 +47,221 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-// Helper function to get mobile-optimized animation duration
-const getMobileDuration = (
-  desktopDuration: number,
-  isMobile: boolean
-): number => {
-  return isMobile ? Math.max(0.3, desktopDuration * 0.4) : desktopDuration;
-};
-
 export default function BenefitsSection() {
-  // Fetch section data from API
-  const {
-    data: sectionData,
-    loading,
-    error,
-  } = useApiData(api.getBenefitsSection);
+  const { data: sectionData } = useApiData(api.getBenefitsSection);
 
-  // const imageURL = [
-  //   "/gavel.p"
-  // ]
-
-  // Fallback data
   const fallbackData = {
     badge_text: "BENEFITS",
     title: "More than",
     subtitle: "Automation",
     description:
-      "floneo isn't just about managing processes — it builds, automates, and scales the workflows that fuel your business.",
+      "FloNeo isn't just about workflows, it builds, automates, and scales the systems that fuel your business.",
     cta_primary_text: "Get Started",
-    cta_primary_url: "/contact",
     cta_secondary_text: "Learn More",
-    cta_secondary_url: "/about",
-    background_color:
-      "radial-gradient(circle at center, #2ECC71 0%, #2ECC71 40%, #ffffffff 100%, #ffffffff 100%)",
     benefits: [
       {
         id: 1,
         title: "Ironclad Compliance",
-        icon: "/gavel.png", // symbolizing laws and compliance
+        color: "yellow",
         position: "top-center",
       },
       {
         id: 2,
         title: "Total Deployment Control",
-        icon: "/cloud.png", // control/settings-like icon
+        color: "yellow",
         position: "top-left",
       },
       {
         id: 3,
         title: "Accelerated Time-to-Value",
-        icon: "/speed.png", // represents acceleration and efficiency
+        color: "yellow",
         position: "top-right",
       },
       {
         id: 4,
-        title: "Cross Platform",
-        icon: "/devices.png", // desktop + mobile — perfect for cross-platform
+        title: "Cross platform",
+        color: "yellow",
         position: "middle-left",
       },
       {
         id: 5,
         title: "Risk Management",
-        icon: "/security.png", // shield icon for safety and risk protection
+        color: "yellow",
         position: "middle-right",
       },
       {
         id: 6,
         title: "Actionable Intelligence",
-        icon: "/graph.png", // analytics bulb icon
+        color: "yellow",
         position: "bottom-left",
       },
       {
         id: 7,
         title: "Advanced Analytics",
-        icon: "/analytics.png", // graph-like analytics symbol
+        color: "yellow",
         position: "bottom-right",
-      },
-      {
-        id: 8,
-        title: "Customizable Dashboards",
-        icon: "/dashboard.png", // dashboard customization icon
-        position: "bottom-center",
       },
     ],
   };
 
-  // Use API data or fallback
   const data = sectionData || fallbackData;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
   const isMobile = useIsMobile();
   const { openModal } = useCTAModal();
-  const { showDemoToast } = useToast();
 
-  // Fetch social media links to get LinkedIn URL
   const { data: socialLinks } = useApiData(api.getSocialMediaLinks);
 
-  // Find LinkedIn URL from social links
   const linkedInLink = socialLinks?.find(
     (link) =>
       link.platform.toLowerCase() === "linkedin" ||
-      link.platform_name.toLowerCase().includes("linkedin")
+      link.platform_name?.toLowerCase().includes("linkedin")
   );
   const linkedInUrl = linkedInLink?.url || "#";
 
-  // Position mapping for floating benefits - matching reference image
+  // FRONTEND HARDCODED ICONS - Map by index position
+  const getIconByIndex = (index: number) => {
+    const icons = [
+      Shield,        // 0 - Ironclad Compliance
+      Cloud,         // 1 - Total Deployment Control
+      Zap,           // 2 - Accelerated Time-to-Value
+      Monitor,       // 3 - Cross platform
+      AlertTriangle, // 4 - Risk Management
+      Lightbulb,     // 5 - Actionable Intelligence
+      BarChart3,     // 6 - Advanced Analytics
+      LayoutDashboard, // 7 - Customizable Dashboards
+    ];
+    
+    return icons[index] || Cloud;
+  };
+
+  const getIconColorClass = (color: string) => {
+    const colorMap: Record<string, string> = {
+      yellow: "bg-yellow-400",
+      green: "bg-green-400",
+      blue: "bg-blue-500",
+      orange: "bg-orange-400",
+    };
+    
+    return colorMap[color?.toLowerCase()] || "bg-yellow-400";
+  };
+
+  // UPDATED POSITIONS - Moved down to avoid navbar overlap
   const getPositionClasses = (position: string) => {
-    switch (position) {
-      case "top-center":
-        return "top-10 left-1/2 transform -translate-x-1/2";
-      case "top-left":
-        return "top-40 left-32";
-      case "top-right":
-        return "top-40 right-32";
-      case "middle-left":
-        return "top-1/2 left-20 transform -translate-y-1/2";
-      case "middle-right":
-        return "top-1/2 right-20 transform -translate-y-1/2";
-      case "bottom-left":
-        return "bottom-40 left-32";
-      case "bottom-right":
-        return "bottom-40 right-32";
-      case "bottom-center":
-        return "bottom-10 left-1/2 transform -translate-x-1/2";
-      default:
-        return "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2";
-    }
+    const positionMap: Record<string, string> = {
+      "top-center": "top-32 left-1/2 -translate-x-1/2",
+      "top-left": "top-56 left-24",
+      "top-right": "top-56 right-24",
+      "middle-left": "top-1/2 left-20 -translate-y-1/2 mt-8",
+      "middle-right": "top-1/2 right-20 -translate-y-1/2 mt-8",
+      "bottom-left": "bottom-32 left-24",
+      "bottom-right": "bottom-32 right-24",
+      "bottom-center": "bottom-16 left-1/2 -translate-x-1/2",
+    };
+    
+    return positionMap[position] || "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2";
   };
 
   return (
     <section
       id="services"
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden py-12 sm:py-20 px-4 sm:px-12 lg:px-24"
+      className="relative min-h-screen overflow-hidden flex items-center justify-center pt-24 pb-20"
       style={{
-        background:
-          data.background_color ||
-          "radial-gradient(circle at center, #2ECC71 0%, #2ECC71 0%, #e8f8ed 100%, #f8fdf9 100%)",
+        background: "linear-gradient(135deg, #7bed9f 0%, #2ed573 50%, #26de81 100%)",
       }}
     >
       {/* Desktop Layout - Floating Benefits Pills */}
-      <div className="hidden md:flex items-center justify-center min-h-screen">
-        {data.benefits?.map((benefit, index) => (
-          <motion.div
-            key={benefit.id}
-            initial={{ opacity: 0, scale: 0.8, y: 0 }}
-            animate={
-              isInView
-                ? {
-                    opacity: 1,
-                    scale: 1,
-                    y: [0, -12, 0], // Floating animation: up and down
-                  }
-                : { opacity: 0, scale: 0.8, y: 0 }
-            }
-            transition={{
-              opacity: {
-                duration: getMobileDuration(0.5, isMobile),
-                delay: getMobileDuration(index * 0.1, isMobile),
-                ease: "easeOut",
-              },
-              scale: {
-                duration: getMobileDuration(0.5, isMobile),
-                delay: getMobileDuration(index * 0.1, isMobile),
-                ease: "easeOut",
-              },
-              y: {
-                duration: getMobileDuration(3 + index * 0.2, isMobile), // Staggered timing: 3-4.6 seconds
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: getMobileDuration(index * 0.3 + 1, isMobile), // Start floating after initial animation + staggered delay
-              },
-            }}
-            className={`absolute ${getPositionClasses(benefit.position)} z-10`}
-          >
-            <div className="relative rounded-full h-16 px-8 flex items-center gap-4 shadow-lg border border-white/10 overflow-hidden bg-black/80 backdrop-blur-sm min-w-[180px]">
-              {/* Icon container */}
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center">
-                  <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center p-1">
-                    <Image
-                      src={benefit.icon}
-                      alt={benefit.title}
-                      width={24}
-                      height={24}
-                      className="object-contain"
-                      priority
-                    />
-                  </div>
+      <div className="hidden lg:block absolute inset-0">
+        {data.benefits?.map((benefit: any, index: number) => {
+          const IconComponent = getIconByIndex(index);
+          
+          return (
+            <motion.div
+              key={benefit.id}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={
+                isInView
+                  ? {
+                      opacity: 1,
+                      scale: 1,
+                      y: [0, -10, 0],
+                    }
+                  : { opacity: 0, scale: 0.8 }
+              }
+              transition={{
+                opacity: { duration: 0.5, delay: index * 0.1 },
+                scale: { duration: 0.5, delay: index * 0.1 },
+                y: {
+                  duration: 2.5 + index * 0.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: index * 0.3 + 0.5,
+                },
+              }}
+              className={`absolute ${getPositionClasses(benefit.position)} z-10`}
+            >
+              <div className="flex items-center gap-3 bg-gray-900 rounded-full px-5 py-3 shadow-xl border border-white/10">
+                <div
+                  className={`w-10 h-10 rounded-full ${getIconColorClass(
+                    benefit.color
+                  )} flex items-center justify-center flex-shrink-0`}
+                >
+                  <IconComponent size={20} className="text-gray-900" strokeWidth={2.5} />
                 </div>
-              </div>
-
-              {/* Text content */}
-              <span className="text-white text-sm font-medium whitespace-nowrap flex-1 text-center">
-                {benefit.title}
-              </span>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Mobile Layout - Stacked Benefits Pills */}
-      <div className="md:hidden flex flex-col items-center justify-start min-h-screen pt-16 gap-6">
-        {data.benefits?.map((benefit, index) => (
-          <motion.div
-            key={`mobile-${benefit.id}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{
-              duration: getMobileDuration(0.5, isMobile),
-              delay: getMobileDuration(index * 0.1, isMobile),
-              ease: "easeOut",
-            }}
-            className="w-full max-w-sm mx-auto px-4"
-          >
-            <div className="relative rounded-full h-16 px-6 flex items-center gap-4 shadow-lg border border-white/10 overflow-hidden bg-black/80 backdrop-blur-sm w-full">
-              {/* Icon container */}
-              <div className="flex-shrink-0 flex items-center">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                  <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center p-1">
-                    <Image
-                      src="/favicon-32x32.png"
-                      alt="FloNeo Logo"
-                      width={20}
-                      height={20}
-                      className="object-contain"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Text content */}
-              <div className="flex-1 flex items-center justify-center">
-                <span className="text-white text-sm font-medium">
+                <span className="text-white font-medium text-sm pr-2 whitespace-nowrap">
                   {benefit.title}
                 </span>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Central Content */}
-      <div className="text-center z-20 max-w-screen-xl w-full mx-auto px-8 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 mt-8 md:mt-0">
-        {/* Benefits Badge */}
+      <div className="relative z-20 text-center px-4 max-w-4xl mx-auto mt-8">
+        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{
-            duration: getMobileDuration(0.6, isMobile),
-            ease: "easeOut",
-          }}
-          className="mb-8"
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          className="mb-6"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,16.5L6.5,12L7.91,10.59L11,13.67L16.59,8.09L18,9.5L11,16.5Z" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" />
             </svg>
-            <span className="text-white text-sm font-light tracking-wider uppercase">
-              {(data as any).badge_text || "BENEFITS"}
+            <span className={`text-white text-xs font-medium tracking-wider uppercase ${urbanist.className}`}>
+              {data.badge_text}
             </span>
           </div>
         </motion.div>
 
-        {/* Main Title */}
+        {/* Title */}
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{
-            duration: getMobileDuration(0.6, isMobile),
-            delay: getMobileDuration(0.2, isMobile),
-            ease: "easeOut",
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white mb-2 ${urbanist.className}`}
+          style={{
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
           }}
-          className="text-5xl md:text-6xl lg:text-7xl text-white mb-4 leading-tight font-surgena"
         >
           {data.title}
         </motion.h2>
 
-        {/* Subtitle */}
+        {/* Subtitle - FIXED: Removed font-normal, keeping font-black and proper className */}
         <motion.h3
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{
-            duration: getMobileDuration(0.6, isMobile),
-            delay: getMobileDuration(0.3, isMobile),
-            ease: "easeOut",
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white mb-8 ${urbanist.className}`}
+          style={{
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
           }}
-          className="text-5xl md:text-6xl lg:text-7xl text-white mb-8 leading-tight font-surgena"
         >
           {data.subtitle}
         </motion.h3>
@@ -325,61 +269,65 @@ export default function BenefitsSection() {
         {/* Description */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{
-            duration: getMobileDuration(0.6, isMobile),
-            delay: getMobileDuration(0.4, isMobile),
-            ease: "easeOut",
-          }}
-          className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
-          style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className={`text-white/95 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed ${poppins.className}`}
         >
           <RichTextRenderer
             content={data.description}
-            fallback="Experience unparalleled quality and innovation"
+            fallback="Experience unparalleled quality"
           />
         </motion.div>
 
         {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{
-            duration: getMobileDuration(0.6, isMobile),
-            delay: getMobileDuration(0.5, isMobile),
-            ease: "easeOut",
-          }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <motion.button
+          <button
             onClick={openModal}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg"
-            style={{ fontFamily: "'Poppins', sans-serif" }}
+            className={`bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${poppins.className}`}
           >
             {data.cta_primary_text}
-          </motion.button>
+          </button>
 
-          <motion.a
+          <a
             href={linkedInUrl}
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-black/60 hover:bg-black/80 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm inline-block text-center"
-            style={{ fontFamily: "'Poppins', sans-serif" }}
+            className={`bg-gray-900 hover:bg-black text-white px-8 py-3.5 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${poppins.className}`}
           >
             {data.cta_secondary_text}
-          </motion.a>
+          </a>
         </motion.div>
       </div>
 
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-1/4 left-1/4 w-40 h-60 bg-white/20 rounded-full blur-xl"></div>
-        <div className="absolute top-3/4 right-1/4 w-56 h-56 bg-white/10 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-white/15 rounded-full blur-lg"></div>
+      {/* Mobile Pills */}
+      <div className="lg:hidden absolute bottom-8 left-0 right-0 px-4 flex flex-wrap gap-2 justify-center">
+        {data.benefits?.slice(0, 4).map((benefit: any, index: number) => {
+          const IconComponent = getIconByIndex(index);
+          
+          return (
+            <motion.div
+              key={`mobile-${benefit.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              className="flex items-center gap-2 bg-gray-900 rounded-full px-4 py-2 shadow-lg"
+            >
+              <div
+                className={`w-8 h-8 rounded-full ${getIconColorClass(
+                  benefit.color
+                )} flex items-center justify-center flex-shrink-0`}
+              >
+                <IconComponent size={16} className="text-gray-900" strokeWidth={2.5} />
+              </div>
+              <span className="text-white font-medium text-xs">{benefit.title}</span>
+            </motion.div>
+          );
+        })}
       </div>
     </section>
   );

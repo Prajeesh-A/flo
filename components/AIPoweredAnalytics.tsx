@@ -1,42 +1,89 @@
 "use client";
 
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useEffect } from "react";
-import { useApiData } from "../lib/api";
-import { api } from "../lib/api";
-import { RichTextRenderer } from "./SafeHTMLRenderer";
+import { useRef } from "react";
+import { useApiData } from "@/lib/api";
+import { api } from "@/lib/api";
+import { RichTextRenderer } from "@/components/SafeHTMLRenderer";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Define complete type for the data we need
+interface MetricData {
+  title?: string;
+  description?: string;
+  metric_1_value?: string;
+  metric_1_description?: string;
+  metric_2_value?: string;
+  metric_2_description?: string;
+  metric_3_value?: string;
+  metric_3_description?: string;
+  metric_4_value?: string;
+  metric_4_description?: string;
+  feature_1_title?: string;
+  feature_1_description?: string;
+  feature_2_title?: string;
+  feature_2_description?: string;
+  is_visible?: boolean;
+  [key: string]: any; // Allow additional properties
+}
 
 // Circular Metric Card Component
 const CircularMetric = ({
   percentage,
   description,
   color,
+  delay = 0,
 }: {
   percentage: string;
   description: string;
   color: string;
+  delay?: number;
 }) => {
   return (
-    <div className="relative place-self-center">
+    <motion.div
+      initial={{ scale: 0, opacity: 0 }}
+      whileInView={{ scale: 1, opacity: 1 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{
+        duration: 0.6,
+        delay: delay,
+        type: "spring",
+        stiffness: 100,
+      }}
+      className="relative"
+    >
+      {/* Outer glow ring */}
+      <div
+        className="absolute inset-0 rounded-full blur-md opacity-30"
+        style={{ backgroundColor: color }}
+      />
+      
       {/* Main Circle */}
       <div
-        className={`w-40 h-40 md:w-48 md:h-48 rounded-full ${color} flex flex-col items-center justify-center border-4 border-black shadow-lg relative`}
+        className="relative w-44 h-44 md:w-52 md:h-52 lg:w-56 lg:h-56 rounded-full flex flex-col items-center justify-center border-[6px] border-gray-900 shadow-2xl"
+        style={{ backgroundColor: color }}
       >
         <div
-          className="text-2xl md:text-3xl font-bold text-white mb-1"
-          style={{ fontFamily: "'Poppins', ", fontWeight: 700 }}
+          className={`text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 ${poppins.className}`}
+          style={{ fontWeight: 700 }}
         >
           {percentage}
         </div>
         <div
-          className="text-xs md:text-sm text-white text-center leading-tight px-2"
-          style={{ fontFamily: "'Poppins', ", fontWeight: 500 }}
+          className={`text-sm md:text-base text-white text-center leading-snug px-6 ${poppins.className}`}
+          style={{ fontWeight: 500 }}
         >
           {description}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -44,320 +91,157 @@ export default function AIPoweredAnalytics() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
-  // URGENT FIX: Use correct API endpoint that exists
-  // Section metadata - using hardcoded for now since /api/ai-analytics/ doesn't exist
-  const sectionData = {
-    title: "AI-Powered Analytics",
-    subtitle: "Intelligent Insights",
-    description:
-      "floneo's AI engine identifies inefficiencies, predicts bottlenecks, and suggests optimizations — turning your operations into a competitive advantage.",
-    is_visible: true,
-  };
-  const loading = false;
-  const error = null;
-
   // Fetch AI Analytics section from API
   const {
-    data: aiAnalyticsData,
+    data: apiData,
     loading: aiAnalyticsLoading,
-    error: aiAnalyticsError,
   } = useApiData(api.getAIPoweredAnalyticsSection);
 
   // Fallback data
-  const fallbackData = {
+  const fallbackData: MetricData = {
     title: "AI-Powered Analytics",
-    subtitle: "Intelligent Insights",
     description:
-      "floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork.",
-    metric_1_value: "85%",
-    metric_1_description: "gain budget control in 2 weeks.",
-    metric_1_color: "#EC4899", // pink-400
-    metric_2_value: "90%",
-    metric_2_description:
-      "of leaders use floneo to cut hours and speed decisions.",
-    metric_2_color: "#4ADE80", // green-400
-    metric_3_value: "70%",
-    metric_3_description:
-      "of teams accelerate process adoption in under 6 weeks.",
-    metric_3_color: "#FACC15", // yellow-400
-    metric_4_value: "84%",
-    metric_4_description: "of users improve savings in 3 months.",
-    metric_4_color: "#60A5FA", // blue-400
-    feature_1_title: "Predict Financial Trends",
+      "Harness the power of AI to transform your data into actionable insights",
+    metric_1_value: "95%",
+    metric_1_description: "Get instant insights from your data",
+    metric_2_value: "2.3x",
+    metric_2_description: "Forecast trends and outcomes",
+    metric_3_value: "24/7",
+    metric_3_description: "Always available",
+    metric_4_value: "99.9%",
+    metric_4_description: "Generate reports automatically",
+    feature_1_title: "Real-time Analysis",
     feature_1_description:
-      "Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve.",
-    feature_2_title: "Enhance Operational Strategy",
+      "Get instant insights from your data with real-time analytics and reporting",
+    feature_2_title: "Predictive Modeling",
     feature_2_description:
-      "floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks.",
-    feature_3_title: "Real-time Monitoring",
-    feature_3_description:
-      "Monitor your systems and processes in real-time with advanced analytics",
+      "Forecast trends and outcomes with advanced AI-powered predictive models",
     is_visible: true,
   };
 
-  // Use AI Analytics data or fallback
-  const data = aiAnalyticsData || fallbackData;
-
-  // Create metrics from AI Analytics features
-  const metrics = {
-    results: [
-      {
-        id: 1,
-        value: "95",
-        suffix: "%",
-        label: data.feature_1_title || "Accuracy",
-        description: data.feature_1_description || "AI prediction accuracy",
-        color: "bg-pink-400",
-      },
-      {
-        id: 2,
-        value: "2.3",
-        suffix: "x",
-        label: data.feature_2_title || "Faster",
-        description:
-          data.feature_2_description || "Processing speed improvement",
-        color: "bg-green-400",
-      },
-      {
-        id: 3,
-        value: "99.9",
-        suffix: "%",
-        label: data.feature_3_title || "Uptime",
-        description: data.feature_3_description || "System reliability",
-        color: "bg-blue-400",
-      },
-      {
-        id: 4,
-        value: "24/7",
-        suffix: "",
-        label: "Support",
-        description: "Always available",
-        color: "bg-purple-400",
-      },
-    ],
+  // Merge API data with fallback, ensuring all properties exist
+  const data: MetricData = {
+    ...fallbackData,
+    ...(apiData as MetricData),
   };
 
-  // Don't render if not visible
-  if (!data.is_visible) {
-    return null;
-  }
-
-  // Loading state
-  if (loading) {
-    return (
-      <section id="ai-analytics" className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <section id="ai-analytics" className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center text-red-600">
-            <p>Failed to load AI Analytics section. Using default content.</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  if (data.is_visible === false) return null;
 
   return (
-    <section id="ai-analytics" ref={sectionRef} className="py-20 bg-white">
-      <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        {/* Desktop Layout - Hidden on Mobile */}
-        <div className="hidden lg:block">
-          {/* First row */}
-          <div className="flex ">
-            <div className="flex-1 flex items-center justify-center">
-              <motion.div
-                initial={{ y: -30, opacity: 0 }}
-                animate={isInView ? { y: 0, opacity: 1 } : {}}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-left mb-16"
+    <section
+      id="ai-analytics"
+      ref={sectionRef}
+      className={`py-20 md:py-24 bg-gradient-to-br from-gray-50 to-white ${poppins.className}`}
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Desktop Layout */}
+        <div className="hidden lg:grid lg:grid-cols-3 lg:gap-12 lg:items-center">
+          {/* Row 1 - Title & Top Right Circle */}
+          <div className="col-span-2">
+            <motion.div
+              initial={{ y: -30, opacity: 0 }}
+              animate={isInView ? { y: 0, opacity: 1 } : {}}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <h2
+                className={`text-5xl md:text-6xl font-bold mb-6 leading-tight ${poppins.className}`}
+                style={{ color: "#10b981", fontWeight: 700 }}
               >
-                <h2
-                  className="text-3xl md:text-4xl font-bold mb-4"
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 700,
-                    color: "#00FF3C",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  {loading ? "Loading..." : data.title}
-                </h2>
+                {data.title}
+              </h2>
+              <RichTextRenderer
+                content={data.description || ""}
+                fallback="Harness the power of AI to transform your data into actionable insights"
+                className="text-lg leading-relaxed text-gray-600 max-w-xl"
+              />
+            </motion.div>
+          </div>
+          
+          <div className="flex justify-center lg:justify-end">
+            <CircularMetric
+              percentage={data.metric_1_value || "95%"}
+              description={data.metric_1_description || "Get instant insights"}
+              color="#10b981"
+              delay={0.2}
+            />
+          </div>
 
-                <RichTextRenderer
-                  content={
-                    loading ? "Loading description..." : data.description
-                  }
-                  fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
-                  className="text-sm md:text-base leading-relaxed max-w-2xl mx-auto text-gray-600"
-                />
-              </motion.div>
-            </div>
-            <div className="flex-1 flex items-center justify-center"></div>
-            <div className="flex-1 flex items-center justify-center pb-4 mb-6">
-              <motion.div
-                key={metrics.results[0].id}
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.1 + 0 * 0.1,
-                  type: "spring",
-                  stiffness: 100,
-                }}
-              >
-                <CircularMetric
-                  percentage={`${metrics.results[0].value}${
-                    metrics.results[0].suffix || ""
-                  }`}
-                  description={metrics.results[0].description}
-                  color={"bg-green-400"}
-                />
-              </motion.div>
-            </div>
+          {/* Row 2 - Left Circle, Center Text, Right Circle */}
+          <div className="flex justify-center lg:justify-start">
+            <CircularMetric
+              percentage={data.metric_2_value || "2.3x"}
+              description={data.metric_2_description || "Forecast trends"}
+              color="#ec4899"
+              delay={0.3}
+            />
           </div>
-          {/* Second Row */}
-          <div className="flex ">
-            <div className="flex-1 flex items-center justify-center mb-4 pb-4">
-              <motion.div
-                key={metrics.results[1].id}
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.1 + 1 * 0.1,
-                  type: "spring",
-                  stiffness: 100,
-                }}
+
+          <div className="flex items-center justify-center">
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-center max-w-lg"
+            >
+              <h3
+                className={`text-3xl font-semibold mb-4 ${poppins.className}`}
+                style={{ color: "#1f2937", fontWeight: 600 }}
               >
-                <CircularMetric
-                  percentage={`${metrics.results[1].value}${
-                    metrics.results[1].suffix || ""
-                  }`}
-                  description={metrics.results[1].description}
-                  color={"bg-pink-400"}
-                />
-              </motion.div>
-            </div>
-            <div className="flex-1 flex items-center justify-center ">
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="text-center max-w-2xl mx-auto mb-16"
-              >
-                <h3
-                  className="text-xl md:text-2xl font-semibold mt-8"
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 600,
-                    color: "#333333",
-                  }}
-                >
-                  {data.feature_1_title}
-                </h3>
-                <RichTextRenderer
-                  content={data.feature_1_description}
-                  fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
-                  className="text-sm md:text-base leading-relaxed mt-4 text-gray-600"
-                />
-              </motion.div>
-            </div>
-            <div className="flex-1 flex items-center justify-center mb-4 pb-4">
-              <motion.div
-                key={metrics.results[2].id}
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.1 + 1 * 0.1,
-                  type: "spring",
-                  stiffness: 100,
-                }}
-              >
-                <CircularMetric
-                  percentage={`${metrics.results[2].value}${
-                    metrics.results[2].suffix || ""
-                  }`}
-                  description={metrics.results[2].description}
-                  color={"bg-blue-400"}
-                />
-              </motion.div>
-            </div>
+                {data.feature_1_title || "Real-time Analysis"}
+              </h3>
+              <RichTextRenderer
+                content={data.feature_1_description || ""}
+                fallback="Get instant insights from your data"
+                className="text-base leading-relaxed text-gray-600"
+              />
+            </motion.div>
           </div>
-          {/* Third Row */}
-          <div className="flex ">
-            <div className="flex-1 flex items-center justify-center mt-4 pt-4">
-              <motion.div
-                key={metrics.results[3].id}
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.1 + 2 * 0.1,
-                  type: "spring",
-                  stiffness: 100,
-                }}
+
+          <div className="flex justify-center lg:justify-end">
+            <CircularMetric
+              percentage={data.metric_4_value || "99.9%"}
+              description={data.metric_4_description || "Generate reports"}
+              color="#60a5fa"
+              delay={0.5}
+            />
+          </div>
+
+          {/* Row 3 - Bottom Left Circle & Right Text */}
+          <div className="flex justify-center lg:justify-start">
+            <CircularMetric
+              percentage={data.metric_3_value || "24/7"}
+              description={data.metric_3_description || "Always available"}
+              color="#facc15"
+              delay={0.6}
+            />
+          </div>
+
+          <div className="col-span-2 flex items-center justify-end">
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="text-right max-w-xl"
+            >
+              <h3
+                className={`text-3xl font-semibold mb-4 ${poppins.className}`}
+                style={{ color: "#3b82f6", fontWeight: 600 }}
               >
-                <CircularMetric
-                  percentage={`${metrics.results[3].value}${
-                    metrics.results[3].suffix || ""
-                  }`}
-                  description={metrics.results[3].description}
-                  color={"bg-yellow-400"}
-                />
-              </motion.div>
-            </div>
-            <div className="flex-1 flex items-center justify-center"></div>
-            <div className="flex-1 flex items-center justify-center ">
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="text-right max-w-2xl mx-auto "
-              >
-                <h3
-                  className="text-xl md:text-2xl font-semibold mb-4"
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 600,
-                    color: "#3AAFFF",
-                  }}
-                >
-                  {data.feature_2_title}
-                </h3>
-                <RichTextRenderer
-                  content={data.feature_2_description}
-                  fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
-                  className="text-sm md:text-base leading-relaxed text-gray-600"
-                />
-              </motion.div>
-            </div>
+                {data.feature_2_title || "Predictive Modeling"}
+              </h3>
+              <RichTextRenderer
+                content={data.feature_2_description || ""}
+                fallback="Forecast trends and outcomes"
+                className="text-base leading-relaxed text-gray-600"
+              />
+            </motion.div>
           </div>
         </div>
 
-        {/* Mobile Layout - Hidden on Desktop */}
-        <div className="lg:hidden space-y-8">
-          {/* Text 1 */}
+        {/* Mobile Layout */}
+        <div className="lg:hidden space-y-12">
           <motion.div
             initial={{ y: -30, opacity: 0 }}
             animate={isInView ? { y: 0, opacity: 1 } : {}}
@@ -365,165 +249,92 @@ export default function AIPoweredAnalytics() {
             className="text-center"
           >
             <h2
-              className="text-3xl font-bold mb-4"
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 700,
-                color: "#00FF3C",
-                letterSpacing: "0.5px",
-              }}
+              className={`text-4xl font-bold mb-6 leading-tight ${poppins.className}`}
+              style={{ color: "#10b981", fontWeight: 700 }}
             >
-              {loading ? "Loading..." : data.title}
+              {data.title}
             </h2>
-
             <RichTextRenderer
-              content={loading ? "Loading description..." : data.description}
-              fallback="floneo's AI engine identifies inefficiencies, predicts risks, and surfaces real-time insights empowering teams to make faster, smarter, and data-driven decisions without the guesswork."
-              className="text-sm leading-relaxed text-gray-600"
+              content={data.description || ""}
+              fallback="Harness the power of AI to transform your data"
+              className="text-base leading-relaxed text-gray-600"
             />
           </motion.div>
 
-          {/* Circle 1 */}
-          <motion.div
-            key={metrics.results[0].id}
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.1,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="flex justify-center"
-          >
-            <CircularMetric
-              percentage={`${metrics.results[0].value}${
-                metrics.results[0].suffix || ""
-              }`}
-              description={metrics.results[0].description}
-              color={"bg-green-400"}
-            />
-          </motion.div>
+          <div className="space-y-10">
+            <div className="flex justify-center">
+              <CircularMetric
+                percentage={data.metric_1_value || "95%"}
+                description={data.metric_1_description || "Get instant insights"}
+                color="#10b981"
+                delay={0.2}
+              />
+            </div>
 
-          {/* Circle 2 */}
-          <motion.div
-            key={metrics.results[1].id}
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.2,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="flex justify-center"
-          >
-            <CircularMetric
-              percentage={`${metrics.results[1].value}${
-                metrics.results[1].suffix || ""
-              }`}
-              description={metrics.results[1].description}
-              color={"bg-pink-400"}
-            />
-          </motion.div>
+            <div className="flex justify-center">
+              <CircularMetric
+                percentage={data.metric_2_value || "2.3x"}
+                description={data.metric_2_description || "Forecast trends"}
+                color="#ec4899"
+                delay={0.3}
+              />
+            </div>
 
-          {/* Text 2 */}
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-center"
-          >
-            <h3
-              className="text-xl font-semibold mb-4"
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 600,
-                color: "#333333",
-              }}
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-center px-4"
             >
-              {data.feature_1_title}
-            </h3>
-            <RichTextRenderer
-              content={data.feature_1_description}
-              fallback="Utilize advanced AI analytics to predict upcoming financial trends, helping you stay ahead of the curve and make proactive decisions that safeguard and grow your wealth."
-              className="text-sm leading-relaxed text-gray-600"
-            />
-          </motion.div>
+              <h3 className={`text-2xl font-semibold mb-4 ${poppins.className}`}>
+                {data.feature_1_title || "Real-time Analysis"}
+              </h3>
+              <RichTextRenderer
+                content={data.feature_1_description || ""}
+                fallback="Get instant insights from your data"
+                className="text-base leading-relaxed text-gray-600"
+              />
+            </motion.div>
 
-          {/* Circle 3 */}
-          <motion.div
-            key={metrics.results[3].id}
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.5,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="flex justify-center"
-          >
-            <CircularMetric
-              percentage={`${metrics.results[3].value}${
-                metrics.results[3].suffix || ""
-              }`}
-              description={metrics.results[3].description}
-              color={"bg-yellow-400"}
-            />
-          </motion.div>
+            <div className="flex justify-center">
+              <CircularMetric
+                percentage={data.metric_3_value || "24/7"}
+                description={data.metric_3_description || "Always available"}
+                color="#facc15"
+                delay={0.5}
+              />
+            </div>
 
-          {/* Circle 4 */}
-          <motion.div
-            key={metrics.results[2].id}
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.4,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="flex justify-center"
-          >
-            <CircularMetric
-              percentage={`${metrics.results[2].value}${
-                metrics.results[2].suffix || ""
-              }`}
-              description={metrics.results[2].description}
-              color={"bg-blue-400"}
-            />
-          </motion.div>
+            <div className="flex justify-center">
+              <CircularMetric
+                percentage={data.metric_4_value || "99.9%"}
+                description={data.metric_4_description || "Generate reports"}
+                color="#60a5fa"
+                delay={0.6}
+              />
+            </div>
 
-          {/* Text 3 */}
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-center"
-          >
-            <h3
-              className="text-xl font-semibold mb-4"
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 600,
-                color: "#3AAFFF",
-              }}
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="text-center px-4"
             >
-              {data.feature_2_title}
-            </h3>
-            <RichTextRenderer
-              content={data.feature_2_description}
-              fallback="floneo empowers enterprises to design, deploy, and scale workflows without IT bottlenecks. With drag-and-drop simplicity and AI insights, teams automate faster and smarter."
-              className="text-sm leading-relaxed text-gray-600"
-            />
-          </motion.div>
+              <h3
+                className={`text-2xl font-semibold mb-4 ${poppins.className}`}
+                style={{ color: "#3b82f6", fontWeight: 600 }}
+              >
+                {data.feature_2_title || "Predictive Modeling"}
+              </h3>
+              <RichTextRenderer
+                content={data.feature_2_description || ""}
+                fallback="Forecast trends and outcomes"
+                className="text-base leading-relaxed text-gray-600"
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

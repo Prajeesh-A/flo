@@ -218,95 +218,128 @@ function HomePageContent() {
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Desktop Navigation Bar */}
-          <nav className="nav-black-transparent mx-auto mt-4 hidden lg:block ">
-            <div className="flex items-center justify-between h-full px-8">
+          <nav className="mx-auto mt-4 hidden lg:block rounded-full bg-gray-800/40 backdrop-blur-xl shadow-2xl border border-white/20 max-w-7xl">
+            <div className="flex items-center justify-between h-[60px] px-6">
               {/* Logo */}
-              <div className="flex items-center gap-2 relative z-50">
+              <div className="flex items-center">
                 <Link
                   href="/"
-                  className="w-10 h-10 logo-rotate block"
+                  className="w-9 h-9 logo-rotate block"
                   style={{ transform: `rotate(${logoRotation}deg)` }}
                 >
                   <Image
                     src="/logo.png"
                     alt="Floneo Logo"
-                    width={40}
-                    height={40}
+                    width={36}
+                    height={36}
                     className="w-full h-full object-contain cursor-pointer"
                   />
                 </Link>
               </div>
 
-              {/* Navigation Links */}
-              <div className="flex items-center gap-8">
+              {/* Navigation Links - Centered */}
+              <div className="flex-1 flex items-center justify-center gap-8">
                 {navItems
                   .filter((item: any) => item.is_active)
-                  .map((item: any, index: number) => (
-                    <a
-                      key={index}
-                      href={item.href}
-                      className="nav-link text-white hover:text-[#FFC107] transition-colors text-lg font-normal"
-                    >
-                      {item.label}
-                    </a>
-                  ))}
+                  .filter((item: any) => item.label.toLowerCase() !== "blog") // Remove blog from center
+                  .map((item: any, index: number) => {
+                    const isPageLink =
+                      item.href.startsWith("/") && !item.href.startsWith("/#");
+
+                    return isPageLink ? (
+                      <Link
+                        key={index}
+                        href={item.href}
+                        className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <a
+                        key={index}
+                        href={item.href}
+                        className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
+                      >
+                        {item.label}
+                      </a>
+                    );
+                  })}
               </div>
 
-              {/* Contact Sales Button */}
-              <button
-                className="contact-sales-btn ml-2 font-normal text-lg"
-                onClick={() => router.push("/contact")}
-              >
-                Contact Sales
-              </button>
+              {/* Right Side Button Group - Blog + Contact Sales */}
+              <div className="flex items-center gap-3">
+                {/* Blog Button - Secondary */}
+                {navItems
+                  .filter((item: any) => item.is_active)
+                  .filter((item: any) => item.label.toLowerCase() === "blog")
+                  .map((item: any, index: number) => (
+                    <Link
+                      key={index}
+                      href={item.href}
+                      className="text-white/90 hover:text-white bg-white/10 hover:bg-white/15 px-5 py-2.5 rounded-full transition-all duration-300 text-[14px] font-medium border border-white/20"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+
+                {/* Contact Sales Button - Primary CTA */}
+                <button
+                  className="bg-[#1a2332] hover:bg-[#0f1621] text-white px-6 py-2.5 rounded-full text-[14px] font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
+                  onClick={() => router.push("/contact")}
+                >
+                  Contact Sales
+                </button>
+              </div>
             </div>
           </nav>
 
-          {/* Mobile Navigation Bar */}
-          <nav className="lg:hidden mx-auto mt-4 bg-white/95 backdrop-blur-lg rounded-full px-5 py-3.5 shadow-xl border border-white/20 max-w-sm">
+          {/* Mobile Navigation Bar - Closed State */}
+          <nav className="lg:hidden mx-auto mt-4 bg-gray-800/40 backdrop-blur-xl rounded-full px-4 py-2.5 shadow-2xl border border-white/20 max-w-[600px]">
             <div className="flex items-center justify-between">
               {/* Logo */}
               <div className="flex items-center">
-                <div
-                  className="w-10 h-10 logo-rotate"
-                  style={{ transform: `rotate(${logoRotation}deg)` }}
-                >
-                  <Image
-                    src="/logo.png"
-                    alt=" floneo Logo"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
+                <Link href="/">
+                  <div
+                    className="w-9 h-9 logo-rotate"
+                    style={{ transform: `rotate(${logoRotation}deg)` }}
+                  >
+                    <Image
+                      src="/logo.png"
+                      alt="Floneo Logo"
+                      width={36}
+                      height={36}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </Link>
               </div>
 
               {/* Contact Sales Button - Mobile */}
               <button
-                className="bg-[#2C2C2E] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#1C1C1E] transition-all duration-200 hover:scale-105 active:scale-95"
-                onClick={openModal}
+                className="bg-[#1a2332] text-white px-5 py-2 rounded-full text-[13px] font-medium hover:bg-[#0f1621] transition-all duration-300"
+                onClick={() => router.push("/contact")}
               >
                 Contact Sales
               </button>
 
-              {/* Yellow Hamburger Menu Button */}
+              {/* Hamburger Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="w-11 h-11 bg-[#FFC107] rounded-full flex flex-col items-center justify-center gap-1.5 hover:bg-[#FFB300] transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+                className="w-9 h-9 bg-[#FFC107] rounded-full flex flex-col items-center justify-center gap-1 hover:bg-[#FFB300] transition-all duration-300 shadow-md"
                 aria-label="Toggle menu"
               >
                 <span
-                  className={`w-5 h-0.5 bg-black transition-all duration-300 ${
+                  className={`w-4 h-0.5 bg-black transition-all duration-300 ${
                     isMobileMenuOpen ? "rotate-45 translate-y-1.5" : ""
                   }`}
                 />
                 <span
-                  className={`w-5 h-0.5 bg-black transition-all duration-300 ${
+                  className={`w-4 h-0.5 bg-black transition-all duration-300 ${
                     isMobileMenuOpen ? "opacity-0" : ""
                   }`}
                 />
                 <span
-                  className={`w-5 h-0.5 bg-black transition-all duration-300 ${
+                  className={`w-4 h-0.5 bg-black transition-all duration-300 ${
                     isMobileMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
                   }`}
                 />
@@ -315,18 +348,18 @@ function HomePageContent() {
           </nav>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Mobile Navigation Menu - Dropdown */}
         {isMobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 right-0 mt-3 mx-4 mobile-menu-enter mobile-menu-container">
-            <div className="bg-white/98 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/30">
-              <div className="flex flex-col gap-2">
+            <div className="bg-white/95 backdrop-blur-2xl rounded-3xl p-6 shadow-2xl border border-white/40">
+              <div className="flex flex-col gap-1">
                 {navItems
                   .filter((item: any) => item.is_active)
                   .map((item: any, index: number) => (
                     <a
                       key={index}
                       href={item.href}
-                      className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-all duration-200 text-base font-medium py-3.5 px-5 rounded-2xl hover:bg-gray-50 active:bg-gray-100 active:scale-95"
+                      className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-all duration-300 text-[15px] font-medium py-3 px-4 rounded-xl hover:bg-gray-50/80 active:bg-gray-100"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.label}
@@ -336,7 +369,7 @@ function HomePageContent() {
                 {/* Additional Contact Button in Menu */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <button
-                    className="w-full bg-[#FFC107] text-black py-3.5 px-5 rounded-2xl font-semibold text-base hover:bg-[#FFB300] transition-all duration-200 active:scale-95"
+                    className="w-full bg-[#FFC107] text-black py-3 px-4 rounded-xl font-semibold text-[15px] hover:bg-[#FFB300] transition-all duration-300 shadow-md"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       openModal();
@@ -350,6 +383,7 @@ function HomePageContent() {
           </div>
         )}
       </header>
+
       {/* Custom Cursor */}
       {customCursor.visible && (
         <div
@@ -389,7 +423,7 @@ function HomePageContent() {
       <section
         id="home"
         ref={heroRef}
-        className="hero-section pt-36 md:pt-40 pb-32 md:pb-40 px-6 sm:px-8 lg:px-12"
+        className="hero-section  pb-32 md:pb-40 px-6 sm:px-8 lg:px-12"
       >
         <div className="container mx-auto max-w-6xl">
           <div

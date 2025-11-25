@@ -363,7 +363,7 @@ function PhoneMockupCard({
   return (
     <motion.div
       {...(isMobile ? mobileStaticProps : desktopAnimatedProps)}
-      className="bg-gradient-to-br from-[#1a1a2e] via-[#2d2d44] to-[#16213e] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[600px] sm:min-h-[700px] md:min-h-[760px] lg:min-h-[900px] relative overflow-hidden group"
+      className="bg-gradient-to-br from-[#1a1a2e] via-[#2d2d44] to-[#16213e] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[600px] sm:min-h-[700px] md:min-h-[760px] lg:min-h-[900px] relative overflow-hidden group "
     >
       {/* Animated background gradient overlay - Static on mobile */}
       <motion.div
@@ -592,16 +592,15 @@ function StepCarousel({
                 
               </p> */}
               <div className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-normal">
-              {step.description
-                .split("•") // Split the string at each bullet
-                .filter((point) => point.trim() !== "") // Remove empty entries
-                .map((point, index) => (
-                  <div key={index} className="mb-2">
-                    • {point.trim()}
-                  </div>
-                ))}
-            </div>
-
+                {step.description
+                  .split("•") // Split the string at each bullet
+                  .filter((point) => point.trim() !== "") // Remove empty entries
+                  .map((point, index) => (
+                    <div key={index} className="mb-2">
+                      • {point.trim()}
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
 
@@ -801,8 +800,10 @@ export default function ArchitectingExcellence() {
     badge_text: "ABOUT US",
     main_title_line1: "Architecting",
     main_title_line2: "Excellence",
-    subtitle: "Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks.",
-    philosophy_title: "At FloNeo, we've redefined workflow creation. We believe it should be as simple as stacking blocks—visual, instant, and accessible to everyone. FloNeo turns every user into a builder.",
+    subtitle:
+      "Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks.",
+    philosophy_title:
+      "At FloNeo, we've redefined workflow creation. We believe it should be as simple as stacking blocks—visual, instant, and accessible to everyone. FloNeo turns every user into a builder.",
     philosophy_button_text: "View Services",
     philosophy_button_url: "#",
     counter_1_value: 70,
@@ -813,13 +814,17 @@ export default function ArchitectingExcellence() {
     team_role: "CCO & Co-Founder",
     team_image: null,
     step_1_title: "Define requirements.",
-    step_1_description: "Define application scope, goal, users type, data strategy in scope.",
+    step_1_description:
+      "Define application scope, goal, users type, data strategy in scope.",
     step_2_title: "Design Prototype (floneo builder)",
-    step_2_description: "• Configure templates, select pre built templates & modify them. • Design user interfaces by drag and drop in Visual builder. • Data Modeling with Databases or connect to existing data . • Set the functional properties by FloNeo Workflow Blocks.",
+    step_2_description:
+      "• Configure templates, select pre built templates & modify them. • Design user interfaces by drag and drop in Visual builder. • Data Modeling with Databases or connect to existing data . • Set the functional properties by FloNeo Workflow Blocks.",
     step_3_title: "Test the newly built app.",
-    step_3_description: "• Functional Testing • Integration Testing • Performance Testing (In case of users & transactions count is high) • Security & Compliance Review",
+    step_3_description:
+      "• Functional Testing • Integration Testing • Performance Testing (In case of users & transactions count is high) • Security & Compliance Review",
     step_4_title: "Deploy and manage.",
-    step_4_description: "• One click Deployment (Publish app in the web for users access) • Define user access & roles • Live Monitoring (Production)",
+    step_4_description:
+      "• One click Deployment (Publish app in the web for users access) • Define user access & roles • Live Monitoring (Production)",
     background_color: "#FFFFFF",
   };
 
@@ -990,69 +995,98 @@ export default function ArchitectingExcellence() {
               </div>
             ) : (
               <motion.div
-                initial={{ opacity: 0, x: -40 }}
+                initial={{ opacity: 0, x: -32 }}
                 animate={
-                  isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }
+                  isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -32 }
                 }
-                transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                 whileHover={{ scale: 1.02 }}
-                className="bg-[#FFC107] rounded-3xl p-10 md:p-12 lg:p-16 flex flex-col justify-between min-h-[380px] lg:min-h-[450px] relative overflow-hidden group"
+                className="
+    bg-[#FFC107]
+    rounded-3xl
+    px-5 py-7 
+    sm:px-10 sm:py-10 md:px-12 md:py-12
+    flex flex-col
+    justify-between
+    min-h-[260px]
+    max-w-full
+    w-full
+    relative
+    overflow-hidden
+    group
+    shadow-xl
+  "
               >
                 {/* Animated background gradient */}
                 <motion.div
-                  animate={{
-                    opacity: [0.1, 0.2, 0.1],
-                    scale: [1, 1.2, 1],
-                  }}
+                  animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.04, 1] }}
                   transition={{
                     duration: 6,
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                  className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
+                  className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"
                 />
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                  }
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="relative z-10"
-                >
-                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-white mb-8 leading-tight">
-                    {data.philosophy_title.split("\n").map((line, index) => (
-                      <React.Fragment key={index}>
+                <div className="flex flex-col flex-1 justify-center relative z-10 gap-4">
+                  <h3
+                    className="
+      font-normal
+      text-white
+      text-xl
+      sm:text-2xl
+      md:text-3xl
+      lg:text-4xl
+      leading-normal
+      mb-2
+      max-w-[640px]
+      "
+                  >
+                    {/* Split title lines for balanced layout */}
+                    {data.philosophy_title.split("\n").map((line, idx) => (
+                      <div key={idx} className="mb-1">
                         {line}
-                        {index <
-                          data.philosophy_title.split("\n").length - 1 && (
-                          <br />
-                        )}
-                      </React.Fragment>
+                      </div>
                     ))}
                   </h3>
-                </motion.div>
+                </div>
 
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={
                     isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
                   }
-                  transition={{ duration: 0.8, delay: 0.4 }}
+                  transition={{ duration: 0.7, delay: 0.3 }}
                   whileHover={{
                     scale: 1.05,
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
                   }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-black text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-900 transition-colors self-start relative z-10"
+                  whileTap={{ scale: 0.98 }}
+                  className="
+      bg-black
+      text-white
+      px-6
+      py-3
+      rounded-full
+      font-semibold
+      text-sm
+      sm:text-base
+      hover:bg-gray-900
+      transition-colors
+      w-full sm:w-auto
+      mt-4
+      mb-2
+      self-start
+      relative
+      z-10
+      "
                   onClick={openModal}
                 >
                   {data.philosophy_button_text}
                 </motion.button>
               </motion.div>
             )}
-            <div className="mb-3 mt-3">
-            </div>
+            <div className="mb-3 mt-3"></div>
             {/* Dark Gradient Card - Faster Process Cycles */}
             <DarkGradientCard
               isInView={isInView}
