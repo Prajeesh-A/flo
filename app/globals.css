@@ -941,13 +941,7 @@ html {
     max-width: 140px !important;
   }
 
-  /* Ensure dropdown has proper z-index and positioning on mobile */
-  .country-selector-mobile [class*="z-[9999]"] {
-    position: absolute !important;
-    z-index: 9999 !important;
-  }
-
-  /* Mobile dropdown improvements */
+  /* Mobile dropdown improvements - now handled by component positioning */
   @media (max-width: 767px) {
     /* Improve touch targets on mobile */
     .country-selector-mobile button {
@@ -960,11 +954,6 @@ html {
     .country-selector-mobile input {
       font-size: 16px !important;
       transform: translateZ(0) !important;
-    }
-
-    /* Ensure dropdown is always visible on mobile */
-    .country-selector-mobile [class*="z-[9999]"] {
-      z-index: 10000 !important;
     }
   }
 

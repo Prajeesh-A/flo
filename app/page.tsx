@@ -423,7 +423,7 @@ function HomePageContent() {
       <section
         id="home"
         ref={heroRef}
-        className="hero-section  pb-32 md:pb-40 px-6 sm:px-8 lg:px-12"
+        className="hero-section pb-20 md:pb-32 lg:pb-40 px-4 sm:px-6 md:px-8 lg:px-12"
       >
         <div className="container mx-auto max-w-6xl">
           <div
@@ -434,64 +434,69 @@ function HomePageContent() {
             }`}
           >
             {/* Small tagline with emoji */}
-            <div className="flex items-center justify-center gap-2 mb-0 mt-20 md:mt-24">
-              <Image
-                src="/favicon-32x32.png"
-                alt="FloNeo Logo"
-                width={20}
-                height={20}
-                className="flex-shrink-0"
-              />
-              <span className="text-lg font-light font-poppins text-gray-700">
-                {heroLoading
-                  ? "Loading..."
-                  : heroError
-                  ? "Build. Automate. Scale."
-                  : heroData?.tagline || "Build. Automate. Scale."}
-              </span>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 mb-4 sm:mb-6 mt-8 sm:mt-20 md:mt-24 px-4">
+              <div className="flex items-center gap-2 mb-2 sm:mb-0">
+                <Image
+                  src="/favicon-32x32.png"
+                  alt="FloNeo Logo"
+                  width={20}
+                  height={20}
+                  className="flex-shrink-0 hidden md:block"
+                />
+                <span className="text-base sm:text-lg font-light font-poppins text-gray-700 whitespace-nowrap">
+                  {heroLoading
+                    ? "Loading..."
+                    : heroError
+                    ? "Build. Automate. Scale."
+                    : heroData?.tagline || "Build. Automate. Scale."}
+                </span>
+              </div>
               {!heroLoading && (
-                <span className="text-lg font-medium font-poppins text-gray-900">
+                <span className="text-base sm:text-lg font-medium font-poppins text-gray-900 text-center sm:text-left">
                   Without the IT bottleneck
                 </span>
               )}
             </div>
 
-            {/* Large  floneo brand name */}
+            {/* Large floneo brand name - Responsive sizing */}
             <h1
-              className="text-4xl sm:text-6xl md:text-[8rem] lg:text-[12rem] font-surgena font-semibold mb-6 sm:mb-10 leading-tight tracking-tight"
+              className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] 2xl:text-[12rem] font-surgena font-semibold mb-6 sm:mb-8 md:mb-10 leading-tight tracking-tight px-2"
               style={{ color: "var(--deep-navy)", fontWeight: 600 }}
             >
               {heroLoading
-                ? " floneo"
+                ? "floneo"
                 : heroError
-                ? " floneo"
-                : heroData?.title || " floneo"}
+                ? "floneo"
+                : heroData?.title || "floneo"}
             </h1>
 
-            {/* Description */}
-            <div className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-8 sm:mb-16 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
+            {/* Description - Responsive text sizing */}
+            <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 mb-8 sm:mb-12 md:mb-16 max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-4 sm:px-6 md:px-8">
               {heroLoading ? (
                 <p>Loading...</p>
               ) : heroError ? (
                 <p>
                   FloNeo's Low-Code/No-Code platform turns manual processes into
-                  instant, powerful applications.It gives teams the agility to
+                  instant, powerful applications. It gives teams the agility to
                   build and deploy real business solutions in hours, not months.
                 </p>
               ) : (
                 <RichTextRenderer
                   content={
                     heroData?.description ||
-                    "FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications.It gives teams the agility to build and deploy real business solutions in hours, not months."
+                    "FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications. It gives teams the agility to build and deploy real business solutions in hours, not months."
                   }
-                  fallback="FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications.It gives teams the agility to build and deploy real business solutions in hours, not months."
+                  fallback="FloNeo's Low-Code/No-Code platform turns manual processes into instant, powerful applications. It gives teams the agility to build and deploy real business solutions in hours, not months."
                 />
               )}
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - Using your custom CSS classes for consistent colors */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 px-4 sm:px-0">
-              <button className="hero-cta-primary" onClick={openModal}>
+              <button
+                className="hero-cta-primary w-full sm:w-auto"
+                onClick={openModal}
+              >
                 <span>
                   {heroLoading
                     ? "Get Started"
@@ -500,7 +505,10 @@ function HomePageContent() {
                     : heroData?.cta_primary_text || "Get Started"}
                 </span>
               </button>
-              <button className="hero-cta-secondary" onClick={openModal}>
+              <button
+                className="hero-cta-secondary w-full sm:w-auto"
+                onClick={openModal}
+              >
                 <span>
                   {heroLoading
                     ? "Schedule a Demo"
@@ -511,20 +519,20 @@ function HomePageContent() {
               </button>
             </div>
 
-            {/* Star Rating */}
-            <div className="flex items-center justify-center gap-3 mt-8">
+            {/* Star Rating - Responsive layout */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 px-4">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className="w-6 h-6 text-green-400 fill-current"
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 fill-current"
                     viewBox="0 0 20 20"
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 ))}
               </div>
-              <span className="text-gray-600 text-base ml-3">
+              <span className="text-gray-600 text-sm sm:text-base text-center sm:text-left sm:ml-2">
                 Trusted by 20+ forward thinking teams
               </span>
             </div>
@@ -533,6 +541,7 @@ function HomePageContent() {
           {/* About Us (scroll-triggered tablet) */}
         </div>
       </section>
+
       <AboutTablet />
       {/* Architecting Excellence Section */}
       <ArchitectingExcellence />
