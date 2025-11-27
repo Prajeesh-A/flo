@@ -12,7 +12,8 @@ const useIsMobile = () => {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      // ✅ Changed from 768px to 1280px
+      setIsMobile(window.innerWidth < 1280);
     };
 
     checkIsMobile();
@@ -527,76 +528,61 @@ function StepCarousel({
   currentStep: number;
   onStepClick: (index: number) => void;
   isInView: boolean;
-  steps: Array<{
-    number: string;
-    title: string;
-    subtitle: string;
-    description: string;
-  }>;
+  steps: Array<{ number: string; title: string; subtitle: string; description: string }>;
   isMobile: boolean;
 }) {
   const step = steps[currentStep];
 
+  // ✅ Mobile/Tablet Layout (< 1280px) - Clean, responsive layout
   if (isMobile) {
     return (
-      <div className="bg-[#0066ff] rounded-3xl p-8 sm:p-10 md:p-12 lg:p-16 relative overflow-hidden group">
-        {/* Static background gradient on mobile */}
+      <div className="bg-[#0066ff] rounded-2xl xl:rounded-3xl p-5 sm:p-6 md:p-7 lg:p-10 xl:p-16 relative overflow-hidden">
+        {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
 
-        {/* Step indicators - static on mobile */}
-        <div className="flex gap-3 mb-10 justify-center md:justify-start relative z-10">
+        {/* Step indicators - Responsive sizing */}
+        <div className="flex gap-2 sm:gap-2.5 md:gap-3 mb-5 sm:mb-6 md:mb-8 justify-center relative z-10">
           {steps.map((_, index) => (
             <button
               key={index}
               onClick={() => onStepClick(index)}
-              className={`h-4 rounded-full transition-all duration-500 ${
-                index === currentStep
-                  ? "bg-[#FFC107] w-10"
-                  : "bg-white/30 hover:bg-white/50 w-4"
+              className={`h-2 sm:h-2.5 md:h-3 lg:h-4 rounded-full transition-all duration-500 ${
+                index === currentStep 
+                  ? "bg-[#FFC107] w-6 sm:w-7 md:w-8 lg:w-10" 
+                  : "bg-white/30 hover:bg-white/50 w-2 sm:w-2.5 md:w-3 lg:w-4"
               }`}
-              style={{
-                boxShadow:
-                  index === currentStep
-                    ? "0 0 20px rgba(255, 193, 7, 0.6)"
-                    : "none",
-              }}
+              style={{ boxShadow: index === currentStep ? "0 0 20px rgba(255, 193, 7, 0.6)" : "none" }}
               aria-label={`Go to step ${index + 1}`}
             />
           ))}
         </div>
 
-        <div
-          key={currentStep}
-          className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative z-10"
-        >
-          {/* Left side - Number and details - static on mobile */}
-          <div className="flex items-start gap-8">
+        {/* Content - Single column, vertically stacked */}
+        <div key={currentStep} className="relative z-10 space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-8">
+          {/* Step number + Details in a flex row */}
+          <div className="flex items-start gap-2.5 sm:gap-3 md:gap-4 lg:gap-6">
+            {/* Step Number - Flex-shrink-0 to prevent squishing */}
             <div
-              className="text-[#FFC107] font-semibold text-5xl sm:text-6xl md:text-8xl lg:text-9xl"
-              style={{
-                textShadow: "0 0 30px rgba(255, 193, 7, 0.5)",
-              }}
+              className="text-[#FFC107] font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl flex-shrink-0 leading-none"
+              style={{ textShadow: "0 0 30px rgba(255, 193, 7, 0.5)" }}
             >
               {step.number}
             </div>
-            <div className="flex-1">
-              <div className="text-white/80 text-base uppercase tracking-wider mb-3 font-normal">
+
+            {/* Step Details - Flex-1 to take remaining space */}
+            <div className="flex-1 min-w-0">
+              <div className="text-white/80 text-[9px] sm:text-[10px] md:text-xs lg:text-sm uppercase tracking-wider mb-1 sm:mb-1.5 md:mb-2 font-normal">
                 STEP {step.number}
               </div>
-              <h3 className="text-white font-semibold text-xl sm:text-2xl md:text-3xl mb-4 sm:mb-5">
+              <h3 className="text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-1.5 sm:mb-2 md:mb-3 leading-tight">
                 {step.title}
               </h3>
-              {/* <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-normal">
-                {step.description}
-                
-                
-              </p> */}
-              <div className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-normal">
+              <div className="text-white/90 text-[10px] sm:text-[11px] md:text-xs lg:text-sm xl:text-base leading-relaxed font-normal">
                 {step.description
-                  .split("•") // Split the string at each bullet
-                  .filter((point) => point.trim() !== "") // Remove empty entries
+                  .split("•")
+                  .filter((point) => point.trim() !== "")
                   .map((point, index) => (
-                    <div key={index} className="mb-2">
+                    <div key={index} className="mb-1 sm:mb-1.5 md:mb-2">
                       • {point.trim()}
                     </div>
                   ))}
@@ -604,23 +590,29 @@ function StepCarousel({
             </div>
           </div>
 
-          {/* Right side - Subtitle and CTA - static on mobile */}
-          <div className="text-left md:text-right">
-            <h3 className="text-white font-semibold text-2xl sm:text-3xl md:text-5xl lg:text-6xl mb-6 sm:mb-8 leading-tight">
+          {/* Subtitle + CTA Button section */}
+          <div className="text-left space-y-2.5 sm:space-y-3 md:space-y-4">
+            <h3 className="text-white font-semibold text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-tight">
               {step.subtitle}
             </h3>
             <button
               onClick={() => onStepClick((currentStep + 1) % steps.length)}
-              className="bg-white text-[#0066ff] px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base hover:bg-gray-100 transition-colors"
+              className="bg-white text-[#0066ff] px-3.5 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 xl:px-8 xl:py-4 rounded-full font-semibold text-[10px] sm:text-[11px] md:text-xs lg:text-sm xl:text-base hover:bg-gray-100 transition-colors inline-block"
             >
               Operational Freedom Starts Here →
             </button>
           </div>
         </div>
 
-        {/* Static decorative element on mobile */}
+        {/* Decorative SVG - Responsive sizing */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
-          <svg width="200" height="200" viewBox="0 0 100 100" fill="none">
+          <svg 
+            width="100" 
+            height="100" 
+            viewBox="0 0 100 100" 
+            fill="none" 
+            className="sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px] lg:w-[160px] lg:h-[160px] xl:w-[180px] xl:h-[180px]"
+          >
             <circle cx="50" cy="50" r="40" stroke="white" strokeWidth="2" />
             <circle cx="50" cy="50" r="30" stroke="white" strokeWidth="1" />
             <circle cx="50" cy="50" r="20" stroke="white" strokeWidth="1" />
@@ -630,6 +622,7 @@ function StepCarousel({
     );
   }
 
+  // ✅ Desktop Layout (>= 1280px) - Original two-column layout
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -637,21 +630,12 @@ function StepCarousel({
       transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       className="bg-[#0066ff] rounded-3xl p-10 md:p-12 lg:p-16 relative overflow-hidden group"
     >
-      {/* Animated background gradient overlay */}
       <motion.div
-        animate={{
-          opacity: [0.1, 0.2, 0.1],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={{ opacity: [0.1, 0.2, 0.1], scale: [1, 1.1, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"
       />
 
-      {/* Step indicators with enhanced animations */}
       <div className="flex gap-3 mb-10 justify-center md:justify-start relative z-10">
         {steps.map((_, index) => (
           <motion.button
@@ -660,16 +644,9 @@ function StepCarousel({
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: 0.9 }}
             className={`h-4 rounded-full transition-all duration-500 ${
-              index === currentStep
-                ? "bg-[#FFC107] w-10"
-                : "bg-white/30 hover:bg-white/50 w-4"
+              index === currentStep ? "bg-[#FFC107] w-10" : "bg-white/30 hover:bg-white/50 w-4"
             }`}
-            style={{
-              boxShadow:
-                index === currentStep
-                  ? "0 0 20px rgba(255, 193, 7, 0.6)"
-                  : "none",
-            }}
+            style={{ boxShadow: index === currentStep ? "0 0 20px rgba(255, 193, 7, 0.6)" : "none" }}
             aria-label={`Go to step ${index + 1}`}
           />
         ))}
@@ -683,16 +660,13 @@ function StepCarousel({
         transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative z-10"
       >
-        {/* Left side - Number and details */}
         <div className="flex items-center gap-8">
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
             className="text-[#FFC107] font-semibold text-7xl md:text-8xl lg:text-9xl"
-            style={{
-              textShadow: "0 0 30px rgba(255, 193, 7, 0.5)",
-            }}
+            style={{ textShadow: "0 0 30px rgba(255, 193, 7, 0.5)" }}
           >
             {step.number}
           </motion.div>
@@ -720,8 +694,8 @@ function StepCarousel({
               className="text-white/90 text-base md:text-lg leading-relaxed font-normal flex flex-wrap gap-x-4"
             >
               {step.description
-                .split("•") // Split the string at each bullet
-                .filter((point) => point.trim() !== "") // Remove empty entries
+                .split("•")
+                .filter((point) => point.trim() !== "")
                 .map((point, index) => (
                   <div key={index} className="whitespace-nowrap">
                     • {point.trim()}
@@ -731,7 +705,6 @@ function StepCarousel({
           </div>
         </div>
 
-        {/* Right side - Subtitle and CTA */}
         <div className="text-left md:text-right">
           <motion.h3
             initial={{ opacity: 0, y: 10 }}
@@ -746,10 +719,7 @@ function StepCarousel({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
             onClick={() => onStepClick((currentStep + 1) % steps.length)}
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 10px 30px rgba(255,255,255,0.3)",
-            }}
+            whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(255,255,255,0.3)" }}
             whileTap={{ scale: 0.95 }}
             className="bg-white text-[#0066ff] px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-100 transition-colors"
           >
@@ -758,17 +728,9 @@ function StepCarousel({
         </div>
       </motion.div>
 
-      {/* Animated decorative element */}
       <motion.div
-        animate={{
-          rotate: [0, 360],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "linear",
-        }}
+        animate={{ rotate: [0, 360], scale: [1, 1.1, 1] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none"
       >
         <svg width="200" height="200" viewBox="0 0 100 100" fill="none">
@@ -780,6 +742,7 @@ function StepCarousel({
     </motion.div>
   );
 }
+
 
 export default function ArchitectingExcellence() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -800,10 +763,8 @@ export default function ArchitectingExcellence() {
     badge_text: "ABOUT US",
     main_title_line1: "Architecting",
     main_title_line2: "Excellence",
-    subtitle:
-      "Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks.",
-    philosophy_title:
-      "At FloNeo, we've redefined workflow creation. We believe it should be as simple as stacking blocks—visual, instant, and accessible to everyone. FloNeo turns every user into a builder.",
+    subtitle: "Together, we're creating a seamless experience that puts you in charge of your operations without IT bottlenecks.",
+    philosophy_title: "At FloNeo, we've redefined workflow creation. We believe it should be as simple as stacking blocks—visual, instant, and accessible to everyone. FloNeo turns every user into a builder.",
     philosophy_button_text: "View Services",
     philosophy_button_url: "#",
     counter_1_value: 70,
@@ -814,17 +775,13 @@ export default function ArchitectingExcellence() {
     team_role: "CCO & Co-Founder",
     team_image: null,
     step_1_title: "Define requirements.",
-    step_1_description:
-      "Define application scope, goal, users type, data strategy in scope.",
+    step_1_description: "Define application scope, goal, users type, data strategy in scope.",
     step_2_title: "Design Prototype (floneo builder)",
-    step_2_description:
-      "• Configure templates, select pre built templates & modify them. • Design user interfaces by drag and drop in Visual builder. • Data Modeling with Databases or connect to existing data . • Set the functional properties by FloNeo Workflow Blocks.",
+    step_2_description: "• Configure templates, select pre built templates & modify them. • Design user interfaces by drag and drop in Visual builder. • Data Modeling with Databases or connect to existing data . • Set the functional properties by FloNeo Workflow Blocks.",
     step_3_title: "Test the newly built app.",
-    step_3_description:
-      "• Functional Testing • Integration Testing • Performance Testing (In case of users & transactions count is high) • Security & Compliance Review",
+    step_3_description: "• Functional Testing • Integration Testing • Performance Testing (In case of users & transactions count is high) • Security & Compliance Review",
     step_4_title: "Deploy and manage.",
-    step_4_description:
-      "• One click Deployment (Publish app in the web for users access) • Define user access & roles • Live Monitoring (Production)",
+    step_4_description: "• One click Deployment (Publish app in the web for users access) • Define user access & roles • Live Monitoring (Production)",
     background_color: "#FFFFFF",
   };
 
@@ -995,13 +952,11 @@ export default function ArchitectingExcellence() {
               </div>
             ) : (
               <motion.div
-                initial={{ opacity: 0, x: -32 }}
-                animate={
-                  isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -32 }
-                }
-                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-                whileHover={{ scale: 1.02 }}
-                className="
+  initial={{ opacity: 0, x: -32 }}
+  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -32 }}
+  transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+  whileHover={{ scale: 1.02 }}
+  className="
     bg-[#FFC107]
     rounded-3xl
     px-5 py-7 
@@ -1016,21 +971,16 @@ export default function ArchitectingExcellence() {
     group
     shadow-xl
   "
-              >
-                {/* Animated background gradient */}
-                <motion.div
-                  animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.04, 1] }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"
-                />
+>
+  {/* Animated background gradient */}
+  <motion.div
+    animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.04, 1] }}
+    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+    className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"
+  />
 
-                <div className="flex flex-col flex-1 justify-center relative z-10 gap-4">
-                  <h3
-                    className="
+  <div className="flex flex-col flex-1 justify-center relative z-10 gap-4">
+    <h3 className="
       font-normal
       text-white
       text-xl
@@ -1041,28 +991,26 @@ export default function ArchitectingExcellence() {
       mb-2
       max-w-[640px]
       "
-                  >
-                    {/* Split title lines for balanced layout */}
-                    {data.philosophy_title.split("\n").map((line, idx) => (
-                      <div key={idx} className="mb-1">
-                        {line}
-                      </div>
-                    ))}
-                  </h3>
-                </div>
+    >
+      {/* Split title lines for balanced layout */}
+      {data.philosophy_title
+        .split("\n")
+        .map((line, idx) => (
+          <div key={idx} className="mb-1">{line}</div>
+        ))}
+    </h3>
+  </div>
 
-                <motion.button
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                  }
-                  transition={{ duration: 0.7, delay: 0.3 }}
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  className="
+  <motion.button
+    initial={{ opacity: 0, y: 20 }}
+    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+    transition={{ duration: 0.7, delay: 0.3 }}
+    whileHover={{
+      scale: 1.05,
+      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+    }}
+    whileTap={{ scale: 0.98 }}
+    className="
       bg-black
       text-white
       px-6
@@ -1080,13 +1028,15 @@ export default function ArchitectingExcellence() {
       relative
       z-10
       "
-                  onClick={openModal}
-                >
-                  {data.philosophy_button_text}
-                </motion.button>
-              </motion.div>
+    onClick={openModal}
+  >
+    {data.philosophy_button_text}
+  </motion.button>
+</motion.div>
+
             )}
-            <div className="mb-3 mt-3"></div>
+            <div className="mb-3 mt-3">
+            </div>
             {/* Dark Gradient Card - Faster Process Cycles */}
             <DarkGradientCard
               isInView={isInView}

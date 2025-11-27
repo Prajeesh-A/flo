@@ -1,15 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
-  trailingSlash: true,
+  // Remove output: 'export' for dynamic routes
+  // Ya phir backend API use karke build time pe generate karo
   eslint: {
-    ignoreDuringBuilds: false, // Enable ESLint checks for better code quality
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: false, // Enable TypeScript checks for better code quality
+    ignoreBuildErrors: false,
   },
   images: {
-    unoptimized: true, // Required for static export
+    unoptimized: true,
     domains: ["flo-do2v.onrender.com"],
   },
   compress: true,
