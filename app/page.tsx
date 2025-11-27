@@ -218,80 +218,84 @@ function HomePageContent() {
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Desktop Navigation Bar */}
-          <nav className="mx-auto mt-4 hidden lg:block rounded-full bg-gray-800/40 backdrop-blur-xl shadow-2xl border border-white/20 max-w-7xl">
-            <div className="flex items-center justify-between h-[60px] px-6">
-              {/* Logo */}
-              <div className="flex items-center">
-                <Link
-                  href="/"
-                  className="w-9 h-9 logo-rotate block"
-                  style={{ transform: `rotate(${logoRotation}deg)` }}
-                >
-                  <Image
-                    src="/logo.png"
-                    alt="Floneo Logo"
-                    width={36}
-                    height={36}
-                    className="w-full h-full object-contain cursor-pointer"
-                  />
-                </Link>
-              </div>
+        {/* Desktop Navigation Bar */}
+<nav className="mx-auto mt-4 hidden lg:block rounded-full bg-gray-800/40 backdrop-blur-xl shadow-2xl border border-white/20 max-w-7xl">
+  <div className="flex items-center justify-between h-[60px] px-6">
+    {/* Logo */}
+    <div className="flex items-center">
+      <Link
+        href="/"
+        className="w-9 h-9 logo-rotate block"
+        style={{ transform: `rotate(${logoRotation}deg)` }}
+      >
+        <Image
+          src="/logo.png"
+          alt="Floneo Logo"
+          width={36}
+          height={36}
+          className="w-full h-full object-contain cursor-pointer"
+        />
+      </Link>
+    </div>
 
-              {/* Navigation Links - Centered */}
-              <div className="flex-1 flex items-center justify-center gap-8">
-                {navItems
-                  .filter((item: any) => item.is_active)
-                  .filter((item: any) => item.label.toLowerCase() !== "blog") // Remove blog from center
-                  .map((item: any, index: number) => {
-                    const isPageLink =
-                      item.href.startsWith("/") && !item.href.startsWith("/#");
+    {/* Navigation Links - Centered */}
+    <div className="flex-1 flex items-center justify-center gap-8">
+      {navItems
+        .filter((item: any) => item.is_active)
+        // ✅ FIXED: Remove both "blog" and "blogs" from center
+        .filter((item: any) => !["blog", "blogs"].includes(item.label.toLowerCase()))
+        .map((item: any, index: number) => {
+          const isPageLink =
+            item.href.startsWith("/") && !item.href.startsWith("/#");
 
-                    return isPageLink ? (
-                      <Link
-                        key={index}
-                        href={item.href}
-                        className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
-                      >
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <a
-                        key={index}
-                        href={item.href}
-                        className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
-                      >
-                        {item.label}
-                      </a>
-                    );
-                  })}
-              </div>
+          return isPageLink ? (
+            <Link
+              key={index}
+              href={item.href}
+              className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
+            >
+              {item.label}
+            </Link>
+          ) : (
+            <a
+              key={index}
+              href={item.href}
+              className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
+            >
+              {item.label}
+            </a>
+          );
+        })}
+    </div>
 
-              {/* Right Side Button Group - Blog + Contact Sales */}
-              <div className="flex items-center gap-3">
-                {/* Blog Button - Secondary */}
-                {navItems
-                  .filter((item: any) => item.is_active)
-                  .filter((item: any) => item.label.toLowerCase() === "blog")
-                  .map((item: any, index: number) => (
-                    <Link
-                      key={index}
-                      href={item.href}
-                      className="text-white/90 hover:text-white bg-white/10 hover:bg-white/15 px-5 py-2.5 rounded-full transition-all duration-300 text-[14px] font-medium border border-white/20"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+    {/* Right Side Button Group - Blog + Contact Sales */}
+    <div className="flex items-center gap-3">
+      {/* Blog Button - Secondary */}
+      {navItems
+        .filter((item: any) => item.is_active)
+        // ✅ FIXED: Check for both "blog" and "blogs" (case-insensitive)
+        .filter((item: any) => ["blog", "blogs"].includes(item.label.toLowerCase()))
+        .map((item: any, index: number) => (
+          <Link
+            key={index}
+            href={item.href}
+            className="text-white/90 hover:text-white bg-white/10 hover:bg-white/15 px-5 py-2.5 rounded-full transition-all duration-300 text-[14px] font-medium border border-white/20"
+          >
+            {item.label}
+          </Link>
+        ))}
 
-                {/* Contact Sales Button - Primary CTA */}
-                <button
-                  className="bg-[#1a2332] hover:bg-[#0f1621] text-white px-6 py-2.5 rounded-full text-[14px] font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
-                  onClick={() => router.push("/contact")}
-                >
-                  Contact Sales
-                </button>
-              </div>
-            </div>
-          </nav>
+      {/* Contact Sales Button - Primary CTA */}
+      <button
+        className="bg-[#1a2332] hover:bg-[#0f1621] text-white px-6 py-2.5 rounded-full text-[14px] font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
+        onClick={() => router.push("/contact")}
+      >
+        Contact Sales
+      </button>
+    </div>
+  </div>
+</nav>
+
 
           {/* Mobile Navigation Bar - Closed State */}
           <nav className="lg:hidden mx-auto mt-4 bg-gray-800/40 backdrop-blur-xl rounded-full px-4 py-2.5 shadow-2xl border border-white/20 max-w-[600px]">
