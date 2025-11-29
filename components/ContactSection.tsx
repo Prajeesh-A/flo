@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { api, useApiData } from "@/lib/api";
 import { useCTAModal } from "@/contexts/CTAModalContext";
@@ -9,6 +9,7 @@ import CountryCodeSelector, {
   defaultCountry,
   Country,
 } from "@/components/CountryCodeSelector";
+import MobileCountryMenu from "@/components/MobileCountryMenu";
 
 export default function ContactSection() {
   const { openModal } = useCTAModal();
@@ -142,7 +143,7 @@ export default function ContactSection() {
       className="bg-gray-100 py-16 sm:py-[100px] px-4 sm:px-6"
     >
       <div className="max-w-[1200px] mx-auto">
-  <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+        <div className="grid lg:grid-cols-2 gap-8 items-stretch">
           {/* Left Column */}
           <div className="flex flex-col h-full gap-8">
             {/* Get in touch card */}
@@ -307,8 +308,8 @@ export default function ContactSection() {
                   <CountryCodeSelector
                     selectedCountry={selectedCountry}
                     onCountryChange={setSelectedCountry}
-                    variant="contact-section"
-                    className="flex-shrink-0 country-selector-mobile"
+                    className="flex-shrink-0"
+                    theme="dark"
                   />
                   <input
                     type="tel"

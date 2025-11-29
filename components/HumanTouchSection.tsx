@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { RefreshCw, Users } from "lucide-react";
-import { api, useApiData } from "@/lib/api";
 
 // Hook to detect mobile viewport
 const useIsMobile = () => {
@@ -178,6 +177,7 @@ const ChatBubble = React.memo(
 ChatBubble.displayName = "ChatBubble";
 
 // Phone mockup component
+// Phone mockup component with FIXED realistic notch
 function PhoneMockup({
   isInView,
   chatMessages,
@@ -192,7 +192,7 @@ function PhoneMockup({
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Function to smoothly scroll to bottom with delay - improved for mobile stability
+  // [Keep all your existing useEffect hooks and functions - scrollToBottom, animateNextMessage, etc.]
   const scrollToBottom = (delay = 0) => {
     setTimeout(() => {
       if (chatContainerRef.current) {
@@ -202,14 +202,11 @@ function PhoneMockup({
             container.scrollTop -
             container.clientHeight <
           100;
-
-        // Only scroll if we're near the bottom or if there are many messages
         if (isNearBottom || visibleMessages.length > 3) {
-          // Use requestAnimationFrame for smoother scrolling on mobile
           requestAnimationFrame(() => {
             container.scrollTo({
               top: container.scrollHeight,
-              behavior: isMobile ? "auto" : "smooth", // Use instant scroll on mobile to prevent jumping
+              behavior: isMobile ? "auto" : "smooth",
             });
           });
         }
@@ -217,30 +214,18 @@ function PhoneMockup({
     }, delay);
   };
 
-  // Auto-scroll when new messages appear with slight delay for natural feel
   useEffect(() => {
-    if (visibleMessages.length > 0) {
-      // Much longer delay on mobile to prevent jumping during animations
-      // Only scroll if there are enough messages to warrant it
-      if (visibleMessages.length > 2) {
-        scrollToBottom(isMobile ? 800 : 300);
-      }
+    if (visibleMessages.length > 0 && visibleMessages.length > 2) {
+      scrollToBottom(isMobile ? 800 : 300);
     }
   }, [visibleMessages, isMobile]);
 
-  // Scroll when typing indicator appears/disappears
   useEffect(() => {
-    if (showTyping) {
-      scrollToBottom(200);
-    }
+    if (showTyping) scrollToBottom(200);
   }, [showTyping]);
 
-  // Disabled auto-scroll functionality on mobile to prevent jumping
-  // Only keep message-triggered scrolling for better UX
   useEffect(() => {
-    if (!isInView || isMobile) return; // Disable auto-scroll on mobile
-
-    // Keep auto-scroll only for desktop
+    if (!isInView || isMobile) return;
     const startDelay = setTimeout(() => {
       const autoScrollInterval = setInterval(() => {
         if (chatContainerRef.current) {
@@ -250,45 +235,30 @@ function PhoneMockup({
               container.scrollTop -
               container.clientHeight <
             20;
-
           if (isAtBottom) {
-            // Scroll to top smoothly when at bottom
-            container.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
+            container.scrollTo({ top: 0, behavior: "smooth" });
           } else {
-            // Continue scrolling down slowly
-            container.scrollBy({
-              top: 30,
-              behavior: "smooth",
-            });
+            container.scrollBy({ top: 30, behavior: "smooth" });
           }
         }
       }, 3000);
-
       return () => clearInterval(autoScrollInterval);
     }, 8000);
-
     return () => clearTimeout(startDelay);
   }, [isInView, isMobile]);
 
   useEffect(() => {
     if (!isInView) {
-      // Clear all timeouts
       timeoutsRef.current.forEach(clearTimeout);
       timeoutsRef.current = [];
       setVisibleMessages([]);
       setShowTyping(false);
       return;
     }
-
-    // Start chat animation after text settles (2s for more natural feel)
     const startDelay = setTimeout(() => {
       animateNextMessage(0);
     }, 2000);
     timeoutsRef.current.push(startDelay);
-
     return () => {
       timeoutsRef.current.forEach(clearTimeout);
       timeoutsRef.current = [];
@@ -297,29 +267,21 @@ function PhoneMockup({
 
   const animateNextMessage = (index: number) => {
     if (index >= chatMessages.length) return;
-
     const message = chatMessages[index];
-
-    // Show typing indicator for bot messages with realistic timing
     if (message.sender === "bot") {
       setShowTyping(true);
-
-      // Typing indicator duration: 1.2-1.8 seconds (realistic typing time)
       const typingDuration = getMobileChatTiming(
         1200 + Math.random() * 600,
         isMobile
-      ); // 1.2-1.8s (slower on mobile)
-
+      );
       const typingTimeout = setTimeout(() => {
         setShowTyping(false);
         setVisibleMessages((prev) => [...prev, message.id]);
-
-        // Wait for message to settle before next message
         if (index + 1 < chatMessages.length) {
           const nextMessageDelay = getMobileChatTiming(
             1800 + Math.random() * 400,
             isMobile
-          ); // 1.8-2.2s delay for bot messages (slower on mobile)
+          );
           const nextTimeout = setTimeout(
             () => animateNextMessage(index + 1),
             nextMessageDelay
@@ -329,15 +291,12 @@ function PhoneMockup({
       }, typingDuration);
       timeoutsRef.current.push(typingTimeout);
     } else {
-      // User messages appear immediately
       setVisibleMessages((prev) => [...prev, message.id]);
-
-      // Wait before next message for natural conversation flow
       if (index + 1 < chatMessages.length) {
         const nextMessageDelay = getMobileChatTiming(
           1200 + Math.random() * 600,
           isMobile
-        ); // 1.2-1.8s delay for user messages (slower on mobile)
+        );
         const nextTimeout = setTimeout(
           () => animateNextMessage(index + 1),
           nextMessageDelay
@@ -349,7 +308,6 @@ function PhoneMockup({
 
   return (
     <>
-      {/* CSS to hide scrollbar for WebKit browsers */}
       <style jsx>{`
         .chat-container::-webkit-scrollbar {
           display: none;
@@ -360,11 +318,7 @@ function PhoneMockup({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={
           isInView
-            ? {
-                opacity: 1,
-                scale: 1,
-                y: [0, -8, 0],
-              }
+            ? { opacity: 1, scale: 1, y: [0, -8, 0] }
             : { opacity: 0, scale: 0.9 }
         }
         transition={{
@@ -380,7 +334,7 @@ function PhoneMockup({
           },
           y: {
             duration: getMobileDuration(3, isMobile),
-            repeat: isMobile ? 0 : Infinity, // Disable floating animation on mobile
+            repeat: isMobile ? 0 : Infinity,
             ease: "easeInOut",
             delay: getMobileDuration(2.5, isMobile),
           },
@@ -391,52 +345,82 @@ function PhoneMockup({
         style={{
           filter: "drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15))",
           willChange: isInView ? "transform, opacity" : "auto",
-          zIndex: isMobile ? 10 : "auto", // Ensure phone appears above decorative elements on mobile
+          zIndex: isMobile ? 10 : "auto",
         }}
       >
-        {/* Phone frame - iPhone style */}
+        {/* Phone frame - iPhone style with proper notch */}
         <div
-          className={`relative bg-black rounded-[3rem] p-2 ${
-            isMobile ? "w-[240px] h-[480px]" : "w-full aspect-[9.5/19]"
+          className={`relative bg-black rounded-[2.5rem] p-2 ${
+            isMobile ? "w-[280px] h-[560px]" : "w-full aspect-[9.5/19]"
           }`}
         >
-          {/* Dynamic Island */}
+          {/* FIXED Dynamic Island / Notch - Realistic iPhone style */}
           <div
-            className={`absolute top-2 left-1/2 transform -translate-x-1/2 bg-black rounded-full z-20 ${
-              isMobile ? "w-20 h-4" : "w-32 h-6"
+            className={`absolute left-1/2 transform -translate-x-1/2 bg-black rounded-full z-30 ${
+              isMobile
+                ? "w-[100px] h-[26px] top-[8px]"
+                : "w-[120px] h-[30px] top-[10px]"
             }`}
+            style={{
+              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+            }}
           />
 
-          {/* Status bar elements */}
-          <div
-            className={`absolute top-3 flex justify-between items-center z-10 ${
-              isMobile ? "left-4 right-4" : "left-6 right-6"
-            }`}
-          >
-            <span
-              className={`text-white font-medium ${
-                isMobile ? "text-xs" : "text-sm"
-              }`}
+          {/* Status bar elements - FIXED positioning around notch */}
+          <div className="absolute top-5 left-0 right-0 z-20 flex justify-between items-start pt-3 px-6">
+            {/* Left side - Time */}
+            <div
+              className={`${
+                isMobile ? "text-[11px]" : "text-sm"
+              } text-white font-semibold`}
             >
               9:41
-            </span>
+            </div>
+
+            {/* Right side - Signal, WiFi, Battery */}
             <div className="flex items-center gap-1">
-              <div className="flex gap-1">
-                <div className="w-1 h-1 bg-white rounded-full"></div>
-                <div className="w-1 h-1 bg-white rounded-full"></div>
-                <div className="w-1 h-1 bg-white rounded-full"></div>
-                <div className="w-1 h-1 bg-white rounded-full"></div>
+              {/* Signal bars */}
+              <div className="flex gap-[2px] items-end">
+                {[3, 5, 7, 9].map((h, i) => (
+                  <div
+                    key={i}
+                    className={`w-[3px] bg-white rounded-sm`}
+                    style={{ height: `${h}px` }}
+                  ></div>
+                ))}
               </div>
-              <div className="w-6 h-3 border border-white rounded-sm">
-                <div className="w-4 h-2 bg-white rounded-sm m-0.5"></div>
+
+              {/* WiFi icon */}
+              <svg
+                className={`${
+                  isMobile ? "w-4 h-4" : "w-[18px] h-[18px]"
+                } text-white ml-1`}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M2.166 9.75a.75.75 0 00-.584 1.032A10.943 10.943 0 015 14.608a.75.75 0 00.998.039 10.93 10.93 0 012.002-1.492.75.75 0 00-.423-1.273 9.423 9.423 0 00-5.411-2.132zm15.668 0a.75.75 0 01.584 1.032 10.943 10.943 0 01-3.418 3.826.75.75 0 01-.998.039 10.93 10.93 0 00-2.002-1.492.75.75 0 01.423-1.273 9.423 9.423 0 015.411-2.132zM10 6.188a12.954 12.954 0 00-7.489 2.37.75.75 0 00.004 1.238 11.45 11.45 0 017.485 2.826.75.75 0 001.008 0 11.45 11.45 0 017.485-2.826.75.75 0 00.004-1.238A12.954 12.954 0 0010 6.188z" />
+              </svg>
+
+              {/* Battery */}
+              <div
+                className={`${
+                  isMobile ? "w-[22px] h-[11px]" : "w-6 h-3"
+                } border-2 border-white rounded-[4px] ml-1 relative`}
+              >
+                <div
+                  className={`${
+                    isMobile ? "w-[14px] h-[5px]" : "w-4 h-[6px]"
+                  } bg-white rounded-[2px] absolute top-[1px] left-[1px]`}
+                ></div>
+                <div className="w-[2px] h-[6px] bg-white rounded-r-sm absolute -right-[3px] top-1/2 transform -translate-y-1/2"></div>
               </div>
             </div>
           </div>
 
-          {/* Screen */}
+          {/* Screen content */}
           <div
             className={`bg-black rounded-[2.5rem] overflow-hidden relative ${
-              isMobile ? "w-[224px] h-[464px] pt-6" : "w-full h-full pt-8"
+              isMobile ? "w-[264px] h-[544px] pt-12" : "w-full h-full pt-14"
             }`}
           >
             {/* Chat messages */}
@@ -444,19 +428,10 @@ function PhoneMockup({
               ref={chatContainerRef}
               className={`chat-container overflow-y-auto overflow-x-hidden ${
                 isMobile
-                  ? "w-[224px] h-[432px] p-4 space-y-3"
+                  ? "w-full h-[500px] p-4 space-y-3"
                   : "h-full p-4 space-y-3"
               }`}
-              style={{
-                scrollbarWidth: "none" /* Firefox */,
-                msOverflowStyle: "none" /* Internet Explorer 10+ */,
-                ...(isMobile && {
-                  maxWidth: "224px",
-                  maxHeight: "432px",
-                  minWidth: "224px",
-                  minHeight: "432px",
-                }),
-              }}
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {chatMessages.map((message: any) => (
                 <ChatBubble
@@ -468,7 +443,6 @@ function PhoneMockup({
               ))}
               {showTyping && <TypingIndicator isMobile={isMobile} />}
 
-              {/*  floneo App Card - Special message with logo */}
               {visibleMessages.includes(6) && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -481,7 +455,6 @@ function PhoneMockup({
                 >
                   <div className="bg-white rounded-2xl p-4 max-w-[220px] shadow-lg">
                     <div className="flex items-center gap-3 mb-2">
-                      {/* Logo image — replace /images/floneo-logo.png with your real path */}
                       <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
                         <img
                           src="/logo.png"
@@ -490,7 +463,6 @@ function PhoneMockup({
                           loading="lazy"
                         />
                       </div>
-
                       <div className="flex flex-col">
                         <span className="font-semibold text-black text-lg">
                           floneo
@@ -498,8 +470,6 @@ function PhoneMockup({
                         <span className="text-xs text-gray-500">LCNC</span>
                       </div>
                     </div>
-
-                    {/* Optional small preview / CTA */}
                     <div className="mt-1 text-sm text-gray-700">
                       Manage your Business effortlessly — modern, secure, and
                       easy-to-use.
@@ -511,40 +481,27 @@ function PhoneMockup({
           </div>
         </div>
 
-        {/* Floating Decorative Elements - Matching Design (INCREASED SIZE) */}
-
-        {/* Top Left - Larger Blue Circle with Icon */}
+        {/* Decorative circles remain the same */}
         <motion.div
-          animate={{
-            y: [0, -25, 0],
-            rotate: [0, 5, 0],
-          }}
+          animate={{ y: [0, -25, 0], rotate: [0, 5, 0] }}
           transition={{
             duration: getMobileDuration(8, isMobile),
             repeat: Infinity,
             ease: "easeInOut",
           }}
           className="absolute -left-32 top-12 hidden md:block"
-          style={{
-            willChange: "transform",
-          }}
+          style={{ willChange: "transform" }}
         >
           <div className="relative">
-            {/* Blue gradient circle - increased */}
             <div className="w-40 h-40 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg opacity-95"></div>
-            {/* Inner yellow circle with icon - increased */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-sm">
               <RefreshCw size={24} className="text-white" strokeWidth={2} />
             </div>
           </div>
         </motion.div>
 
-        {/* Bottom Right - Larger Yellow Circle with Icon */}
         <motion.div
-          animate={{
-            y: [0, 20, 0],
-            rotate: [0, -5, 0],
-          }}
+          animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
           transition={{
             duration: getMobileDuration(7, isMobile),
             repeat: Infinity,
@@ -552,14 +509,10 @@ function PhoneMockup({
             delay: getMobileDuration(1, isMobile),
           }}
           className="absolute -right-32 bottom-28 hidden md:block"
-          style={{
-            willChange: "transform",
-          }}
+          style={{ willChange: "transform" }}
         >
           <div className="relative">
-            {/* Yellow gradient circle - increased */}
             <div className="w-36 h-36 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full shadow-lg opacity-95"></div>
-            {/* Inner green circle with icon - increased */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-sm">
               <Users size={20} className="text-white" strokeWidth={2} />
             </div>
@@ -571,46 +524,19 @@ function PhoneMockup({
 }
 
 export default function HumanTouchSection() {
-  // Fetch section data from API
-  const {
-    data: sectionData,
-    loading,
-    error,
-  } = useApiData(api.getHumanTouchSection);
-
-  // Fallback data
-  const fallbackData = {
-    title: "Easy Workflow",
-    subtitle: "Management",
-    description:
-      "Experience personalized support with our dedicated team of experts",
-    benefit_1_title: "24/7 Support",
-    benefit_1_description: "Round-the-clock assistance when you need it most",
-    benefit_2_title: "Expert Guidance",
-    benefit_2_description: "Professional advice from industry specialists",
-    benefit_3_title: "Custom Solutions",
-    benefit_3_description: "Tailored approaches for your unique business needs",
-    cta_text: "Get Started",
-    cta_url: "/contact",
-    chat_messages: defaultChatMessages,
-  };
-
-  // Use API data or fallback
-  const data = sectionData || fallbackData;
-
-  // Get chat messages from API data or fallback
-  const chatMessages = (data as any).chat_messages || defaultChatMessages;
-
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
   const isMobile = useIsMobile();
+
+  // Use default chat messages
+  const chatMessages = defaultChatMessages;
 
   return (
     <section
       id="features"
       ref={sectionRef}
       className="relative py-20 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden"
-      style={{ fontFamily: "'Poppins',  " }}
+      style={{ fontFamily: "'Poppins'" }}
     >
       <div className="container mx-auto max-w-[1400px]">
         {/* Desktop Layout */}
@@ -630,7 +556,7 @@ export default function HumanTouchSection() {
               className="font-surgena text-6xl lg:text-7xl xl:text-8xl font-bold text-black leading-tight"
               style={{ fontWeight: 700 }}
             >
-              {data.title}
+              Easy Workflow
             </motion.h2>
 
             {/* Second Line - "Management" */}
@@ -645,7 +571,7 @@ export default function HumanTouchSection() {
               className="text-6xl lg:text-7xl xl:text-8xl font-bold text-[#2ecc71] leading-tight"
               style={{ fontWeight: 700 }}
             >
-              {data.subtitle}
+              Management
             </motion.h2>
           </div>
 
@@ -674,7 +600,7 @@ export default function HumanTouchSection() {
               className="text-5xl sm:text-6xl font-bold text-black text-center"
               style={{ fontWeight: 700 }}
             >
-              {data.title}
+              Easy Workflow
             </motion.h2>
             {/* Top Text - "Management" (subtitle first on mobile) */}
             <motion.h2
@@ -687,7 +613,7 @@ export default function HumanTouchSection() {
               className="text-5xl sm:text-6xl font-bold text-[#2ecc71] text-center"
               style={{ fontWeight: 700 }}
             >
-              {data.subtitle}
+              Management
             </motion.h2>
 
             {/* Phone Mockup - Fixed size for mobile */}
@@ -707,22 +633,206 @@ export default function HumanTouchSection() {
             duration: getMobileDuration(0.8, isMobile),
             delay: getMobileDuration(1.5, isMobile),
           }}
-          className="mt-16 max-w-full space-y-4 text-left"
+          className="mt-20 max-w-6xl mx-auto px-4"
         >
-          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
-            Prototype in hours, launch in weeks.
-          </p>
-          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
-            Drag-and-drop UI, no steep learning curve.
-          </p>
-          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
-            Real-time monitoring and alerts.
-          </p>
-          <p className="text-4xl text-gray-800 font-semibold leading-relaxed">
-            AI assistant to answer questions instantly.
-          </p>
+          {/* Section header */}
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 1.6 }}
+              className="inline-flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full mb-4"
+            >
+              <div className="w-2 h-2 bg-[#2ecc71] rounded-full animate-pulse" />
+              <span className="text-sm font-semibold text-[#2ecc71]">
+                Why FloNeo?
+              </span>
+            </motion.div>
+          </div>
+
+          {/* Feature grid - Modern card design */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+            {/* Feature 1 - Lightning fast */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{ duration: 0.7, delay: 1.7 }}
+              className="group relative bg-white border border-gray-100 rounded-3xl p-8 hover:border-[#2ecc71] transition-all duration-300 hover:shadow-lg hover:shadow-green-100/50"
+            >
+              {/* Decorative corner accent */}
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#2ecc71]/10 to-transparent rounded-bl-[3rem] rounded-tr-3xl" />
+
+              <div className="relative">
+                {/* Icon badge */}
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-[#2ecc71] to-[#27ae60] rounded-2xl mb-5 group-hover:scale-110 transition-transform">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                </div>
+
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 leading-tight">
+                  Prototype in hours,
+                  <br />
+                  launch in weeks
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Skip months of development. Build production-ready apps at
+                  lightning speed with our visual platform.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Feature 2 - No-code simplicity */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{ duration: 0.7, delay: 1.85 }}
+              className="group relative bg-white border border-gray-100 rounded-3xl p-8 hover:border-[#0066FF] transition-all duration-300 hover:shadow-lg hover:shadow-blue-100/50"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#0066FF]/10 to-transparent rounded-bl-[3rem] rounded-tr-3xl" />
+
+              <div className="relative">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-[#0066FF] to-[#0099FF] rounded-2xl mb-5 group-hover:scale-110 transition-transform">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                    />
+                  </svg>
+                </div>
+
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 leading-tight">
+                  Drag-and-drop UI,
+                  <br />
+                  zero coding required
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Empower your entire team to build. Intuitive visual builder
+                  means no technical skills needed.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Feature 3 - Real-time monitoring */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{ duration: 0.7, delay: 2.0 }}
+              className="group relative bg-white border border-gray-100 rounded-3xl p-8 hover:border-[#FFC107] transition-all duration-300 hover:shadow-lg hover:shadow-yellow-100/50"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#FFC107]/10 to-transparent rounded-bl-[3rem] rounded-tr-3xl" />
+
+              <div className="relative">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-[#FFC107] to-[#FFB300] rounded-2xl mb-5 group-hover:scale-110 transition-transform">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                </div>
+
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 leading-tight">
+                  Real-time monitoring
+                  <br />& smart alerts
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Stay in control with live dashboards and instant notifications
+                  when it matters most.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Feature 4 - AI assistant */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{ duration: 0.7, delay: 2.15 }}
+              className="group relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 overflow-hidden"
+            >
+              {/* Animated gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2ecc71]/20 via-transparent to-[#0066FF]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              <div className="relative">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-white to-gray-100 rounded-2xl mb-5 group-hover:scale-110 transition-transform">
+                  <svg
+                    className="w-7 h-7 text-gray-900"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    />
+                  </svg>
+                </div>
+
+                <h3 className="text-2xl font-bold text-white mb-3 leading-tight">
+                  AI assistant for
+                  <br />
+                  instant support
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  Never get stuck. Ask questions and get intelligent help 24/7
+                  from our AI-powered assistant.
+                </p>
+
+                {/* Decorative element */}
+                <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-[#2ecc71]/20 to-transparent rounded-tl-[4rem]" />
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Bottom CTA badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 2.4 }}
+            className="text-center mt-12"
+          >
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-gray-50 to-white border border-gray-200 px-6 py-4 rounded-2xl shadow-sm">
+              <div className="flex -space-x-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2ecc71] to-[#27ae60] border-2 border-white" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0066FF] to-[#0099FF] border-2 border-white" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FFC107] to-[#FFB300] border-2 border-white" />
+              </div>
+              <span className="text-sm font-medium text-gray-700">
+                Join <span className="font-bold text-gray-900">2,500+</span>{" "}
+                teams building with FloNeo
+              </span>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
   );
 }
+
+

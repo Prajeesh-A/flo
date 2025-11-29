@@ -8,6 +8,7 @@ import "./globals.css";
 import "./../styles/globals.css";
 import localFont from "next/font/local";
 
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
