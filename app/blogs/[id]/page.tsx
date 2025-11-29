@@ -19,31 +19,39 @@ const dummyBlog = {
 // ✅ Generate static params for all blogs
 export async function generateStaticParams() {
   try {
-    const res = await fetch('https://flo-do2v.onrender.com/api/blogs/');
+    const res = await fetch("https://flo-do2v.onrender.com/api/blogs/");
     const blogs = await res.json();
-    
+
     return blogs.map((blog: any) => ({
       id: blog.id.toString(),
     }));
   } catch (error) {
-    console.error('Error generating static params:', error);
-    return [{ id: 'demo-blog-1' }];
+    console.error("Error generating static params:", error);
+    return [{ id: "demo-blog-1" }];
   }
 }
 
 // ✅ Server Component - Fetches blog data
-export default async function BlogDetailPage({ params }: { params: { id: string } }) {
+export default async function BlogDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   let blog = null;
 
   try {
-    const blogId = params.id;
+    const resolvedParams = await params;
+    const blogId = resolvedParams.id;
 
     if (blogId === "demo-blog-1") {
       blog = dummyBlog;
     } else {
-      const res = await fetch(`https://flo-do2v.onrender.com/api/blogs/${blogId}/`, {
-        next: { revalidate: 3600 }, // ISR: Cache for 1 hour
-      });
+      const res = await fetch(
+        `https://flo-do2v.onrender.com/api/blogs/${blogId}/`,
+        {
+          next: { revalidate: 3600 }, // ISR: Cache for 1 hour
+        }
+      );
 
       if (res.ok) {
         const data = await res.json();
@@ -53,7 +61,9 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
           content: data.content,
           createdBy: data.author || data.createdBy || "Floneo Team",
           date: data.created_at || data.date,
-          readTime: `${Math.ceil(data.content.split(" ").length / 200)} min read`,
+          readTime: `${Math.ceil(
+            data.content.split(" ").length / 200
+          )} min read`,
           category: data.category || "Technology",
         };
       } else {
@@ -69,16 +79,23 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
 }
 
 // ✅ SEO Metadata
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   try {
-    if (params.id === "demo-blog-1") {
+    const resolvedParams = await params;
+    if (resolvedParams.id === "demo-blog-1") {
       return {
         title: dummyBlog.title,
         description: dummyBlog.content.substring(0, 160),
       };
     }
 
-    const res = await fetch(`https://flo-do2v.onrender.com/api/blogs/${params.id}/`);
+    const res = await fetch(
+      `https://flo-do2v.onrender.com/api/blogs/${resolvedParams.id}/`
+    );
     if (res.ok) {
       const blog = await res.json();
       return {
