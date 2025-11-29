@@ -447,6 +447,7 @@ export interface BenefitsSection {
   id: number;
   is_visible: boolean;
   order: number;
+  badge_text?: string;
   title: string;
   subtitle: string;
   description: string;

@@ -1,6 +1,3 @@
-
-
-
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -46,7 +43,12 @@ const countries: Country[] = [
   { code: "BA", name: "Bosnia and Herzegovina", dialCode: "+387", flag: "🇧🇦" },
   { code: "BW", name: "Botswana", dialCode: "+267", flag: "🇧🇼" },
   { code: "BR", name: "Brazil", dialCode: "+55", flag: "🇧🇷" },
-  { code: "IO", name: "British Indian Ocean Territory", dialCode: "+246", flag: "🇮🇴" },
+  {
+    code: "IO",
+    name: "British Indian Ocean Territory",
+    dialCode: "+246",
+    flag: "🇮🇴",
+  },
   { code: "BN", name: "Brunei", dialCode: "+673", flag: "🇧🇳" },
   { code: "BG", name: "Bulgaria", dialCode: "+359", flag: "🇧🇬" },
   { code: "BF", name: "Burkina Faso", dialCode: "+226", flag: "🇧🇫" },
@@ -56,7 +58,12 @@ const countries: Country[] = [
   { code: "CA", name: "Canada", dialCode: "+1", flag: "🇨🇦" },
   { code: "CV", name: "Cape Verde", dialCode: "+238", flag: "🇨🇻" },
   { code: "KY", name: "Cayman Islands", dialCode: "+1", flag: "🇰🇾" },
-  { code: "CF", name: "Central African Republic", dialCode: "+236", flag: "🇨🇫" },
+  {
+    code: "CF",
+    name: "Central African Republic",
+    dialCode: "+236",
+    flag: "🇨🇫",
+  },
   { code: "TD", name: "Chad", dialCode: "+235", flag: "🇹🇩" },
   { code: "CL", name: "Chile", dialCode: "+56", flag: "🇨🇱" },
   { code: "CN", name: "China", dialCode: "+86", flag: "🇨🇳" },
@@ -109,7 +116,12 @@ const countries: Country[] = [
   { code: "GW", name: "Guinea-Bissau", dialCode: "+245", flag: "🇬🇼" },
   { code: "GY", name: "Guyana", dialCode: "+592", flag: "🇬🇾" },
   { code: "HT", name: "Haiti", dialCode: "+509", flag: "🇭🇹" },
-  { code: "HM", name: "Heard Island and McDonald Islands", dialCode: "+672", flag: "🇭🇲" },
+  {
+    code: "HM",
+    name: "Heard Island and McDonald Islands",
+    dialCode: "+672",
+    flag: "🇭🇲",
+  },
   { code: "HN", name: "Honduras", dialCode: "+504", flag: "🇭🇳" },
   { code: "HK", name: "Hong Kong", dialCode: "+852", flag: "🇭🇰" },
   { code: "HU", name: "Hungary", dialCode: "+36", flag: "🇭🇺" },
@@ -201,8 +213,18 @@ const countries: Country[] = [
   { code: "KN", name: "Saint Kitts and Nevis", dialCode: "+1", flag: "🇰🇳" },
   { code: "LC", name: "Saint Lucia", dialCode: "+1", flag: "🇱🇨" },
   { code: "MF", name: "Saint Martin", dialCode: "+590", flag: "🇲🇫" },
-  { code: "PM", name: "Saint Pierre and Miquelon", dialCode: "+508", flag: "🇵🇲" },
-  { code: "VC", name: "Saint Vincent and the Grenadines", dialCode: "+1", flag: "🇻🇨" },
+  {
+    code: "PM",
+    name: "Saint Pierre and Miquelon",
+    dialCode: "+508",
+    flag: "🇵🇲",
+  },
+  {
+    code: "VC",
+    name: "Saint Vincent and the Grenadines",
+    dialCode: "+1",
+    flag: "🇻🇨",
+  },
   { code: "WS", name: "Samoa", dialCode: "+685", flag: "🇼🇸" },
   { code: "SM", name: "San Marino", dialCode: "+378", flag: "🇸🇲" },
   { code: "ST", name: "Sao Tome and Principe", dialCode: "+239", flag: "🇸🇹" },
@@ -218,7 +240,12 @@ const countries: Country[] = [
   { code: "SB", name: "Solomon Islands", dialCode: "+677", flag: "🇸🇧" },
   { code: "SO", name: "Somalia", dialCode: "+252", flag: "🇸🇴" },
   { code: "ZA", name: "South Africa", dialCode: "+27", flag: "🇿🇦" },
-  { code: "GS", name: "South Georgia and the South Sandwich Islands", dialCode: "+500", flag: "🇬🇸" },
+  {
+    code: "GS",
+    name: "South Georgia and the South Sandwich Islands",
+    dialCode: "+500",
+    flag: "🇬🇸",
+  },
   { code: "SS", name: "South Sudan", dialCode: "+211", flag: "🇸🇸" },
   { code: "ES", name: "Spain", dialCode: "+34", flag: "🇪🇸" },
   { code: "LK", name: "Sri Lanka", dialCode: "+94", flag: "🇱🇰" },
@@ -268,6 +295,7 @@ interface CountryCodeSelectorProps {
   className?: string;
   disabled?: boolean;
   theme?: "light" | "dark";
+  variant?: string;
 }
 
 export default function CountryCodeSelector({
@@ -276,10 +304,11 @@ export default function CountryCodeSelector({
   className = "",
   disabled = false,
   theme = "light",
+  variant,
 }: CountryCodeSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Initialize mobile check synchronously - no null state
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window !== "undefined") {
@@ -399,12 +428,16 @@ export default function CountryCodeSelector({
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
               className={`absolute top-full left-0 mt-1 w-80 rounded-xl shadow-2xl border z-[99999] ${
-                isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+                isDark
+                  ? "bg-gray-800 border-gray-700"
+                  : "bg-white border-gray-200"
               }`}
             >
               <div
                 className={`p-4 ${
-                  isDark ? "border-b border-gray-700" : "border-b border-gray-100"
+                  isDark
+                    ? "border-b border-gray-700"
+                    : "border-b border-gray-100"
                 }`}
               >
                 <div className="relative">
