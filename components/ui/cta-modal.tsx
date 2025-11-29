@@ -89,13 +89,12 @@ export default function CTAModal({ isOpen, onClose }: CTAModalProps) {
                   style={{ fontFamily: "'Poppins', sans-serif" }}
                 >
                   <span className="font-semibold text-blue-600">floneo</span>{" "}
-                  will be ready for demo on{" "}
-                  <span className="font-semibold text-blue-600">
-                    November 30th
-                  </span>
-                  .
+                  will be available for demo{" "}
+                  <span className="font-semibold text-blue-600">very soon</span>
+                  !
                   <br />
-                  Reserve your spot today!
+                  Reserve your spot today and be among the first to experience
+                  it.
                 </p>
 
                 {/* Action Buttons */}
