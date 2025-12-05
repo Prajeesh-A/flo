@@ -1,7 +1,10 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
+from django.utils.text import slugify
 from colorfield.fields import ColorField
 from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 
 
@@ -1109,3 +1112,221 @@ class PrivacyPolicy(models.Model):
             from datetime import date
             self.effective_date = date.today()
         super().save(*args, **kwargs)
+
+
+# Blog Management Models
+
+class BlogCategory(models.Model):
+    """Blog categories for organizing blog posts"""
+    name = models.CharField(max_length=100, unique=True, help_text="Category name (e.g., Technology, Business)")
+    slug = models.SlugField(max_length=100, unique=True, blank=True, help_text="URL-friendly version of the name")
+    description = models.TextField(blank=True, help_text="Brief description of this category")
+    color = ColorField(default='#3B82F6', help_text="Color for category display")
+    is_active = models.BooleanField(default=True, help_text="Show/hide this category")
+    order = models.IntegerField(default=0, help_text="Display order (lower numbers first)")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Blog Category"
+        verbose_name_plural = "Blog Categories"
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
+class BlogTag(models.Model):
+    """Blog tags for detailed categorization"""
+    name = models.CharField(max_length=50, unique=True, help_text="Tag name (e.g., automation, workflow)")
+    slug = models.SlugField(max_length=50, unique=True, blank=True, help_text="URL-friendly version of the name")
+    is_active = models.BooleanField(default=True, help_text="Show/hide this tag")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Blog Tag"
+        verbose_name_plural = "Blog Tags"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
+class BlogPost(models.Model):
+    """Blog posts with rich content and media support"""
+
+    # Publication status choices
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+        ('archived', 'Archived'),
+    ]
+
+    # Basic Information
+    title = models.CharField(max_length=200, help_text="Blog post title")
+    slug = models.SlugField(max_length=200, unique=True, blank=True, help_text="URL-friendly version of title")
+    excerpt = models.TextField(max_length=300, blank=True, help_text="Brief summary of the blog post")
+
+    # Content
+    content = RichTextUploadingField(help_text="Main blog post content with rich text editor")
+
+    # Media
+    featured_image = models.ImageField(
+        upload_to='blog/images/',
+        blank=True,
+        null=True,
+        help_text="Featured image for the blog post"
+    )
+    featured_image_alt = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Alt text for featured image (for accessibility)"
+    )
+    video_url = models.URLField(
+        blank=True,
+        help_text="YouTube, Vimeo, or other video URL"
+    )
+    video_file = models.FileField(
+        upload_to='blog/videos/',
+        blank=True,
+        null=True,
+        help_text="Upload video file directly"
+    )
+
+    # Author and Publication
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        help_text="Blog post author"
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='draft',
+        help_text="Publication status"
+    )
+    published_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="When the post was published (auto-set when status changes to published)"
+    )
+
+    # Categorization
+    category = models.ForeignKey(
+        BlogCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="Primary category for this post"
+    )
+    tags = models.ManyToManyField(
+        BlogTag,
+        blank=True,
+        help_text="Tags for this post"
+    )
+
+    # SEO and Metadata
+    meta_title = models.CharField(
+        max_length=60,
+        blank=True,
+        help_text="SEO title (max 60 chars, defaults to post title)"
+    )
+    meta_description = models.CharField(
+        max_length=160,
+        blank=True,
+        help_text="SEO meta description (max 160 chars)"
+    )
+    meta_keywords = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="SEO keywords, comma-separated"
+    )
+
+    # Analytics and Engagement
+    view_count = models.PositiveIntegerField(default=0, help_text="Number of views")
+    reading_time = models.PositiveIntegerField(
+        default=0,
+        help_text="Estimated reading time in minutes (auto-calculated)"
+    )
+
+    # Admin fields
+    is_featured = models.BooleanField(default=False, help_text="Feature this post on homepage")
+    allow_comments = models.BooleanField(default=True, help_text="Allow comments on this post")
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Blog Post"
+        verbose_name_plural = "Blog Posts"
+        ordering = ['-published_at', '-created_at']
+        indexes = [
+            models.Index(fields=['status', 'published_at']),
+            models.Index(fields=['category', 'status']),
+            models.Index(fields=['slug']),
+        ]
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        # Auto-generate slug if not provided
+        if not self.slug:
+            self.slug = slugify(self.title)
+
+        # Auto-set published_at when status changes to published
+        if self.status == 'published' and not self.published_at:
+            self.published_at = timezone.now()
+        elif self.status != 'published':
+            self.published_at = None
+
+        # Auto-generate meta_title if not provided
+        if not self.meta_title:
+            self.meta_title = self.title[:60]
+
+        # Auto-calculate reading time based on content
+        if self.content:
+            # Remove HTML tags for word count
+            import re
+            clean_content = re.sub(r'<[^>]+>', '', self.content)
+            word_count = len(clean_content.split())
+            self.reading_time = max(1, word_count // 200)  # Assume 200 words per minute
+
+        super().save(*args, **kwargs)
+
+    @property
+    def is_published(self):
+        """Check if the post is published and publication date has passed"""
+        return (
+            self.status == 'published' and
+            self.published_at and
+            self.published_at <= timezone.now()
+        )
+
+    @property
+    def get_absolute_url(self):
+        """Get the URL for this blog post"""
+        return f"/blogs/{self.slug}/"
+
+    def get_excerpt(self):
+        """Get excerpt, fallback to content if excerpt is empty"""
+        if self.excerpt:
+            return self.excerpt
+        # Remove HTML tags and get first 150 characters
+        import re
+        clean_content = re.sub(r'<[^>]+>', '', self.content)
+        return clean_content[:150] + "..." if len(clean_content) > 150 else clean_content

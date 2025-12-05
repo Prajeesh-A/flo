@@ -1,7 +1,6 @@
 import React from "react";
 import BlogsClient from "./BlogsClient";
 
-
 // ✅ ISR: Revalidate every 1 hour (3600 seconds)
 export const revalidate = 3600;
 
@@ -25,21 +24,32 @@ export default async function BlogsPage() {
 
   try {
     // Fetch blogs from backend API
-    const res = await fetch('https://flo-do2v.onrender.com/api/blogs/', {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const res = await fetch(`${apiUrl}/api/blogs/`, {
       next: { revalidate: 3600 }, // ISR: Cache for 1 hour
     });
 
     if (res.ok) {
       const data = await res.json();
-      blogs = data.map((blog: any) => ({
+      const results = data.results || data; // Handle paginated response
+      blogs = results.map((blog: any) => ({
         id: blog.id.toString(),
         title: blog.title,
         content: blog.content,
-        excerpt: blog.content.substring(0, 150) + "...",
-        createdBy: blog.author || blog.createdBy || "Floneo Team",
-        date: blog.created_at || blog.date,
-        readTime: `${Math.ceil(blog.content.split(" ").length / 200)} min read`,
-        category: blog.category || "Technology",
+        excerpt:
+          blog.excerpt_text || blog.content?.substring(0, 150) + "..." || "",
+        createdBy: blog.author_name || blog.author_username || "Floneo Team",
+        date: blog.published_at || blog.created_at || blog.date,
+        readTime: blog.reading_time
+          ? `${blog.reading_time} min read`
+          : `${Math.ceil(
+              (blog.content?.split(" ").length || 0) / 200
+            )} min read`,
+        category: blog.category_name || blog.category || "Technology",
+        featuredImage: blog.featured_image_url,
+        tags: blog.tags || [],
+        viewCount: blog.view_count || 0,
+        isFeatured: blog.is_featured || false,
       }));
     }
   } catch (error) {

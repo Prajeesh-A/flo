@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.db import models
 
 from .models import (
     HeroSection, AboutSection, ServiceCard, MetricBox,
@@ -12,7 +13,8 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy
+    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
+    BlogCategory, BlogTag, BlogPost
 )
 from .serializers import (
     HeroSectionSerializer, AboutSectionSerializer, ServiceCardSerializer,
@@ -25,7 +27,8 @@ from .serializers import (
     ArchitectingExcellenceSectionSerializer, WhyChooseUsSectionSerializer, HumanTouchSectionSerializer, VideoTabsSectionSerializer,
     VideoTabSerializer, CountryDataSerializer, MetricsDisplaySectionSerializer,
     PricingFeaturesSectionSerializer, VideoTabsDemoSectionSerializer, DemoTabSerializer,
-    BenefitsSectionSerializer, ContactSubmissionSerializer, PrivacyPolicySerializer
+    BenefitsSectionSerializer, ContactSubmissionSerializer, PrivacyPolicySerializer,
+    BlogCategorySerializer, BlogTagSerializer, BlogPostListSerializer, BlogPostDetailSerializer
 )
 
 
@@ -503,6 +506,142 @@ def privacy_policy_detail(request):
                 is_active=True
             )
         serializer = PrivacyPolicySerializer(privacy_policy, context={'request': request})
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Blog Management API Views
+
+class BlogCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for blog categories"""
+    queryset = BlogCategory.objects.filter(is_active=True).order_by('order', 'name')
+    serializer_class = BlogCategorySerializer
+
+
+class BlogTagViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for blog tags"""
+    queryset = BlogTag.objects.filter(is_active=True).order_by('name')
+    serializer_class = BlogTagSerializer
+
+
+class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for blog posts with different serializers for list and detail views"""
+    queryset = BlogPost.objects.filter(status='published').select_related('author', 'category').prefetch_related('tags').order_by('-published_at', '-created_at')
+
+    def get_queryset(self):
+        """Get published blog posts with optimized queries"""
+        queryset = BlogPost.objects.filter(
+            status='published'
+        ).select_related(
+            'author', 'category'
+        ).prefetch_related(
+            'tags'
+        ).order_by('-published_at', '-created_at')
+
+        # Filter by category if provided
+        category_slug = self.request.query_params.get('category', None)
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+
+        # Filter by tag if provided
+        tag_slug = self.request.query_params.get('tag', None)
+        if tag_slug:
+            queryset = queryset.filter(tags__slug=tag_slug)
+
+        # Filter by featured status if provided
+        is_featured = self.request.query_params.get('featured', None)
+        if is_featured is not None:
+            queryset = queryset.filter(is_featured=is_featured.lower() == 'true')
+
+        return queryset
+
+    def get_serializer_class(self):
+        """Use different serializers for list and detail views"""
+        if self.action == 'list':
+            return BlogPostListSerializer
+        return BlogPostDetailSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        """Override retrieve to handle both ID and slug lookups, and increment view count"""
+        lookup_value = kwargs.get('pk')
+
+        # Try to get by slug first, then by ID
+        try:
+            if lookup_value.isdigit():
+                instance = self.get_queryset().get(id=lookup_value)
+            else:
+                instance = self.get_queryset().get(slug=lookup_value)
+        except BlogPost.DoesNotExist:
+            return Response({'error': 'Blog post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Increment view count
+        BlogPost.objects.filter(id=instance.id).update(view_count=models.F('view_count') + 1)
+
+        # Refresh instance to get updated view count
+        instance.refresh_from_db()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+# Blog-related API endpoints
+
+@api_view(['GET'])
+def blog_categories_list(request):
+    """Get all active blog categories"""
+    try:
+        categories = BlogCategory.objects.filter(is_active=True).order_by('order', 'name')
+        serializer = BlogCategorySerializer(categories, many=True, context={'request': request})
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def blog_tags_list(request):
+    """Get all active blog tags"""
+    try:
+        tags = BlogTag.objects.filter(is_active=True).order_by('name')
+        serializer = BlogTagSerializer(tags, many=True, context={'request': request})
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def featured_blogs_list(request):
+    """Get featured blog posts"""
+    try:
+        blogs = BlogPost.objects.filter(
+            status='published',
+            is_featured=True
+        ).select_related(
+            'author', 'category'
+        ).prefetch_related(
+            'tags'
+        ).order_by('-published_at')[:6]  # Limit to 6 featured posts
+
+        serializer = BlogPostListSerializer(blogs, many=True, context={'request': request})
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def recent_blogs_list(request):
+    """Get recent blog posts"""
+    try:
+        limit = int(request.query_params.get('limit', 5))
+        blogs = BlogPost.objects.filter(
+            status='published'
+        ).select_related(
+            'author', 'category'
+        ).prefetch_related(
+            'tags'
+        ).order_by('-published_at')[:limit]
+
+        serializer = BlogPostListSerializer(blogs, many=True, context={'request': request})
         return Response(serializer.data)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

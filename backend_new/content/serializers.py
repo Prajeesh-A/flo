@@ -8,7 +8,8 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy
+    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
+    BlogCategory, BlogTag, BlogPost
 )
 
 
@@ -379,3 +380,120 @@ class PrivacyPolicySerializer(serializers.ModelSerializer):
             'id', 'title', 'subtitle', 'content', 'last_updated',
             'effective_date', 'meta_title', 'meta_description'
         ]
+
+
+# Blog Management Serializers
+
+class BlogCategorySerializer(serializers.ModelSerializer):
+    """Serializer for blog categories"""
+    post_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogCategory
+        fields = [
+            'id', 'name', 'slug', 'description', 'color',
+            'is_active', 'order', 'post_count', 'created_at', 'updated_at'
+        ]
+
+    def get_post_count(self, obj):
+        """Get the number of published posts in this category"""
+        return obj.blogpost_set.filter(status='published').count()
+
+
+class BlogTagSerializer(serializers.ModelSerializer):
+    """Serializer for blog tags"""
+    post_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogTag
+        fields = [
+            'id', 'name', 'slug', 'is_active',
+            'post_count', 'created_at', 'updated_at'
+        ]
+
+    def get_post_count(self, obj):
+        """Get the number of published posts with this tag"""
+        return obj.blogpost_set.filter(status='published').count()
+
+
+class BlogPostListSerializer(serializers.ModelSerializer):
+    """Serializer for blog post list view (lighter data)"""
+    author_name = serializers.CharField(source='author.get_full_name', read_only=True)
+    author_username = serializers.CharField(source='author.username', read_only=True)
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    category_slug = serializers.CharField(source='category.slug', read_only=True)
+    category_color = serializers.CharField(source='category.color', read_only=True)
+    tags = BlogTagSerializer(many=True, read_only=True)
+    featured_image_url = serializers.SerializerMethodField()
+    excerpt_text = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogPost
+        fields = [
+            'id', 'title', 'slug', 'excerpt_text', 'featured_image_url',
+            'author_name', 'author_username', 'category_name', 'category_slug',
+            'category_color', 'tags', 'status', 'published_at', 'view_count',
+            'reading_time', 'is_featured', 'created_at', 'updated_at'
+        ]
+
+    def get_featured_image_url(self, obj):
+        """Get absolute URL for featured image"""
+        if obj.featured_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.featured_image.url)
+            return obj.featured_image.url
+        return None
+
+    def get_excerpt_text(self, obj):
+        """Get excerpt or auto-generated excerpt"""
+        return obj.get_excerpt()
+
+
+class BlogPostDetailSerializer(serializers.ModelSerializer):
+    """Serializer for blog post detail view (full data)"""
+    author_name = serializers.CharField(source='author.get_full_name', read_only=True)
+    author_username = serializers.CharField(source='author.username', read_only=True)
+    category = BlogCategorySerializer(read_only=True)
+    tags = BlogTagSerializer(many=True, read_only=True)
+    featured_image_url = serializers.SerializerMethodField()
+    video_file_url = serializers.SerializerMethodField()
+    excerpt_text = serializers.SerializerMethodField()
+    absolute_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogPost
+        fields = [
+            'id', 'title', 'slug', 'excerpt_text', 'content',
+            'featured_image_url', 'featured_image_alt', 'video_url', 'video_file_url',
+            'author_name', 'author_username', 'category', 'tags',
+            'status', 'published_at', 'view_count', 'reading_time',
+            'is_featured', 'allow_comments', 'meta_title', 'meta_description',
+            'meta_keywords', 'absolute_url', 'created_at', 'updated_at'
+        ]
+
+    def get_featured_image_url(self, obj):
+        """Get absolute URL for featured image"""
+        if obj.featured_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.featured_image.url)
+            return obj.featured_image.url
+        return None
+
+    def get_video_file_url(self, obj):
+        """Get absolute URL for video file"""
+        if obj.video_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.video_file.url)
+            return obj.video_file.url
+        return None
+
+    def get_excerpt_text(self, obj):
+        """Get excerpt or auto-generated excerpt"""
+        return obj.get_excerpt()
+
+    def get_absolute_url(self, obj):
+        """Get the absolute URL for this blog post"""
+        return obj.get_absolute_url

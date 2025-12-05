@@ -16,6 +16,9 @@ router.register(r'contact-submissions', views.ContactFormSubmissionViewSet)
 router.register(r'video-tabs', views.VideoTabViewSet)
 router.register(r'country-data', views.CountryDataViewSet)
 router.register(r'demo-tabs', views.DemoTabViewSet)
+router.register(r'blog-categories', views.BlogCategoryViewSet)
+router.register(r'blog-tags', views.BlogTagViewSet)
+router.register(r'blogs', views.BlogPostViewSet)
 
 # The API URLs are now determined automatically by the router
 urlpatterns = [
@@ -50,6 +53,12 @@ urlpatterns = [
 
     # Privacy Policy
     path('privacy-policy/', views.privacy_policy_detail, name='privacy-policy-detail'),
+
+    # Blog endpoints
+    path('blog-categories-list/', views.blog_categories_list, name='blog-categories-list'),
+    path('blog-tags-list/', views.blog_tags_list, name='blog-tags-list'),
+    path('featured-blogs/', views.featured_blogs_list, name='featured-blogs'),
+    path('recent-blogs/', views.recent_blogs_list, name='recent-blogs'),
 
     # Combined endpoint for all website data
     path('website-data/', views.website_data, name='website-data'),

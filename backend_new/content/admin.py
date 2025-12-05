@@ -9,7 +9,8 @@ from .models import (
     AboutTabletSection, AIPoweredAnalyticsSection, ArchitectingExcellenceSection,
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
-    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy
+    BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
+    BlogCategory, BlogTag, BlogPost
 )
 
 
@@ -828,6 +829,140 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
         updated = queryset.update(is_read=False)
         self.message_user(request, f'{updated} submissions marked as unread.')
     mark_as_unread.short_description = "Mark selected submissions as unread"
+
+
+# Blog Management Admin
+
+@admin.register(BlogCategory)
+class BlogCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'is_active', 'order', 'created_at']
+    list_editable = ['is_active', 'order']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['name', 'description']
+    prepopulated_fields = {'slug': ('name',)}
+    ordering = ['order', 'name']
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'slug', 'description')
+        }),
+        ('Display Settings', {
+            'fields': ('color', 'is_active', 'order')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    )
+
+    readonly_fields = ['created_at', 'updated_at']
+
+
+@admin.register(BlogTag)
+class BlogTagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'is_active', 'created_at']
+    list_editable = ['is_active']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['name']
+    prepopulated_fields = {'slug': ('name',)}
+    ordering = ['name']
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'slug', 'is_active')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    )
+
+    readonly_fields = ['created_at', 'updated_at']
+
+
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = [
+        'title', 'author', 'category', 'status', 'is_featured',
+        'published_at', 'view_count', 'reading_time'
+    ]
+    list_editable = ['status', 'is_featured']
+    list_filter = [
+        'status', 'category', 'tags', 'is_featured',
+        'allow_comments', 'created_at', 'published_at'
+    ]
+    search_fields = ['title', 'content', 'excerpt', 'meta_keywords']
+    prepopulated_fields = {'slug': ('title',)}
+    filter_horizontal = ['tags']
+    date_hierarchy = 'published_at'
+    ordering = ['-created_at']
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'slug', 'author', 'excerpt')
+        }),
+        ('Content', {
+            'fields': ('content',),
+            'classes': ('wide',)
+        }),
+        ('Media', {
+            'fields': ('featured_image', 'featured_image_alt', 'video_url', 'video_file'),
+            'classes': ('collapse',)
+        }),
+        ('Categorization', {
+            'fields': ('category', 'tags')
+        }),
+        ('Publication', {
+            'fields': ('status', 'published_at', 'is_featured', 'allow_comments')
+        }),
+        ('SEO & Metadata', {
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
+            'classes': ('collapse',)
+        }),
+        ('Analytics', {
+            'fields': ('view_count', 'reading_time'),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    )
+
+    readonly_fields = ['created_at', 'updated_at', 'reading_time']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('author', 'category')
+
+    def save_model(self, request, obj, form, change):
+        if not change:  # If creating new post
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
+
+    # Custom admin actions
+    def make_published(self, request, queryset):
+        updated = queryset.update(status='published')
+        self.message_user(request, f'{updated} posts marked as published.')
+    make_published.short_description = "Mark selected posts as published"
+
+    def make_draft(self, request, queryset):
+        updated = queryset.update(status='draft')
+        self.message_user(request, f'{updated} posts marked as draft.')
+    make_draft.short_description = "Mark selected posts as draft"
+
+    actions = ['make_published', 'make_draft']
+
+    # Show featured image preview
+    def featured_image_preview(self, obj):
+        if obj.featured_image:
+            return format_html(
+                '<img src="{}" style="max-height: 50px; max-width: 100px;" />',
+                obj.featured_image.url
+            )
+        return "No image"
+    featured_image_preview.short_description = "Image Preview"
+
+
+admin.site.register(BlogPost, BlogPostAdmin)
 
 
 # Customize admin site header and title
