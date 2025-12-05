@@ -167,13 +167,8 @@ export default function BlogDetailClient({
                 color: "#374151",
                 fontFamily: "'Poppins', sans-serif",
               }}
-            >
-              {initialBlog.content.split("\n\n").map((paragraph, index) => (
-                <p key={index} className="mb-6 leading-relaxed text-lg">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+              dangerouslySetInnerHTML={{ __html: initialBlog.content }}
+            />
 
             {/* Share Section */}
             <div className="mt-16 pt-8 border-t border-gray-200">
