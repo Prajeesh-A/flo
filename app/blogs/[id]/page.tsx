@@ -1,11 +1,30 @@
 import React from "react";
 import BlogDetailClient from "./BlogDetailClient";
 
+// Blog interface to match BlogDetailClient
+interface Blog {
+  id: string;
+  title: string;
+  content: string;
+  createdBy: string;
+  date: string;
+  readTime: string;
+  category: string;
+  featuredImage?: string;
+  videoUrl?: string;
+  videoFile?: string;
+  tags?: any[];
+  viewCount?: number;
+  isFeatured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
 // ✅ ISR: Revalidate every 1 hour
 export const revalidate = 3600;
 
 // Dummy blog for fallback
-const dummyBlog = {
+const dummyBlog: Blog = {
   id: "demo-blog-1",
   title: "Welcome to Our Blog - Getting Started with Floneo",
   content:
@@ -50,7 +69,7 @@ export default async function BlogDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  let blog = null;
+  let blog: Blog | null = null;
 
   try {
     const resolvedParams = await params;
