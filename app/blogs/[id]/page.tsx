@@ -24,12 +24,23 @@ export async function generateStaticParams() {
     const data = await res.json();
     const blogs = data.results || data; // Handle paginated response
 
-    return blogs.map((blog: any) => ({
-      id: blog.id.toString(),
+    // Use slug if available, otherwise use ID
+    const params = blogs.map((blog: any) => ({
+      id: blog.slug || blog.id.toString(),
     }));
+
+    // Always include the demo blog
+    params.push({ id: "demo-blog-1" });
+
+    return params;
   } catch (error) {
     console.error("Error generating static params:", error);
-    return [{ id: "demo-blog-1" }];
+    // Return known blog slugs/IDs as fallback
+    return [
+      { id: "demo-blog-1" },
+      { id: "demo" }, // Your current blog slug
+      { id: "1" }, // Your current blog ID
+    ];
   }
 }
 
@@ -49,9 +60,29 @@ export default async function BlogDetailPage({
       blog = dummyBlog;
     } else {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-      const res = await fetch(`${apiUrl}/api/blogs/${blogId}/`, {
+
+      // Try to fetch by slug first, then by ID
+      let res = await fetch(`${apiUrl}/api/blogs/${blogId}/`, {
         next: { revalidate: 3600 }, // ISR: Cache for 1 hour
       });
+
+      // If not found and blogId is not a number, it might be a slug
+      // Try to find by slug in the blog list
+      if (!res.ok && isNaN(Number(blogId))) {
+        const listRes = await fetch(`${apiUrl}/api/blogs/`, {
+          next: { revalidate: 3600 },
+        });
+        if (listRes.ok) {
+          const listData = await listRes.json();
+          const blogs = listData.results || listData;
+          const blogBySlug = blogs.find((b: any) => b.slug === blogId);
+          if (blogBySlug) {
+            res = await fetch(`${apiUrl}/api/blogs/${blogBySlug.id}/`, {
+              next: { revalidate: 3600 },
+            });
+          }
+        }
+      }
 
       if (res.ok) {
         const data = await res.json();
@@ -104,7 +135,24 @@ export async function generateMetadata({
     }
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    const res = await fetch(`${apiUrl}/api/blogs/${resolvedParams.id}/`);
+    const blogId = resolvedParams.id;
+
+    // Try to fetch by slug first, then by ID
+    let res = await fetch(`${apiUrl}/api/blogs/${blogId}/`);
+
+    // If not found and blogId is not a number, it might be a slug
+    if (!res.ok && isNaN(Number(blogId))) {
+      const listRes = await fetch(`${apiUrl}/api/blogs/`);
+      if (listRes.ok) {
+        const listData = await listRes.json();
+        const blogs = listData.results || listData;
+        const blogBySlug = blogs.find((b: any) => b.slug === blogId);
+        if (blogBySlug) {
+          res = await fetch(`${apiUrl}/api/blogs/${blogBySlug.id}/`);
+        }
+      }
+    }
+
     if (res.ok) {
       const blog = await res.json();
       return {

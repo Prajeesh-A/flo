@@ -7,6 +7,7 @@ export const revalidate = 3600;
 // Dummy blog for fallback
 const dummyBlog = {
   id: "demo-blog-1",
+  slug: "demo-blog-1",
   title: "Welcome to Our Blog - Getting Started with Floneo",
   content:
     "This is a sample blog post to demonstrate how our blog section works. Floneo is designed to help you build, automate, and scale your business without the IT bottleneck. In this article, we'll explore the key features that make Floneo the perfect solution for modern businesses.",
@@ -34,6 +35,7 @@ export default async function BlogsPage() {
       const results = data.results || data; // Handle paginated response
       blogs = results.map((blog: any) => ({
         id: blog.id.toString(),
+        slug: blog.slug,
         title: blog.title,
         content: blog.content,
         excerpt:

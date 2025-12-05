@@ -8,6 +8,7 @@ import Image from "next/image";
 
 interface Blog {
   id: string;
+  slug?: string;
   title: string;
   content: string;
   excerpt: string;
@@ -52,7 +53,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
         ></div>
       </div>
 
-         {/* Back Button */}
+      {/* Back Button */}
       <Link
         href="/"
         className="fixed top-4 left-4 sm:top-6 sm:left-6  z-50 group"
@@ -170,7 +171,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Link href={`/blogs/${blog.id}`}>
+                <Link href={`/blogs/${blog.slug || blog.id}`}>
                   <div className="group h-full bg-white border border-gray-200 rounded-3xl overflow-hidden hover:border-blue-200 transition-all duration-300 cursor-pointer">
                     {/* Colored Header */}
                     <div

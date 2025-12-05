@@ -14,13 +14,23 @@ interface Blog {
   date: string;
   readTime: string;
   category: string;
+  featuredImage?: string;
+  videoUrl?: string;
+  videoFile?: string;
+  tags?: any[];
+  viewCount?: number;
+  isFeatured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 interface BlogDetailClientProps {
   initialBlog: Blog | null;
 }
 
-export default function BlogDetailClient({ initialBlog }: BlogDetailClientProps) {
+export default function BlogDetailClient({
+  initialBlog,
+}: BlogDetailClientProps) {
   if (!initialBlog) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -80,30 +90,29 @@ export default function BlogDetailClient({ initialBlog }: BlogDetailClientProps)
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center justify-center mb-6">
-            {/* Logo */}
-            <div className="w-12 h-12">
-              <Image
-                src="/logo.png"
-                alt="Floneo Logo"
-                width={48}
-                height={48}
-                className="w-full h-full object-contain"
-              />
-            </div>
+              {/* Logo */}
+              <div className="w-12 h-12">
+                <Image
+                  src="/logo.png"
+                  alt="Floneo Logo"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain"
+                />
+              </div>
 
-            {/* Category Badge */}
-            <div className="text-center">
-              <span
-                className="inline-block px-4 py-2 bg-gray-50 rounded-full text-sm font-medium"
-                style={{
-                  color: "#6b7280",
-                  fontFamily: "'Poppins', sans-serif",
-                }}
-              >
-                {initialBlog.category}
-              </span>
-            </div>
-
+              {/* Category Badge */}
+              <div className="text-center">
+                <span
+                  className="inline-block px-4 py-2 bg-gray-50 rounded-full text-sm font-medium"
+                  style={{
+                    color: "#6b7280",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                >
+                  {initialBlog.category}
+                </span>
+              </div>
             </div>
 
             {/* Title */}
