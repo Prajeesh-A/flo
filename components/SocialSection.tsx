@@ -177,19 +177,6 @@ export default function SocialSection() {
   return (
     <section className="bg-white py-20 px-6">
       <div className="max-w-6xl mx-auto">
-        {/* Debug indicator for fallback data */}
-        {(!sectionData || !socialLinks || sectionError || linksError) && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6 text-sm">
-            <strong>Debug:</strong> Using fallback data -
-            {(!sectionData || sectionError) && " social section"}
-            {(!sectionData || sectionError) &&
-              (!socialLinks || linksError) &&
-              ","}
-            {(!socialLinks || linksError) && " social links"} not loaded from
-            API
-          </div>
-        )}
-
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
