@@ -123,7 +123,7 @@ export default function ContactPage() {
               </div>
               <div className="text-left">
                 <h3 className="font-semibold text-gray-900 mb-0.5 text-sm">Email us</h3>
-                <p className="text-gray-600 text-xs">hello@floneo.com</p>
+                <p className="text-gray-600 text-xs">admin@floneo.co</p>
               </div>
             </div>
 
@@ -174,7 +174,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Email us</h3>
-                  <p className="text-gray-600 text-sm">hello@floneo.com</p>
+                  <p className="text-gray-600 text-sm">admin@floneo.co</p>
                 </div>
               </div>
 
@@ -231,7 +231,7 @@ export default function ContactPage() {
                 >
                   <p className="text-red-900 font-medium mb-1 text-sm sm:text-base">Something went wrong</p>
                   <p className="text-red-700 text-xs sm:text-sm">
-                    Please try again or email us directly at hello@floneo.com
+                    Please try again or email us directly at admin@floneo.co
                   </p>
                 </motion.div>
               )}

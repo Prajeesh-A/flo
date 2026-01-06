@@ -408,7 +408,6 @@ export default function CountryCodeSelector({
       >
         <div className="flex items-center gap-1.5 text-sm font-semibold">
           <span className="text-lg leading-none">{selectedCountry.flag}</span>
-          <span className="leading-none">{selectedCountry.code}</span>
         </div>
         <ChevronDown
           className={`h-4 w-4 transition-transform duration-200 flex-shrink-0 ${

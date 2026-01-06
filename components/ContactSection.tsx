@@ -41,7 +41,7 @@ export default function ContactSection() {
       "Ready to transform your business? Let's talk about how we can help you achieve your goals.",
     email: "admin@floneo.co",
     phone: "+91 7994147201",
-    address: "123 Business St, Suite 100, City, State 12345",
+    address: "door no 1-650, Kollam, Kerala 691572, India",
     form_title: "Send us a message",
     form_submit_text: "Send Message",
     form_success_message:

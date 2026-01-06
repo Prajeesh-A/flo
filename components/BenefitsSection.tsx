@@ -83,26 +83,26 @@ export default function BenefitsSection() {
       },
       {
         id: 4,
-        title: "Cloud Sync",
-        color: "yellow",
+        title: "AI Analytics",
+        color: "blue",
         position: "middle-left",
       },
       {
         id: 5,
-        title: "Top Security",
-        color: "green",
+        title: "Real-time Monitoring",
+        color: "purple",
         position: "middle-right",
       },
       {
         id: 6,
-        title: "Top Security",
-        color: "green",
+        title: "Smart Alerts",
+        color: "orange",
         position: "bottom-left",
       },
       {
         id: 7,
-        title: "Cloud Sync",
-        color: "yellow",
+        title: "Workflow Builder",
+        color: "cyan",
         position: "bottom-right",
       },
       {
@@ -135,11 +135,11 @@ export default function BenefitsSection() {
     const icons = [
       Shield,        // 0 - Top Security
       Cloud,         // 1 - Cloud Sync
-      Monitor,       // 2 - Fast Transactions
-      Cloud,         // 3 - Cloud Sync
-      Shield,        // 4 - Top Security
-      Monitor,       // 5 - Top Security
-      Cloud,         // 6 - Cloud Sync
+      Zap,           // 2 - Fast Transactions
+      BarChart3,     // 3 - AI Analytics
+      Monitor,       // 4 - Real-time Monitoring
+      AlertTriangle, // 5 - Smart Alerts
+      Lightbulb,     // 6 - Workflow Builder
       LayoutDashboard, // 7 - Customizable Dashboards
     ];
     
@@ -159,19 +159,18 @@ export default function BenefitsSection() {
 
 const getPositionClasses = (position: string) => {
   const positionMap: Record<string, string> = {
-    "top-left": "top-24 md:top-32 lg:top-40 left-8 md:left-12 lg:left-24",
-    "top-center": "top-16 md:top-20 lg:top-24 left-1/2 -translate-x-1/2",
-    "top-right": "top-24 md:top-32 lg:top-40 right-8 md:right-12 lg:right-24",
-    "middle-left": "top-1/2 left-8 md:left-12 lg:left-20 -translate-y-1/2",
-    "middle-right": "top-1/2 right-8 md:right-12 lg:right-20 -translate-y-1/2",
-    "bottom-left": "bottom-24 md:bottom-32 lg:bottom-40 left-8 md:left-12 lg:left-24",
-    "bottom-right": "bottom-24 md:bottom-32 lg:bottom-40 right-8 md:right-12 lg:right-24",
-    "bottom-center": "bottom-8 md:bottom-10 lg:bottom-12 left-1/2 -translate-x-1/2",
+    "top-left": "top-28 md:top-32 lg:top-40 left-8 md:left-12 lg:left-20",
+    "top-center": "top-4 md:top-8 lg:top-12 left-1/2 -translate-x-1/2",
+    "top-right": "top-28 md:top-32 lg:top-40 right-8 md:right-12 lg:right-20",
+    "middle-left": "top-1/2 left-2 md:left-4 lg:left-8 -translate-y-1/2",
+    "middle-right": "top-1/2 right-2 md:right-4 lg:right-8 -translate-y-1/2",
+    "bottom-left": "bottom-28 md:bottom-32 lg:bottom-40 left-8 md:left-12 lg:left-20",
+    "bottom-right": "bottom-28 md:bottom-32 lg:bottom-40 right-8 md:right-12 lg:right-20",
+    "bottom-center": "bottom-4 md:bottom-8 lg:bottom-12 left-1/2 -translate-x-1/2",
   };
-  
+
   return positionMap[position] || "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2";
 };
-
 
   // ✅ Determine which features to show based on screen size
   const displayedFeatures = isMobile 
