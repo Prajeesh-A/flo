@@ -26,7 +26,13 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = ["All", "Technology", "Business", "Design", "Development"];
+  // Dynamically extract unique categories from blogs
+  const uniqueCategories = Array.from(new Set(initialBlogs.map(blog => blog.category))).filter(Boolean);
+  const categories = ["All", ...uniqueCategories.sort()];
+
+  // Ensure "Technology", "Business", etc. are present if you want defaults, 
+  // but better to just use what's available. 
+  // If no blogs, at least show "All".
 
   const filteredBlogs = initialBlogs.filter((blog) => {
     const matchesSearch =
@@ -37,8 +43,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
     return matchesSearch && matchesCategory;
   });
 
-  const displayBlogs =
-    filteredBlogs.length === 0 ? initialBlogs : filteredBlogs;
+  const displayBlogs = filteredBlogs;
 
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
@@ -142,11 +147,10 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`px-6 py-4 rounded-xl font-medium whitespace-nowrap transition-all ${
-                      selectedCategory === category
-                        ? "bg-[#0a0e27] text-white shadow-lg"
-                        : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
-                    }`}
+                    className={`px-6 py-4 rounded-xl font-medium whitespace-nowrap transition-all ${selectedCategory === category
+                      ? "bg-[#0a0e27] text-white shadow-lg"
+                      : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
+                      }`}
                     style={{
                       fontFamily: "'Poppins', sans-serif",
                     }}
@@ -177,13 +181,12 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                     <div
                       className="h-2"
                       style={{
-                        background: `linear-gradient(90deg, ${
-                          index % 3 === 0
-                            ? "#0066ff, #00d4ff"
-                            : index % 3 === 1
+                        background: `linear-gradient(90deg, ${index % 3 === 0
+                          ? "#0066ff, #00d4ff"
+                          : index % 3 === 1
                             ? "#2ecc71, #00d4ff"
                             : "#ffc107, #ff6b6b"
-                        })`,
+                          })`,
                       }}
                     ></div>
 
