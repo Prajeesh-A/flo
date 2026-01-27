@@ -10,7 +10,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true, // Required for static export
-    domains: ["flo-do2v.onrender.com"],
+    domains: ["flo-do2v.onrender.com", "localhost", "127.0.0.1"],
   },
   compress: true,
   poweredByHeader: false,

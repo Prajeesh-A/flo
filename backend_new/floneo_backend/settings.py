@@ -22,7 +22,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env helpers
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key-change-in-production-immediately")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else ["*"]
 
@@ -239,6 +239,7 @@ CKEDITOR_CONFIGS = {
             ['Bold', 'Italic', 'Underline'],
             ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
             ['Link', 'Unlink'],
+            ['Image', 'Table', 'HorizontalRule'],
             ['RemoveFormat', 'Source']
         ],
         'height': 200,
