@@ -31,6 +31,14 @@ interface BlogDetailClientProps {
 export default function BlogDetailClient({
   initialBlog,
 }: BlogDetailClientProps) {
+  // Fix relative image paths in content
+  const processedContent = React.useMemo(() => {
+    if (!initialBlog?.content) return "";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    // Replace all src="/media/..." with src="http://127.0.0.1:8000/media/..."
+    return initialBlog.content.replace(/src="\/media\//g, `src="${apiUrl}/media/`);
+  }, [initialBlog?.content]);
+
   if (!initialBlog) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -160,6 +168,17 @@ export default function BlogDetailClient({
               </div>
             </div>
 
+            {/* Featured Image */}
+            {initialBlog.featuredImage && (
+              <div className="mb-12 rounded-3xl overflow-hidden shadow-lg">
+                <img
+                  src={initialBlog.featuredImage}
+                  alt={initialBlog.title}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+            )}
+
             {/* Blog Content */}
             <div
               className="prose prose-lg max-w-none"
@@ -167,7 +186,7 @@ export default function BlogDetailClient({
                 color: "#374151",
                 fontFamily: "'Poppins', sans-serif",
               }}
-              dangerouslySetInnerHTML={{ __html: initialBlog.content }}
+              dangerouslySetInnerHTML={{ __html: processedContent }}
             />
 
             {/* Share Section */}
