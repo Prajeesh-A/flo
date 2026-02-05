@@ -13,7 +13,7 @@ const nextConfig = {
         hostname: 'flo-do2v.onrender.com',
       },
     ],
-    domains: ["flo-do2v.onrender.com"],
+    domains: ["flo-do2v.onrender.com", "localhost", "127.0.0.1"],
   },
   compress: true,
   poweredByHeader: false,

@@ -27,7 +27,7 @@ export default async function BlogsPage() {
     // Fetch blogs from backend API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     const res = await fetch(`${apiUrl}/api/blogs/`, {
-      next: { revalidate: 3600 }, // ISR: Cache for 1 hour
+      next: { revalidate: 0 }, // ISR: Cache for 1 hour
     });
 
     if (res.ok) {
@@ -45,8 +45,8 @@ export default async function BlogsPage() {
         readTime: blog.reading_time
           ? `${blog.reading_time} min read`
           : `${Math.ceil(
-              (blog.content?.split(" ").length || 0) / 200
-            )} min read`,
+            (blog.content?.split(" ").length || 0) / 200
+          )} min read`,
         category: blog.category_name || blog.category || "Technology",
         featuredImage: blog.featured_image_url,
         tags: blog.tags || [],
