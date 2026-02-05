@@ -1,11 +1,10 @@
 [build]
-  publish = "out"
   command = "npm run build"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "18"
+
+# Enable Next.js SSR Runtime
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
