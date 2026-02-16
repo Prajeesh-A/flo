@@ -4,6 +4,7 @@ import { Inter, Poppins, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/notification-toast";
+import { CTAModalProvider } from "@/contexts/CTAModalContext";
 import "./globals.css";
 import "./../styles/globals.css";
 import localFont from "next/font/local";
@@ -82,10 +83,12 @@ export default function RootLayout({
       <body
         className={`font-sans ${inter.variable} ${poppins.variable} antialiased`}
       >
-        <ToastProvider>
-          <Suspense fallback={null}>{children}</Suspense>
-          <Analytics />
-        </ToastProvider>
+        <CTAModalProvider>
+          <ToastProvider>
+            <Suspense fallback={null}>{children}</Suspense>
+            <Analytics />
+          </ToastProvider>
+        </CTAModalProvider>
       </body>
     </html>
   );
