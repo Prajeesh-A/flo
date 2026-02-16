@@ -60,8 +60,10 @@ export default function BenefitsSection() {
     subtitle: "Automation",
     description:
       "Floneo isn't just about managing processes — it builds, automates, and scales the workflows that fuel your business.",
-    cta_primary_text: "Get Started",
+    cta_primary_text: "Get Started Free",
+    cta_primary_url: "https://calendly.com/demo-floneo/demo-booking",
     cta_secondary_text: "Learn More",
+    cta_secondary_url: "https://www.linkedin.com/company/floneo",
     benefits: [
       {
         id: 1,
@@ -311,7 +313,7 @@ const getPositionClasses = (position: string) => {
             </button>
 
             <a
-              href={linkedInUrl}
+              href={data.cta_secondary_url || linkedInUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`w-full sm:w-auto bg-gray-900 hover:bg-black text-white px-8 sm:px-10 py-3 sm:py-3.5 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base ${poppins.className}`}

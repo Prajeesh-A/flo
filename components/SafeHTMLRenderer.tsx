@@ -45,21 +45,21 @@ export default function SafeHTMLRenderer({
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'a', 'span',
       'div', 'pre', 'code', 'sub', 'sup', 'del', 'ins', 'mark'
     ],
-    
+
     // Default allowed attributes
     ALLOWED_ATTR: allowedAttributes || [
       'href', 'title', 'target', 'rel', 'class', 'id', 'style'
     ],
-    
+
     // Additional security options
     ALLOW_DATA_ATTR: false,
     ALLOW_UNKNOWN_PROTOCOLS: false,
     SANITIZE_DOM: true,
     KEEP_CONTENT: true,
-    
+
     // Remove potentially dangerous attributes
     FORBID_ATTR: ['onclick', 'onload', 'onerror', 'onmouseover'],
-    
+
     // Transform links to be safe
     ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
   }
@@ -68,13 +68,13 @@ export default function SafeHTMLRenderer({
     // Sanitize the HTML content
     // const sanitizedHTML = DOMPurify.sanitize(content, purifyConfig)
     const sanitizedHTML = content
-    
+
     // Parse the sanitized HTML into React elements
     const parsedContent = parse(sanitizedHTML, {
       replace: (domNode) => {
         // Additional custom transformations can be added here
         // For example, adding custom classes or modifying elements
-        
+
         if (domNode.type === 'tag') {
           // Add security attributes to links
           if (domNode.name === 'a') {
@@ -85,12 +85,12 @@ export default function SafeHTMLRenderer({
                 rel: 'noopener noreferrer',
                 target: domNode.attribs?.target || '_blank',
               },
-              domNode.children?.map((child, index) => 
+              domNode.children?.map((child, index) =>
                 typeof child === 'string' ? child : parse(child.toString())
               )
             )
           }
-          
+
           // Add responsive classes to images if needed
           if (domNode.name === 'img') {
             return React.createElement('img', {
@@ -100,13 +100,13 @@ export default function SafeHTMLRenderer({
             })
           }
         }
-        
+
         return domNode
       }
     })
 
     return (
-      <div 
+      <span
         className={`safe-html-content ${className}`.trim()}
         style={{
           // Ensure proper text formatting
@@ -114,14 +114,15 @@ export default function SafeHTMLRenderer({
           color: 'inherit',
           fontSize: 'inherit',
           fontFamily: 'inherit',
+          display: 'inline', // Use inline to work inside <p> tags
         }}
       >
         {parsedContent}
-      </div>
+      </span>
     )
   } catch (error) {
     console.error('Error rendering HTML content:', error)
-    
+
     // Fallback to plain text if HTML parsing fails
     const plainText = content.replace(/<[^>]*>/g, '').trim()
     return (
@@ -145,7 +146,7 @@ export function containsHTML(content: string): boolean {
  */
 export function stripHTML(content: string): string {
   if (!content || typeof content !== 'string') return ''
-  
+
   try {
     // First sanitize, then strip tags
     // const sanitized = DOMPurify.sanitize(content, { ALLOWED_TAGS: [] })
@@ -162,10 +163,10 @@ export function stripHTML(content: string): string {
  */
 export function truncateHTML(content: string, maxLength: number = 150): string {
   if (!content || typeof content !== 'string') return ''
-  
+
   const plainText = stripHTML(content)
   if (plainText.length <= maxLength) return content
-  
+
   // If we need to truncate, return plain text version
   return plainText.substring(0, maxLength).trim() + '...'
 }

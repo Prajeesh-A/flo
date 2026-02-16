@@ -80,7 +80,7 @@ export default function CTAModal({ isOpen, onClose }: CTAModalProps) {
                   className="text-2xl font-bold text-gray-900 mb-4"
                   style={{ fontFamily: "'Poppins', sans-serif" }}
                 >
-                  Exciting News!
+                  🚀 Floneo Version 1.0 is Live!
                 </h2>
 
                 {/* Message */}
@@ -88,13 +88,10 @@ export default function CTAModal({ isOpen, onClose }: CTAModalProps) {
                   className="text-gray-600 text-lg leading-relaxed mb-8"
                   style={{ fontFamily: "'Poppins', sans-serif" }}
                 >
-                  <span className="font-semibold text-blue-600">floneo</span>{" "}
-                  will be available for demo{" "}
-                  <span className="font-semibold text-blue-600">very soon</span>
-                  !
+                  <span className="font-semibold text-blue-600">Floneo</span> is now ready for you to explore!
                   <br />
-                  Reserve your spot today and be among the first to experience
-                  it.
+                  <br />
+                  Book your personalized demo and discover how we can transform your business workflows.
                 </p>
 
                 {/* Action Buttons */}
@@ -103,13 +100,13 @@ export default function CTAModal({ isOpen, onClose }: CTAModalProps) {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
-                      router.push("/contact");
+                      window.open("https://calendly.com/demo-floneo/demo-booking", "_blank");
                       onClose();
                     }}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition-colors"
                     style={{ fontFamily: "'Poppins', sans-serif" }}
                   >
-                    Reserve My Spot
+                    Book Demo Now
                   </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.02 }}

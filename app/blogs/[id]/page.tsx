@@ -38,8 +38,8 @@ const dummyBlog: Blog = {
 // ✅ Generate static params for all blogs
 export async function generateStaticParams() {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    const res = await fetch(`${apiUrl}/api/blogs/`);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+    const res = await fetch(`${apiUrl}/blogs/`);
     const data = await res.json();
     const blogs = data.results || data; // Handle paginated response
 
@@ -78,17 +78,17 @@ export default async function BlogDetailPage({
     if (blogId === "demo-blog-1") {
       blog = dummyBlog;
     } else {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 
       // Try to fetch by slug first, then by ID
-      let res = await fetch(`${apiUrl}/api/blogs/${blogId}/`, {
+      let res = await fetch(`${apiUrl}/blogs/${blogId}/`, {
         next: { revalidate: 3600 }, // ISR: Cache for 1 hour
       });
 
       // If not found and blogId is not a number, it might be a slug
       // Try to find by slug in the blog list
       if (!res.ok && isNaN(Number(blogId))) {
-        const listRes = await fetch(`${apiUrl}/api/blogs/`, {
+        const listRes = await fetch(`${apiUrl}/blogs/`, {
           next: { revalidate: 3600 },
         });
         if (listRes.ok) {
@@ -96,7 +96,7 @@ export default async function BlogDetailPage({
           const blogs = listData.results || listData;
           const blogBySlug = blogs.find((b: any) => b.slug === blogId);
           if (blogBySlug) {
-            res = await fetch(`${apiUrl}/api/blogs/${blogBySlug.id}/`, {
+            res = await fetch(`${apiUrl}/blogs/${blogBySlug.id}/`, {
               next: { revalidate: 3600 },
             });
           }
@@ -153,21 +153,21 @@ export async function generateMetadata({
       };
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
     const blogId = resolvedParams.id;
 
     // Try to fetch by slug first, then by ID
-    let res = await fetch(`${apiUrl}/api/blogs/${blogId}/`);
+    let res = await fetch(`${apiUrl}/blogs/${blogId}/`);
 
     // If not found and blogId is not a number, it might be a slug
     if (!res.ok && isNaN(Number(blogId))) {
-      const listRes = await fetch(`${apiUrl}/api/blogs/`);
+      const listRes = await fetch(`${apiUrl}/blogs/`);
       if (listRes.ok) {
         const listData = await listRes.json();
         const blogs = listData.results || listData;
         const blogBySlug = blogs.find((b: any) => b.slug === blogId);
         if (blogBySlug) {
-          res = await fetch(`${apiUrl}/api/blogs/${blogBySlug.id}/`);
+          res = await fetch(`${apiUrl}/blogs/${blogBySlug.id}/`);
         }
       }
     }
