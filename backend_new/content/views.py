@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db import models
+from django.core.management import call_command
+import io
 
 from .models import (
     HeroSection, AboutSection, ServiceCard, MetricBox,
@@ -643,5 +645,23 @@ def recent_blogs_list(request):
 
         serializer = BlogPostListSerializer(blogs, many=True, context={'request': request})
         return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def populate_data_trigger(request):
+    """HTTP trigger to run populate_production_data command.
+    Usage: GET /api/populate-data/?key=FloNeo2025Populate
+    """
+    secret_key = request.query_params.get('key', '')
+    if secret_key != 'FloNeo2025Populate':
+        return Response({'error': 'Invalid key'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        output = io.StringIO()
+        call_command('populate_production_data', stdout=output)
+        result = output.getvalue()
+        return Response({'status': 'success', 'output': result})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

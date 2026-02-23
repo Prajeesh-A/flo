@@ -62,4 +62,7 @@ urlpatterns = [
 
     # Combined endpoint for all website data
     path('website-data/', views.website_data, name='website-data'),
+
+    # Data population trigger (secret key required)
+    path('populate-data/', views.populate_data_trigger, name='populate-data'),
 ]
