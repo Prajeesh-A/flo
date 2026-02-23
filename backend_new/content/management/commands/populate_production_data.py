@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from content.models import (
+    HeroSection, ContactSection,
     MetricBox, FeatureCard, CountryData,
     HumanTouchSection, ChatMessage,
     VideoTabsSection, VideoTab,
@@ -15,6 +16,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Populating missing production data...\n')
 
+        self._fix_hero_section()
+        self._fix_contact_section()
         self._populate_metric_boxes()
         self._populate_feature_cards()
         self._populate_country_data()
@@ -24,6 +27,46 @@ class Command(BaseCommand):
         self._populate_benefit_items()
 
         self.stdout.write(self.style.SUCCESS('\nAll missing production data populated successfully!'))
+
+    def _fix_hero_section(self):
+        """Always update hero section to correct production content (removes leftover test data)"""
+        hero = HeroSection.objects.first()
+        if not hero:
+            self.stdout.write('HeroSection: Not found, skipping.')
+            return
+
+        hero.tagline = 'Build. Automate. Scale.'
+        hero.title = 'floneo'
+        hero.description = (
+            'floneo Low-Code/No-Code platform turns manual processes into instant, '
+            'powerful applications. Build and deploy real business solutions in hours, not months.'
+        )
+        hero.cta_primary_text = 'Get Started Free'
+        hero.cta_primary_url = '/contact'
+        hero.cta_secondary_text = 'Watch Demo'
+        hero.cta_secondary_url = '#'
+        hero.is_visible = True
+        hero.save()
+        self.stdout.write(self.style.SUCCESS('HeroSection: Updated to production content.'))
+
+    def _fix_contact_section(self):
+        """Always update contact section with real contact details"""
+        contact = ContactSection.objects.first()
+        if not contact:
+            self.stdout.write('ContactSection: Not found, skipping.')
+            return
+
+        contact.title = 'Get in Touch'
+        contact.subtitle = 'Contact Us'
+        contact.description = "We'd love to hear from you"
+        contact.email = 'contact@floneo.co'
+        contact.phone = ''
+        contact.address = ''
+        contact.form_title = 'Contact our sales team'
+        contact.form_submit_text = 'Send Message'
+        contact.form_success_message = "Thank you! We'll get back to you soon."
+        contact.save()
+        self.stdout.write(self.style.SUCCESS('ContactSection: Updated with real contact details.'))
 
     def _populate_metric_boxes(self):
         """Populate MetricBox data matching frontend fallback"""
