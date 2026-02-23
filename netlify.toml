@@ -1,9 +1,10 @@
 [build]
-  command = "npm run build"
+  command = "pnpm install && pnpm run build"
   publish = ".next"
 
 [build.environment]
   NODE_VERSION = "18"
+  PNPM_VERSION = "9"
   NEXT_PUBLIC_API_URL = "https://flo-1m00.onrender.com/api"
 
 # Enable Next.js SSR Runtime
