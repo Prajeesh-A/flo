@@ -13,3 +13,6 @@ python manage.py migrate
 
 # Create superuser from env vars
 python manage.py init_admin
+
+# Populate missing production data (idempotent - skips existing data)
+python manage.py populate_production_data
