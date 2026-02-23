@@ -18,7 +18,14 @@ class Command(BaseCommand):
             return
 
         if User.objects.filter(username=username).exists():
-            self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" already exists.'))
+            # Always update password and ensure superuser/staff flags are set
+            user = User.objects.get(username=username)
+            user.set_password(password)
+            user.email = email
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+            self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" updated successfully.'))
         else:
             self.stdout.write(f'Creating superuser "{username}"...')
             User.objects.create_superuser(username=username, email=email, password=password)
