@@ -1,9 +1,9 @@
 [build]
-  command = "pnpm install && pnpm run build"
+  command = "pnpm install --no-frozen-lockfile && pnpm run build"
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   PNPM_VERSION = "9"
   NEXT_PUBLIC_API_URL = "https://flo-1m00.onrender.com/api"
 
