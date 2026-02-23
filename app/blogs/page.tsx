@@ -25,7 +25,7 @@ export default async function BlogsPage() {
 
   try {
     // Fetch blogs from backend API
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api";
     const res = await fetch(`${apiUrl}/blogs/`, {
       next: { revalidate: 0 }, // ISR: Cache for 1 hour
     });
