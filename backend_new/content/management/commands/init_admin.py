@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
+from django.core.management import call_command
 from django.conf import settings
 import os
 
@@ -15,6 +16,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(
                 'Missing DJANGO_SUPERUSER environment variables. Skipping admin creation.'
             ))
+            # Still populate data even without admin credentials
+            call_command('populate_production_data')
             return
 
         if User.objects.filter(username=username).exists():
@@ -30,3 +33,7 @@ class Command(BaseCommand):
             self.stdout.write(f'Creating superuser "{username}"...')
             User.objects.create_superuser(username=username, email=email, password=password)
             self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" created successfully!'))
+
+        # Always run data population (idempotent - skips already-existing data)
+        self.stdout.write('Running populate_production_data...')
+        call_command('populate_production_data')
