@@ -20,8 +20,8 @@ interface Blog {
   metaDescription?: string;
 }
 
-// ✅ ISR: Revalidate every 1 hour
-export const revalidate = 3600;
+// Force dynamic rendering - fetch data at request time, not build time
+export const dynamic = "force-dynamic";
 
 // Dummy blog for fallback
 const dummyBlog: Blog = {
@@ -34,34 +34,6 @@ const dummyBlog: Blog = {
   readTime: "3 min read",
   category: "Technology",
 };
-
-// ✅ Generate static params for all blogs
-export async function generateStaticParams() {
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
-    const res = await fetch(`${apiUrl}/blogs/`);
-    const data = await res.json();
-    const blogs = data.results || data; // Handle paginated response
-
-    // Use slug if available, otherwise use ID
-    const params = blogs.map((blog: any) => ({
-      id: blog.slug || blog.id.toString(),
-    }));
-
-    // Always include the demo blog
-    params.push({ id: "demo-blog-1" });
-
-    return params;
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    // Return known blog slugs/IDs as fallback
-    return [
-      { id: "demo-blog-1" },
-      { id: "demo" }, // Your current blog slug
-      { id: "1" }, // Your current blog ID
-    ];
-  }
-}
 
 // ✅ Server Component - Fetches blog data
 export default async function BlogDetailPage({
@@ -82,14 +54,14 @@ export default async function BlogDetailPage({
 
       // Try to fetch by slug first, then by ID
       let res = await fetch(`${apiUrl}/blogs/${blogId}/`, {
-        next: { revalidate: 3600 }, // ISR: Cache for 1 hour
+        cache: "no-store",
       });
 
       // If not found and blogId is not a number, it might be a slug
       // Try to find by slug in the blog list
       if (!res.ok && isNaN(Number(blogId))) {
         const listRes = await fetch(`${apiUrl}/blogs/`, {
-          next: { revalidate: 3600 },
+          cache: "no-store",
         });
         if (listRes.ok) {
           const listData = await listRes.json();
@@ -97,7 +69,7 @@ export default async function BlogDetailPage({
           const blogBySlug = blogs.find((b: any) => b.slug === blogId);
           if (blogBySlug) {
             res = await fetch(`${apiUrl}/blogs/${blogBySlug.id}/`, {
-              next: { revalidate: 3600 },
+              cache: "no-store",
             });
           }
         }

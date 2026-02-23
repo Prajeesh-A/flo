@@ -1,8 +1,8 @@
 import React from "react";
 import BlogsClient from "./BlogsClient";
 
-// ✅ ISR: Revalidate every 1 hour (3600 seconds)
-export const revalidate = 3600;
+// Force dynamic rendering - fetch data at request time, not build time
+export const dynamic = "force-dynamic";
 
 // Dummy blog for fallback
 const dummyBlog = {
@@ -27,7 +27,7 @@ export default async function BlogsPage() {
     // Fetch blogs from backend API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
     const res = await fetch(`${apiUrl}/blogs/`, {
-      next: { revalidate: 0 }, // ISR: Cache for 1 hour
+      cache: "no-store",
     });
 
     if (res.ok) {
