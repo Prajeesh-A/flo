@@ -32,7 +32,7 @@
 
 3. **Add Environment Variable**
    - **Name**: `NEXT_PUBLIC_API_URL`
-   - **Value**: `https://flo-do2v.onrender.com/api`
+   - **Value**: `https://flo-1m00.onrender.com/api`
    - **Environment**: Production (and Preview if needed)
    - Click "Save"
 
@@ -49,7 +49,7 @@
    - Check logs for any errors
 
 2. **Test Backend Directly**
-   - Open: https://flo-do2v.onrender.com/api/hero/
+   - Open: https://flo-1m00.onrender.com/api/hero/
    - Should return JSON data
    - If 404/500, backend needs fixing
 
@@ -121,7 +121,7 @@
 
 ### Current Configuration
 - **Frontend**: Next.js on Vercel
-- **Backend**: Django on Render (https://flo-do2v.onrender.com)
+- **Backend**: Django on Render (https://flo-1m00.onrender.com)
 - **Database**: PostgreSQL on Render
 - **Caching**: SWR + Vercel Edge Cache
 
@@ -134,13 +134,13 @@
 ### Environment Variables Needed
 ```
 # Vercel (Frontend)
-NEXT_PUBLIC_API_URL=https://flo-do2v.onrender.com/api
+NEXT_PUBLIC_API_URL=https://flo-1m00.onrender.com/api
 
 # Render (Backend)
 SECRET_KEY=<your-secret-key>
 DEBUG=False
 DATABASE_URL=<postgres-url>
-ALLOWED_HOSTS=flo-do2v.onrender.com
+ALLOWED_HOSTS=flo-1m00.onrender.com
 CORS_ALLOWED_ORIGINS=https://<your-vercel-app>.vercel.app
 ```
 

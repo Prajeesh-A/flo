@@ -82,7 +82,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://flo-do2v.onrender.com/api/:path*"
+      "destination": "https://flo-1m00.onrender.com/api/:path*"
     }
   ],
   "functions": {

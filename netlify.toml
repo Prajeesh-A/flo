@@ -4,7 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NEXT_PUBLIC_API_URL = "https://flo-do2v.onrender.com/api"
+  NEXT_PUBLIC_API_URL = "https://flo-1m00.onrender.com/api"
 
 # Enable Next.js SSR Runtime
 [[plugins]]

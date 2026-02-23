@@ -38,7 +38,7 @@ const dummyBlog: Blog = {
 // ✅ Generate static params for all blogs
 export async function generateStaticParams() {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
     const res = await fetch(`${apiUrl}/blogs/`);
     const data = await res.json();
     const blogs = data.results || data; // Handle paginated response
@@ -78,7 +78,7 @@ export default async function BlogDetailPage({
     if (blogId === "demo-blog-1") {
       blog = dummyBlog;
     } else {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
 
       // Try to fetch by slug first, then by ID
       let res = await fetch(`${apiUrl}/blogs/${blogId}/`, {
@@ -153,7 +153,7 @@ export async function generateMetadata({
       };
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
     const blogId = resolvedParams.id;
 
     // Try to fetch by slug first, then by ID

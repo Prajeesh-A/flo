@@ -10,10 +10,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'flo-do2v.onrender.com',
+        hostname: 'flo-1m00.onrender.com',
       },
     ],
-    domains: ["flo-do2v.onrender.com", "localhost", "127.0.0.1"],
+    domains: ["flo-1m00.onrender.com", "localhost", "127.0.0.1"],
   },
   compress: true,
   poweredByHeader: false,

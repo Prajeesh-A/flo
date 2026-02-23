@@ -126,7 +126,7 @@ export default function FAQSection() {
         setFaqItemsLoading(true);
         const API_BASE_URL =
           process.env.NEXT_PUBLIC_API_URL ||
-          "https://flo-do2v.onrender.com/api";
+          "https://flo-1m00.onrender.com/api";
         const response = await fetch(`${API_BASE_URL}/faq-items/`, {
           signal: AbortSignal.timeout(5000), // Add timeout
         });

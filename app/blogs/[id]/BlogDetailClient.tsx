@@ -34,7 +34,7 @@ export default function BlogDetailClient({
   // Fix relative image paths in content
   const processedContent = React.useMemo(() => {
     if (!initialBlog?.content) return "";
-    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://flo-do2v.onrender.com/api").replace(/\/api$/, '');
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api").replace(/\/api$/, '');
     // Replace all src="/media/..." with full API URL
     return initialBlog.content.replace(/src="\/media\//g, `src="${apiUrl}/media/`);
   }, [initialBlog?.content]);
