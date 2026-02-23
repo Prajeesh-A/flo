@@ -1,7 +1,6 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Outfit } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/notification-toast";
 import { CTAModalProvider } from "@/contexts/CTAModalContext";
@@ -86,7 +85,6 @@ export default function RootLayout({
         <CTAModalProvider>
           <ToastProvider>
             <Suspense fallback={null}>{children}</Suspense>
-            <Analytics />
           </ToastProvider>
         </CTAModalProvider>
       </body>
