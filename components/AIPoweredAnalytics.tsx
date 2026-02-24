@@ -46,6 +46,10 @@ const CircularMetric = ({
   color: string;
   delay?: number;
 }) => {
+  // Use smaller font for longer values
+  const isLong = percentage.length > 6;
+  const isVeryLong = percentage.length > 10;
+
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
@@ -67,17 +71,23 @@ const CircularMetric = ({
       
       {/* Main Circle */}
       <div
-        className="relative w-44 h-44 md:w-52 md:h-52 lg:w-56 lg:h-56 rounded-full flex flex-col items-center justify-center border-[6px] border-gray-900 shadow-2xl"
+        className="relative w-52 h-52 md:w-60 md:h-60 lg:w-64 lg:h-64 rounded-full flex flex-col items-center justify-center border-[6px] border-gray-900 shadow-2xl"
         style={{ backgroundColor: color }}
       >
         <div
-          className={`text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 ${poppins.className}`}
+          className={`font-bold text-white text-center leading-tight px-4 mb-2 ${poppins.className} ${
+            isVeryLong
+              ? "text-2xl md:text-3xl lg:text-3xl"
+              : isLong
+              ? "text-3xl md:text-3xl lg:text-4xl"
+              : "text-4xl md:text-5xl lg:text-5xl"
+          }`}
           style={{ fontWeight: 700 }}
         >
           {percentage}
         </div>
         <div
-          className={`text-sm md:text-base text-white text-center leading-snug px-6 ${poppins.className}`}
+          className={`text-xs md:text-sm text-white text-center leading-snug px-5 ${poppins.className}`}
           style={{ fontWeight: 500 }}
         >
           {description}
