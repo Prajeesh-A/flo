@@ -112,12 +112,12 @@ class Command(BaseCommand):
             section = AIPoweredAnalyticsSection()
         section.title = 'AI-Powered Analytics'
         section.description = 'Harness the power of AI to transform your data into actionable insights'
-        section.feature_1_title = 'Real-time Analysis'
-        section.feature_1_description = 'Get instant insights from your data with real-time analytics and reporting'
-        section.feature_2_title = 'Predictive Modeling'
-        section.feature_2_description = 'Forecast trends and outcomes with advanced AI-powered predictive models'
-        section.feature_3_title = 'Automated Reports'
-        section.feature_3_description = 'Generate reports automatically'
+        section.feature_1_title = 'Development Speed'
+        section.feature_1_description = 'Accelerate delivery by replacing repetitive coding with visual workflows and reusable components.'
+        section.feature_2_title = 'Scalability & Governance'
+        section.feature_2_description = 'Build applications that scale securely without re-architecture or system rewrites.'
+        section.feature_3_title = 'Cost Efficiency'
+        section.feature_3_description = 'Reduce engineering overhead, maintenance effort, and long-term technical debt.'
         section.is_visible = True
         section.order = 3
         section.save()

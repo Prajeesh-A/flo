@@ -102,20 +102,20 @@ export default function AIPoweredAnalytics() {
     title: "AI-Powered Analytics",
     description:
       "Harness the power of AI to transform your data into actionable insights",
-    metric_1_value: "95%",
-    metric_1_description: "Get instant insights from your data",
-    metric_2_value: "2.3x",
-    metric_2_description: "Forecast trends and outcomes",
-    metric_3_value: "24/7",
-    metric_3_description: "Always available",
-    metric_4_value: "99.9%",
-    metric_4_description: "Generate reports automatically",
-    feature_1_title: "Real-time Analysis",
+    metric_1_value: "40–60%",
+    metric_1_description: "Faster Application Development",
+    metric_2_value: "70%",
+    metric_2_description: "Lower Learning Curve",
+    metric_3_value: "Enterprise-Ready",
+    metric_3_description: "by Design",
+    metric_4_value: "Up to 50%",
+    metric_4_description: "Reduction in Development Costs",
+    feature_1_title: "Development Speed",
     feature_1_description:
-      "Get instant insights from your data with real-time analytics and reporting",
-    feature_2_title: "Predictive Modeling",
+      "Accelerate delivery by replacing repetitive coding with visual workflows and reusable components.",
+    feature_2_title: "Scalability & Governance",
     feature_2_description:
-      "Forecast trends and outcomes with advanced AI-powered predictive models",
+      "Build applications that scale securely without re-architecture or system rewrites.",
     is_visible: true,
   };
 
