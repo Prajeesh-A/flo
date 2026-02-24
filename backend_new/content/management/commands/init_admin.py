@@ -18,6 +18,7 @@ class Command(BaseCommand):
             ))
             # Still populate data even without admin credentials
             call_command('populate_production_data')
+            call_command('setup_blogs')
             return
 
         if User.objects.filter(username=username).exists():
@@ -37,3 +38,7 @@ class Command(BaseCommand):
         # Always run data population (idempotent - skips already-existing data)
         self.stdout.write('Running populate_production_data...')
         call_command('populate_production_data')
+
+        # Set up real blog posts (deletes demo blogs, creates production content)
+        self.stdout.write('Running setup_blogs...')
+        call_command('setup_blogs')

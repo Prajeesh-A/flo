@@ -665,3 +665,21 @@ def populate_data_trigger(request):
         return Response({'status': 'success', 'output': result})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def setup_blogs_trigger(request):
+    """HTTP trigger to delete demo blogs and create real blog posts.
+    Usage: GET /api/setup-blogs/?key=FloNeo2025Populate
+    """
+    secret_key = request.query_params.get('key', '')
+    if secret_key != 'FloNeo2025Populate':
+        return Response({'error': 'Invalid key'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        output = io.StringIO()
+        call_command('setup_blogs', stdout=output)
+        result = output.getvalue()
+        return Response({'status': 'success', 'output': result})
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

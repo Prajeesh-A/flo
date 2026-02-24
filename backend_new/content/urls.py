@@ -65,4 +65,7 @@ urlpatterns = [
 
     # Data population trigger (secret key required)
     path('populate-data/', views.populate_data_trigger, name='populate-data'),
+
+    # Blog setup trigger (deletes demos, adds real blogs)
+    path('setup-blogs/', views.setup_blogs_trigger, name='setup-blogs'),
 ]
