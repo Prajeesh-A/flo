@@ -23,18 +23,6 @@ interface Blog {
 // Force dynamic rendering - fetch data at request time, not build time
 export const dynamic = "force-dynamic";
 
-// Dummy blog for fallback
-const dummyBlog: Blog = {
-  id: "demo-blog-1",
-  title: "Welcome to Our Blog - Getting Started with Floneo",
-  content:
-    "This is a sample blog post to demonstrate how our blog section works. Floneo is designed to help you build, automate, and scale your business without the IT bottleneck.\n\nIn this article, we'll explore the key features that make Floneo the perfect solution for modern businesses. We believe in making technology accessible to everyone, regardless of their technical expertise.\n\nOur platform is built with simplicity and power in mind, allowing you to create sophisticated workflows with just a few clicks. Whether you're a small startup or a large enterprise, Floneo adapts to your needs.\n\nKey Features:\n- Visual workflow builder\n- No-code automation\n- Real-time collaboration\n- Enterprise-grade security\n- Scalable infrastructure\n\nGet started today and transform the way you work!",
-  createdBy: "Floneo Team",
-  date: new Date().toISOString(),
-  readTime: "3 min read",
-  category: "Technology",
-};
-
 // ✅ Server Component - Fetches blog data
 export default async function BlogDetailPage({
   params,
@@ -47,9 +35,7 @@ export default async function BlogDetailPage({
     const resolvedParams = await params;
     const blogId = resolvedParams.id;
 
-    if (blogId === "demo-blog-1") {
-      blog = dummyBlog;
-    } else {
+    {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
 
       // Try to fetch by slug first, then by ID
@@ -99,12 +85,12 @@ export default async function BlogDetailPage({
           metaDescription: data.meta_description,
         };
       } else {
-        blog = dummyBlog;
+        blog = null;
       }
     }
   } catch (error) {
     console.error("Error fetching blog:", error);
-    blog = dummyBlog;
+    blog = null;
   }
 
   return <BlogDetailClient initialBlog={blog} />;

@@ -7,8 +7,50 @@ interface ServiceCard {
   title: string;
   description: string;
   image?: string;
+  image_url?: string;
   color: string;
 }
+
+// Fallback data — matches what's in the backend populate script
+const fallbackServicesData: ServiceCard[] = [
+  {
+    id: 1,
+    title: "Seamless Workflow Integration",
+    description:
+      "Effortlessly design, connect, and automate workflows across teams and systems. With our drag-and-drop builder and AI-powered recommendations, your operations run smoother without IT bottlenecks.",
+    image:
+      "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=800&h=800&fit=crop",
+    color: "#0066ff",
+  },
+  {
+    id: 2,
+    title: "Data Analytics",
+    description:
+      "Transform your data into actionable insights with powerful analytics tools. Make data-driven decisions faster with real-time dashboards and intelligent reporting.",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=800&fit=crop",
+    color: "#2ecc71",
+  },
+  {
+    id: 3,
+    title: "Workflow Management",
+    description:
+      "Streamline your business processes with intelligent workflow automation. Reduce manual tasks and increase productivity across your organization.",
+    image:
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=800&fit=crop",
+    color: "#9b59b6",
+  },
+  {
+    id: 4,
+    title: "Integration Platform",
+    description:
+      "Connect all your tools and systems with seamless integrations. Build a unified ecosystem that works the way you do, without switching between apps.",
+    image:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=800&fit=crop",
+    color: "#e74c3c",
+  },
+];
+
 
 const StackingCard = ({
   card,
@@ -22,6 +64,8 @@ const StackingCard = ({
   scrollProgress: number;
 }) => {
   const [imageError, setImageError] = useState(false);
+  const cardImage = card.image_url || card.image;
+
 
   // Calculate when this card should start and finish animating
   const cardStart = index / totalCards;
@@ -92,9 +136,9 @@ const StackingCard = ({
               backgroundColor: imageError ? card.color : "transparent",
             }}
           >
-            {card.image && !imageError ? (
+            {cardImage && !imageError ? (
               <img
-                src={card.image}
+                src={cardImage}
                 alt={card.title}
                 className="w-full h-full object-cover"
                 onError={() => setImageError(true)}
@@ -153,44 +197,31 @@ export default function ServicesScrollSection() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
-  const servicesData: ServiceCard[] = [
-    {
-      id: 1,
-      title: "Seamless Workflow Integration",
-      description:
-        "Effortlessly design, connect, and automate workflows across teams and systems. With our drag-and-drop builder and AI-powered recommendations, your operations run smoother without IT bottlenecks.",
-      image:
-        "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=800&h=800&fit=crop",
-      color: "#0066ff",
-    },
-    {
-      id: 2,
-      title: "Data Analytics",
-      description:
-        "Transform your data into actionable insights with powerful analytics tools. Make data-driven decisions faster with real-time dashboards and intelligent reporting.",
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=800&fit=crop",
-      color: "#2ecc71",
-    },
-    {
-      id: 3,
-      title: "Workflow Management",
-      description:
-        "Streamline your business processes with intelligent workflow automation. Reduce manual tasks and increase productivity across your organization.",
-      image:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=800&fit=crop",
-      color: "#9b59b6",
-    },
-    {
-      id: 4,
-      title: "Integration Platform",
-      description:
-        "Connect all your tools and systems with seamless integrations. Build a unified ecosystem that works the way you do, without switching between apps.",
-      image:
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=800&fit=crop",
-      color: "#e74c3c",
-    },
-  ];
+  const [servicesData, setServicesData] = useState<ServiceCard[]>(fallbackServicesData);
+
+  // Fetch services from API on mount
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const API_BASE_URL =
+          process.env.NEXT_PUBLIC_API_URL ||
+          "https://flo-1m00.onrender.com/api";
+        const res = await fetch(`${API_BASE_URL}/services/`, {
+          signal: AbortSignal.timeout(5000),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const results: ServiceCard[] = data.results || data;
+          if (results.length > 0) {
+            setServicesData(results);
+          }
+        }
+      } catch {
+        // Keep fallback data on error
+      }
+    };
+    fetchServices();
+  }, []);
 
   // Set mounted state
   useEffect(() => {

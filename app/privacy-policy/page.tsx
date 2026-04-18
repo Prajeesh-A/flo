@@ -70,8 +70,7 @@ export default function PrivacyPolicyPage() {
   };
 
   // Use API data or fallback
-  // const data = privacyData || fallbackData;
-  const data = fallbackData;
+  const data = (privacyData as any) || fallbackData;
 
   // Format dates
   const formatDate = (dateString: string) => {

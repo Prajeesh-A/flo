@@ -47,6 +47,7 @@ class Command(BaseCommand):
         self._populate_faq_items()
         self._populate_navigation()
         self._populate_benefit_items()
+        self._populate_service_cards()
 
         self.stdout.write('\n' + '='*60)
         self.stdout.write(self.style.SUCCESS('ALL PRODUCTION DATA POPULATED SUCCESSFULLY!'))
@@ -595,3 +596,50 @@ class Command(BaseCommand):
         for item in items:
             BenefitItem.objects.create(section=section, is_active=True, **item)
         self.stdout.write(self.style.SUCCESS(f'[OK] BenefitItem: created {len(items)}'))
+
+    def _populate_service_cards(self):
+        if ServiceCard.objects.exists():
+            self.stdout.write('[OK] ServiceCard: already has data')
+            return
+        services = [
+            {
+                'title': 'Seamless Workflow Integration',
+                'description': (
+                    'Effortlessly design, connect, and automate workflows across teams and systems. '
+                    'With our drag-and-drop builder and AI-powered recommendations, your operations '
+                    'run smoother without IT bottlenecks.'
+                ),
+                'color': '#0066ff',
+                'order': 1,
+            },
+            {
+                'title': 'Data Analytics',
+                'description': (
+                    'Transform your data into actionable insights with powerful analytics tools. '
+                    'Make data-driven decisions faster with real-time dashboards and intelligent reporting.'
+                ),
+                'color': '#2ecc71',
+                'order': 2,
+            },
+            {
+                'title': 'Workflow Management',
+                'description': (
+                    'Streamline your business processes with intelligent workflow automation. '
+                    'Reduce manual tasks and increase productivity across your organization.'
+                ),
+                'color': '#9b59b6',
+                'order': 3,
+            },
+            {
+                'title': 'Integration Platform',
+                'description': (
+                    'Connect all your tools and systems with seamless integrations. '
+                    'Build a unified ecosystem that works the way you do, without switching between apps.'
+                ),
+                'color': '#e74c3c',
+                'order': 4,
+            },
+        ]
+        for data in services:
+            ServiceCard.objects.create(**data)
+        self.stdout.write(self.style.SUCCESS(f'[OK] ServiceCard: created {len(services)}'))
