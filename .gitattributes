@@ -1,0 +1,5 @@
+# Always use LF for shell scripts (prevents Windows CRLF breaking bash on Linux/Render)
+*.sh text eol=lf
+
+# Default behavior
+* text=auto
