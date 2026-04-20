@@ -668,6 +668,7 @@ export const api = {
     name: string;
     email: string;
     phone?: string;
+    company?: string;
     subject?: string;
     message: string;
   }): Promise<void> => {
@@ -680,7 +681,25 @@ export const api = {
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      // Read the actual error body from the backend
+      let errorMessage = "Sorry, there was an error sending your message. Please try again.";
+      try {
+        const errorData = await response.json();
+        // Backend returns { error, errors: { field: [msg] }, success: false }
+        if (errorData.errors) {
+          const fieldErrors = Object.values(errorData.errors as Record<string, string[]>).flat();
+          if (fieldErrors.length > 0) {
+            errorMessage = fieldErrors.join(" ");
+          }
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.error) {
+          errorMessage = errorData.error;
+        }
+      } catch {
+        // JSON parse failed — keep default message
+      }
+      throw new Error(errorMessage);
     }
   },
 };

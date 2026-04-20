@@ -67,6 +67,7 @@ export default function ContactSection() {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -84,22 +85,41 @@ export default function ContactSection() {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: "" });
+    setFieldErrors({});
+
+    // --- Client-side validation ---
+    const errors: Record<string, string> = {};
+    const fullName =
+      `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+
+    if (fullName.length < 2) {
+      errors.name = "Please enter your full name (at least 2 characters).";
+    }
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+    if (formData.message.trim().length < 10) {
+      errors.message = `Message must be at least 10 characters long. (Currently: ${formData.message.trim().length})`;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setIsSubmitting(false);
+      return;
+    }
+    // --- End client-side validation ---
 
     try {
-      // Combine first and last name for the API
-      const fullName =
-        `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
-
       // Combine country code with phone number
       const fullPhoneNumber = formData.phone
         ? `${selectedCountry.dialCode} ${formData.phone}`
         : "";
 
-      // Prepare data for API submission (matching new ContactSubmission model)
+      // Prepare data for API submission (matching ContactSubmission model)
       const submissionData = {
         name: fullName,
         email: formData.email,
-        company: "", // Company field (optional)
+        company: "",
         phone: fullPhoneNumber,
         message: formData.message,
       };
@@ -124,13 +144,17 @@ export default function ContactSection() {
         subject: "",
         message: "",
       });
+      setFieldErrors({});
       setSelectedCountry(defaultCountry);
     } catch (error) {
       console.error("Form submission error:", error);
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : "Sorry, there was an error sending your message. Please try again.";
       setSubmitStatus({
         type: "error",
-        message:
-          "Sorry, there was an error sending your message. Please try again.",
+        message,
       });
     } finally {
       setIsSubmitting(false);
@@ -289,6 +313,9 @@ export default function ContactSection() {
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
                   />
                 </div>
+                {fieldErrors.name && (
+                  <p className="col-span-2 text-red-400 text-xs mt-1">{fieldErrors.name}</p>
+                )}
               </div>
 
               <div>
@@ -301,6 +328,9 @@ export default function ContactSection() {
                   required
                   className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors"
                 />
+                {fieldErrors.email && (
+                  <p className="text-red-400 text-xs mt-1">{fieldErrors.email}</p>
+                )}
               </div>
 
               <div>
@@ -336,13 +366,16 @@ export default function ContactSection() {
               <div>
                 <textarea
                   name="message"
-                  placeholder="Your message here"
+                  placeholder="Your message here (minimum 10 characters)"
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
                   required
                   className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/30 transition-colors resize-none"
                 />
+                {fieldErrors.message && (
+                  <p className="text-red-400 text-xs mt-1">{fieldErrors.message}</p>
+                )}
               </div>
 
               <motion.button
