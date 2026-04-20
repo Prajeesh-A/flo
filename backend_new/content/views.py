@@ -83,10 +83,38 @@ class SocialMediaLinkViewSet(viewsets.ModelViewSet):
 
 
 class ContactFormSubmissionViewSet(viewsets.ModelViewSet):
-    """API endpoint for contact form submissions"""
-    queryset = ContactFormSubmission.objects.all()
-    serializer_class = ContactFormSubmissionSerializer
+    """API endpoint for contact form submissions — saves to ContactSubmission and sends email"""
+    queryset = ContactSubmission.objects.all()
+    serializer_class = ContactSubmissionSerializer
     http_method_names = ['post']  # Only allow POST requests
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                submission = serializer.save()
+                # Send email notification
+                from .utils import send_contact_notification_email
+                try:
+                    send_contact_notification_email(submission)
+                except Exception as email_err:
+                    import logging
+                    logging.getLogger(__name__).warning(f'Email notification failed: {email_err}')
+                return Response({
+                    'message': 'Contact form submitted successfully',
+                    'success': True
+                }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    'error': 'Failed to process submission',
+                    'message': str(e),
+                    'success': False
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({
+            'error': 'Invalid form data',
+            'errors': serializer.errors,
+            'success': False
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Single instance endpoints (for sections that should only have one instance)

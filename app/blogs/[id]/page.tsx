@@ -104,13 +104,6 @@ export async function generateMetadata({
 }) {
   try {
     const resolvedParams = await params;
-    if (resolvedParams.id === "demo-blog-1") {
-      return {
-        title: dummyBlog.title,
-        description: dummyBlog.content.substring(0, 160),
-      };
-    }
-
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
     const blogId = resolvedParams.id;
 

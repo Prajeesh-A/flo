@@ -48,9 +48,6 @@ urlpatterns = [
     path('video-tabs-demo/', views.video_tabs_demo_section_detail, name='video-tabs-demo-detail'),
     path('benefits/', views.benefits_section_detail, name='benefits-detail'),
 
-    # Contact form submissions
-    path('contact-submissions/', views.contact_submissions, name='contact-submissions'),
-
     # Privacy Policy
     path('privacy-policy/', views.privacy_policy_detail, name='privacy-policy-detail'),
 
