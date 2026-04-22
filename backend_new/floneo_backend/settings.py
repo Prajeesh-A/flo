@@ -125,13 +125,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'floneo_backend.wsgi.application'
 
 
-# Database (Postgres on Render)
+# Database — compatible with Render, DigitalOcean, Supabase, or any PostgreSQL provider
 DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=60,           # 60s — releases connections faster, safe for all providers
+            ssl_require=True,
+            conn_health_checks=True    # Auto-reconnect on stale/dropped connections
+        )
     }
 else:
+    # Local development fallback (SQLite)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

@@ -1,6 +1,7 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Outfit } from "next/font/google";
+import Script from "next/script";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/notification-toast";
 import { CTAModalProvider } from "@/contexts/CTAModalContext";
@@ -82,6 +83,18 @@ export default function RootLayout({
       <body
         className={`font-sans ${inter.variable} ${poppins.variable} antialiased`}
       >
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-2QH3N5J0ZT"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-2QH3N5J0ZT');
+          `}
+        </Script>
         <CTAModalProvider>
           <ToastProvider>
             <Suspense fallback={null}>{children}</Suspense>
