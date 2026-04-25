@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -16,7 +17,7 @@ from .models import (
     WhyChooseUsSection, HumanTouchSection, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
     BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
-    BlogCategory, BlogTag, BlogPost
+    BlogCategory, BlogTag, BlogPost, NewsletterSubscription
 )
 from .serializers import (
     HeroSectionSerializer, AboutSectionSerializer, ServiceCardSerializer,
@@ -30,54 +31,55 @@ from .serializers import (
     VideoTabSerializer, CountryDataSerializer, MetricsDisplaySectionSerializer,
     PricingFeaturesSectionSerializer, VideoTabsDemoSectionSerializer, DemoTabSerializer,
     BenefitsSectionSerializer, ContactSubmissionSerializer, PrivacyPolicySerializer,
-    BlogCategorySerializer, BlogTagSerializer, BlogPostListSerializer, BlogPostDetailSerializer
+    BlogCategorySerializer, BlogTagSerializer, BlogPostListSerializer, BlogPostDetailSerializer,
+    NewsletterSubscriptionSerializer
 )
 
 
-class ServiceCardViewSet(viewsets.ModelViewSet):
-    """API endpoint for service cards"""
+class ServiceCardViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for service cards (read-only)"""
     queryset = ServiceCard.objects.all()
     serializer_class = ServiceCardSerializer
 
 
-class MetricBoxViewSet(viewsets.ModelViewSet):
-    """API endpoint for metric boxes"""
+class MetricBoxViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for metric boxes (read-only)"""
     queryset = MetricBox.objects.all()
     serializer_class = MetricBoxSerializer
 
 
-class FeatureCardViewSet(viewsets.ModelViewSet):
-    """API endpoint for feature cards"""
+class FeatureCardViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for feature cards (read-only)"""
     queryset = FeatureCard.objects.all()
     serializer_class = FeatureCardSerializer
 
 
-class TestimonialViewSet(viewsets.ModelViewSet):
-    """API endpoint for testimonials"""
+class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for testimonials (read-only)"""
     queryset = Testimonial.objects.all()
     serializer_class = TestimonialSerializer
 
 
-class NavigationItemViewSet(viewsets.ModelViewSet):
-    """API endpoint for navigation items"""
+class NavigationItemViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for navigation items (read-only)"""
     queryset = NavigationItem.objects.filter(is_active=True)
     serializer_class = NavigationItemSerializer
 
 
-class PricingPlanViewSet(viewsets.ModelViewSet):
-    """API endpoint for pricing plans"""
+class PricingPlanViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for pricing plans (read-only)"""
     queryset = PricingPlan.objects.all()
     serializer_class = PricingPlanSerializer
 
 
-class FAQItemViewSet(viewsets.ModelViewSet):
-    """API endpoint for FAQ items"""
+class FAQItemViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for FAQ items (read-only)"""
     queryset = FAQItem.objects.filter(is_active=True)
     serializer_class = FAQItemSerializer
 
 
-class SocialMediaLinkViewSet(viewsets.ModelViewSet):
-    """API endpoint for social media links"""
+class SocialMediaLinkViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for social media links (read-only)"""
     queryset = SocialMediaLink.objects.filter(is_active=True)
     serializer_class = SocialMediaLinkSerializer
 
@@ -711,3 +713,65 @@ def setup_blogs_trigger(request):
         return Response({'status': 'success', 'output': result})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def newsletter_subscribe(request):
+    """Subscribe to the blog newsletter"""
+    serializer = NewsletterSubscriptionSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response({
+            'error': 'Invalid email address',
+            'errors': serializer.errors,
+            'success': False
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    email = serializer.validated_data['email']
+
+    # Check if already subscribed
+    existing = NewsletterSubscription.objects.filter(email=email).first()
+    if existing:
+        if existing.is_active:
+            return Response({
+                'message': 'You are already subscribed!',
+                'success': True,
+                'already_subscribed': True
+            }, status=status.HTTP_200_OK)
+        else:
+            # Re-activate subscription
+            existing.is_active = True
+            existing.unsubscribed_at = None
+            existing.save()
+            return Response({
+                'message': 'Welcome back! Your subscription has been reactivated.',
+                'success': True
+            }, status=status.HTTP_200_OK)
+
+    # Create new subscription
+    try:
+        # Get IP address
+        ip = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or request.META.get('REMOTE_ADDR')
+        subscription = NewsletterSubscription.objects.create(
+            email=email,
+            ip_address=ip,
+            source='blog_page'
+        )
+
+        # Send notification email to admin
+        try:
+            from .utils import send_newsletter_notification_email
+            send_newsletter_notification_email(subscription)
+        except Exception as email_err:
+            import logging
+            logging.getLogger(__name__).warning(f'Newsletter notification email failed: {email_err}')
+
+        return Response({
+            'message': 'Successfully subscribed! You will receive our latest articles.',
+            'success': True
+        }, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({
+            'error': 'Failed to process subscription',
+            'message': str(e),
+            'success': False
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

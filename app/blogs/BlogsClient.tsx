@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Calendar, Clock, ArrowRight, Search, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { api } from "@/lib/api";
 
 interface Blog {
   id: string;
@@ -25,6 +26,35 @@ interface BlogsClientProps {
 export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error" | "already">("idle");
+  const [subscribeMessage, setSubscribeMessage] = useState("");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subscribeEmail.trim()) return;
+
+    setSubscribeStatus("loading");
+    setSubscribeMessage("");
+
+    try {
+      const result = await api.subscribeNewsletter(subscribeEmail.trim());
+      if (result.already_subscribed) {
+        setSubscribeStatus("already");
+        setSubscribeMessage(result.message || "You're already subscribed!");
+      } else {
+        setSubscribeStatus("success");
+        setSubscribeMessage(result.message || "Successfully subscribed!");
+        setSubscribeEmail("");
+      }
+      setTimeout(() => setSubscribeStatus("idle"), 5000);
+    } catch (error) {
+      setSubscribeStatus("error");
+      setSubscribeMessage(error instanceof Error ? error.message : "Failed to subscribe. Please try again.");
+      setTimeout(() => setSubscribeStatus("idle"), 5000);
+    }
+  };
 
   // Dynamically extract unique categories from blogs
   const uniqueCategories = Array.from(new Set(initialBlogs.map(blog => blog.category))).filter(Boolean);
@@ -296,25 +326,66 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
               Subscribe to get our latest articles in your inbox
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
+            {subscribeStatus === "success" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-3 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm max-w-lg mx-auto"
+              >
+                ✓ {subscribeMessage}
+              </motion.div>
+            )}
+            {subscribeStatus === "already" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-800 text-sm max-w-lg mx-auto"
+              >
+                ℹ {subscribeMessage}
+              </motion.div>
+            )}
+            {subscribeStatus === "error" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm max-w-lg mx-auto"
+              >
+                ✗ {subscribeMessage}
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
               <input
                 type="email"
                 placeholder="your@email.com"
-                className="flex-1 px-5 py-3.5 bg-white border border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all shadow-sm"
+                value={subscribeEmail}
+                onChange={(e) => setSubscribeEmail(e.target.value)}
+                required
+                disabled={subscribeStatus === "loading"}
+                className="flex-1 px-5 py-3.5 bg-white border border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all shadow-sm disabled:opacity-50"
                 style={{
                   fontFamily: "'Poppins', sans-serif",
                   color: "#0a0e27",
                 }}
               />
               <button
-                className="px-7 py-3.5 bg-[#0a0e27] hover:bg-[#1a1f3a] text-white rounded-xl font-medium transition-all shadow-sm hover:shadow-md"
+                type="submit"
+                disabled={subscribeStatus === "loading"}
+                className="px-7 py-3.5 bg-[#0a0e27] hover:bg-[#1a1f3a] text-white rounded-xl font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{
                   fontFamily: "'Poppins', sans-serif",
                 }}
               >
-                Subscribe
+                {subscribeStatus === "loading" ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    <span>Subscribing...</span>
+                  </>
+                ) : (
+                  "Subscribe"
+                )}
               </button>
-            </div>
+            </form>
 
             <p
               className="text-xs sm:text-sm mt-4"

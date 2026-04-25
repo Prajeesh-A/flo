@@ -332,3 +332,66 @@ def test_email_connection():
         logger.error(f"❌ SendGrid email test failed: {str(e)}")
         logger.error(f"Settings - API_KEY: {'SET' if getattr(settings, 'SENDGRID_API_KEY', None) else 'NOT SET'}, FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
         return False
+
+
+def send_newsletter_notification_email(subscription):
+    """Send notification email to admin when a new newsletter subscriber signs up"""
+    try:
+        recipient = getattr(settings, 'CONTACT_EMAIL_RECIPIENT', 'admin@floneo.co')
+        from_email = settings.DEFAULT_FROM_EMAIL
+
+        subject = f"📬 New Blog Subscriber: {subscription.email}"
+
+        text_content = f"""
+New Newsletter Subscription
+
+Email: {subscription.email}
+Subscribed At: {subscription.subscribed_at.strftime('%Y-%m-%d %H:%M:%S') if subscription.subscribed_at else 'Just now'}
+Source: {subscription.source}
+
+---
+This notification was sent from floneo.co
+        """.strip()
+
+        html_content = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px 12px 0 0;">
+                        <h2 style="color: white; margin: 0;">📬 New Blog Subscriber</h2>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 0 0 12px 12px; border: 1px solid #e9ecef;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 10px; font-weight: bold; color: #495057;">Email:</td>
+                                <td style="padding: 10px; color: #212529;">{subscription.email}</td>
+                            </tr>
+                            <tr style="background: white;">
+                                <td style="padding: 10px; font-weight: bold; color: #495057;">Source:</td>
+                                <td style="padding: 10px; color: #212529;">{subscription.source}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p style="color: #666; font-size: 12px; margin-top: 15px; text-align: center;">
+                        Sent from floneo.co blog subscription system
+                    </p>
+                </div>
+            </body>
+        </html>
+        """
+
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=from_email,
+            to=[recipient],
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send(fail_silently=False)
+
+        logger.info(f"✅ Newsletter notification sent to {recipient} for subscriber {subscription.email}")
+        return True
+
+    except Exception as e:
+        logger.error(f"❌ Newsletter notification email failed: {str(e)}")
+        return False

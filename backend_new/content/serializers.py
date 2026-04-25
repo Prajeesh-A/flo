@@ -497,3 +497,12 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
     def get_absolute_url(self, obj):
         """Get the absolute URL for this blog post"""
         return obj.get_absolute_url
+
+
+class NewsletterSubscriptionSerializer(serializers.Serializer):
+    """Serializer for newsletter subscription — only accepts email"""
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        """Normalize email to lowercase"""
+        return value.lower().strip()

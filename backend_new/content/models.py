@@ -1064,6 +1064,32 @@ class ContactSubmission(models.Model):
         return self.message
 
 
+class NewsletterSubscription(models.Model):
+    """Newsletter/blog subscription from website"""
+    email = models.EmailField(unique=True, help_text="Subscriber email address")
+    is_active = models.BooleanField(default=True, help_text="Whether the subscription is active")
+    subscribed_at = models.DateTimeField(auto_now_add=True, help_text="When the user subscribed")
+    unsubscribed_at = models.DateTimeField(blank=True, null=True, help_text="When the user unsubscribed")
+    ip_address = models.GenericIPAddressField(blank=True, null=True, help_text="IP address of the subscriber")
+    source = models.CharField(max_length=50, default='blog_page', help_text="Where the subscription came from")
+    unsubscribe_token = models.CharField(max_length=64, blank=True, unique=True, help_text="Token for unsubscribe link")
+
+    class Meta:
+        verbose_name = "Newsletter Subscription"
+        verbose_name_plural = "Newsletter Subscriptions"
+        ordering = ['-subscribed_at']
+
+    def __str__(self):
+        status = "Active" if self.is_active else "Unsubscribed"
+        return f"{self.email} ({status})"
+
+    def save(self, *args, **kwargs):
+        if not self.unsubscribe_token:
+            import secrets
+            self.unsubscribe_token = secrets.token_urlsafe(32)
+        super().save(*args, **kwargs)
+
+
 class PrivacyPolicy(models.Model):
     """Privacy Policy content management"""
     title = models.CharField(max_length=200, default="Privacy Policy", help_text="Page title")

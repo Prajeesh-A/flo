@@ -10,7 +10,7 @@ from .models import (
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
     BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
-    BlogCategory, BlogTag, BlogPost
+    BlogCategory, BlogTag, BlogPost, NewsletterSubscription
 )
 
 
@@ -963,6 +963,34 @@ class BlogPostAdmin(admin.ModelAdmin):
 
 
 admin.site.register(BlogPost, BlogPostAdmin)
+
+
+@admin.register(NewsletterSubscription)
+class NewsletterSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ['email', 'is_active', 'source', 'subscribed_at', 'unsubscribed_at']
+    list_filter = ['is_active', 'source', 'subscribed_at']
+    search_fields = ['email']
+    list_editable = ['is_active']
+    readonly_fields = ['subscribed_at', 'ip_address', 'unsubscribe_token']
+    date_hierarchy = 'subscribed_at'
+    ordering = ['-subscribed_at']
+
+    fieldsets = (
+        ('Subscriber Info', {
+            'fields': ('email', 'is_active', 'source')
+        }),
+        ('Timestamps', {
+            'fields': ('subscribed_at', 'unsubscribed_at'),
+            'classes': ('collapse',)
+        }),
+        ('Technical', {
+            'fields': ('ip_address', 'unsubscribe_token'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def has_add_permission(self, request):
+        return False  # Subscriptions come from the frontend only
 
 
 # Customize admin site header and title

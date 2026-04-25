@@ -65,4 +65,7 @@ urlpatterns = [
 
     # Blog setup trigger (deletes demos, adds real blogs)
     path('setup-blogs/', views.setup_blogs_trigger, name='setup-blogs'),
+
+    # Newsletter subscription
+    path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter-subscribe'),
 ]

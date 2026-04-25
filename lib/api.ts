@@ -702,6 +702,25 @@ export const api = {
       throw new Error(errorMessage);
     }
   },
+
+  // Newsletter subscription
+  subscribeNewsletter: async (email: string): Promise<{ success: boolean; message: string; already_subscribed?: boolean }> => {
+    const response = await fetch(`${API_BASE_URL}/newsletter/subscribe/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || data.message || "Failed to subscribe. Please try again.");
+    }
+
+    return data;
+  },
 };
 
 // Hook for loading states and error handling
