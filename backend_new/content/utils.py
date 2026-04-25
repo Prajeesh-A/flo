@@ -395,3 +395,167 @@ This notification was sent from floneo.co
     except Exception as e:
         logger.error(f"❌ Newsletter notification email failed: {str(e)}")
         return False
+
+
+def send_blog_published_notification(blog_post, subscriber_emails: list):
+    """
+    Send a blog publish notification to all active newsletter subscribers.
+    Called automatically by signals.py when a BlogPost status changes to 'published'.
+
+    Args:
+        blog_post: The BlogPost model instance that was just published
+        subscriber_emails: List of subscriber email strings
+    """
+    if not subscriber_emails:
+        return
+
+    try:
+        from_email = settings.DEFAULT_FROM_EMAIL
+        site_url = getattr(settings, 'SITE_URL', 'https://floneo.co')
+
+        # Build the blog URL using slug if available, else id
+        blog_identifier = blog_post.slug if blog_post.slug else str(blog_post.pk)
+        blog_url = f"{site_url}/blogs/{blog_identifier}"
+
+        # Get excerpt for email preview
+        excerpt = blog_post.get_excerpt() if hasattr(blog_post, 'get_excerpt') else ''
+        if len(excerpt) > 200:
+            excerpt = excerpt[:200] + '...'
+
+        # Author name
+        author_name = blog_post.author.get_full_name() or blog_post.author.username if blog_post.author else 'Floneo Team'
+
+        # Category
+        category_name = blog_post.category.name if blog_post.category else 'General'
+
+        subject = f"📖 New Article: {blog_post.title}"
+
+        html_template = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin:0; padding:0; background-color:#f4f4f8; font-family: 'Arial', sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f8; padding: 40px 20px;">
+                <tr>
+                    <td align="center">
+                        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%;">
+
+                            <!-- Header -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); padding: 32px 40px; border-radius: 16px 16px 0 0; text-align: center;">
+                                    <p style="color: #ffffff; font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">floneo</p>
+                                    <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin: 6px 0 0 0; text-transform: uppercase; letter-spacing: 2px;">New Article Published</p>
+                                </td>
+                            </tr>
+
+                            <!-- Body -->
+                            <tr>
+                                <td style="background: #ffffff; padding: 40px; border-radius: 0 0 16px 16px;">
+
+                                    <!-- Category badge -->
+                                    <p style="display: inline-block; background: #f0f4ff; color: #3b5bdb; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 5px 12px; border-radius: 20px; margin: 0 0 20px 0;">
+                                        {category_name}
+                                    </p>
+
+                                    <!-- Title -->
+                                    <h1 style="color: #0a0e27; font-size: 26px; font-weight: 800; line-height: 1.3; margin: 0 0 16px 0;">
+                                        {blog_post.title}
+                                    </h1>
+
+                                    <!-- Meta: author + read time -->
+                                    <p style="color: #9ca3af; font-size: 13px; margin: 0 0 24px 0;">
+                                        By <strong style="color: #6b7280;">{author_name}</strong>
+                                        &nbsp;·&nbsp;
+                                        {blog_post.reading_time} min read
+                                    </p>
+
+                                    <!-- Divider -->
+                                    <hr style="border: none; border-top: 1px solid #f0f0f0; margin: 0 0 24px 0;">
+
+                                    <!-- Excerpt -->
+                                    <p style="color: #4b5563; font-size: 16px; line-height: 1.7; margin: 0 0 32px 0;">
+                                        {excerpt}
+                                    </p>
+
+                                    <!-- CTA Button -->
+                                    <table cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <td align="center">
+                                                <a href="{blog_url}"
+                                                   style="display: inline-block; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 700; padding: 16px 40px; border-radius: 12px; letter-spacing: 0.3px;">
+                                                    Read Full Article →
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </td>
+                            </tr>
+
+                            <!-- Footer -->
+                            <tr>
+                                <td style="padding: 28px 0; text-align: center;">
+                                    <p style="color: #9ca3af; font-size: 12px; margin: 0 0 6px 0;">
+                                        You're receiving this because you subscribed to floneo blog updates.
+                                    </p>
+                                    <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+                                        <a href="{site_url}" style="color: #6b7280; text-decoration: underline;">floneo.co</a>
+                                        &nbsp;·&nbsp;
+                                        No spam. We only email when we publish.
+                                    </p>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        """
+
+        plain_text = f"""New article from floneo: {blog_post.title}
+
+By {author_name} · {blog_post.reading_time} min read
+
+{excerpt}
+
+Read the full article: {blog_url}
+
+---
+You're receiving this because you subscribed to floneo blog updates.
+Unsubscribe: {site_url}
+"""
+
+        # Send individually to each subscriber so we don't expose the full list in CC/BCC
+        success_count = 0
+        fail_count = 0
+
+        for email_address in subscriber_emails:
+            try:
+                email = EmailMultiAlternatives(
+                    subject=subject,
+                    body=plain_text,
+                    from_email=from_email,
+                    to=[email_address],
+                )
+                email.attach_alternative(html_template, "text/html")
+                email.send(fail_silently=False)
+                success_count += 1
+            except Exception as e:
+                logger.warning(f"Failed to send blog notification to {email_address}: {e}")
+                fail_count += 1
+
+        logger.info(
+            f"✅ Blog notification for '{blog_post.title}': "
+            f"{success_count} sent, {fail_count} failed out of {len(subscriber_emails)} subscribers."
+        )
+        return True
+
+    except Exception as e:
+        logger.error(f"❌ Blog published notification failed: {str(e)}")
+        return False
+
