@@ -86,6 +86,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'colorfield',
+    'cloudinary',
+    'cloudinary_storage',
 
     # Local apps
     'content',
@@ -196,9 +198,27 @@ STATICFILES_DIRS = [
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
 
-# Media files (User uploaded content)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# ── Cloudinary Media Storage ────────────────────────────────────────────────
+# When CLOUDINARY_CLOUD_NAME is set (production), all uploaded files are stored
+# on Cloudinary's CDN. Falls back to local disk for local development.
+CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', '')
+CLOUDINARY_API_KEY     = os.getenv('CLOUDINARY_API_KEY', '')
+CLOUDINARY_API_SECRET  = os.getenv('CLOUDINARY_API_SECRET', '')
+
+if CLOUDINARY_CLOUD_NAME:
+    # Production: use Cloudinary CDN for all uploaded media
+    DEFAULT_FILE_STORAGE  = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+        'API_KEY':    CLOUDINARY_API_KEY,
+        'API_SECRET': CLOUDINARY_API_SECRET,
+    }
+    MEDIA_URL = f'https://res.cloudinary.com/{CLOUDINARY_CLOUD_NAME}/'
+    MEDIA_ROOT = BASE_DIR / 'media'  # Local fallback (not used in production)
+else:
+    # Local development: store files on local disk
+    MEDIA_URL  = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Proxy headers (Render)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
