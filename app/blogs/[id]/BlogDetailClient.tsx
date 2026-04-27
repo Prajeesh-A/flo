@@ -31,12 +31,16 @@ interface BlogDetailClientProps {
 export default function BlogDetailClient({
   initialBlog,
 }: BlogDetailClientProps) {
-  // Fix relative image paths in content
+  // Fix relative image paths in content (works for both local dev and production)
   const processedContent = React.useMemo(() => {
     if (!initialBlog?.content) return "";
-    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api").replace(/\/api$/, '');
-    // Replace all src="/media/..." with full API URL
-    return initialBlog.content.replace(/src="\/media\//g, `src="${apiUrl}/media/`);
+    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
+    const apiBase = rawApiUrl.replace(/\/api$/, '');
+    // Replace all src="/media/..." with full base URL
+    return initialBlog.content
+      .replace(/src="\/media\//g, `src="${apiBase}/media/`)
+      // Also fix any style attributes on inline images for proper display
+      .replace(/<img /g, '<img style="max-width:100%;height:auto;border-radius:8px;margin:16px auto;display:block;" ');
   }, [initialBlog?.content]);
 
   if (!initialBlog) {
@@ -170,11 +174,16 @@ export default function BlogDetailClient({
 
             {/* Featured Image */}
             {initialBlog.featuredImage && (
-              <div className="mb-12 rounded-3xl overflow-hidden shadow-lg">
+              <div className="mb-12 rounded-3xl overflow-hidden shadow-lg" style={{ maxHeight: '520px' }}>
                 <img
                   src={initialBlog.featuredImage}
                   alt={initialBlog.title}
-                  className="w-full h-auto object-contain"
+                  className="w-full object-cover"
+                  style={{ maxHeight: '520px', objectFit: 'cover', objectPosition: 'center' }}
+                  onError={(e) => {
+                    // Hide image container if it fails to load
+                    (e.target as HTMLImageElement).parentElement!.style.display = 'none';
+                  }}
                 />
               </div>
             )}

@@ -12,6 +12,16 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'flo-1m00.onrender.com',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8000',
+      },
     ],
     domains: ["flo-1m00.onrender.com", "localhost", "127.0.0.1"],
   },

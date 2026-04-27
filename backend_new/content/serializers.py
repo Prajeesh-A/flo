@@ -437,12 +437,15 @@ class BlogPostListSerializer(serializers.ModelSerializer):
         ]
 
     def get_featured_image_url(self, obj):
-        """Get absolute URL for featured image"""
+        """Get absolute URL for featured image — always returns full URL"""
         if obj.featured_image:
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(obj.featured_image.url)
-            return obj.featured_image.url
+            # Fallback: build absolute URL from settings when no request context
+            from django.conf import settings
+            site_url = getattr(settings, 'SITE_URL', 'https://flo-1m00.onrender.com')
+            return f"{site_url.rstrip('/')}{obj.featured_image.url}"
         return None
 
     def get_excerpt_text(self, obj):
@@ -473,12 +476,15 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_featured_image_url(self, obj):
-        """Get absolute URL for featured image"""
+        """Get absolute URL for featured image — always returns full URL"""
         if obj.featured_image:
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(obj.featured_image.url)
-            return obj.featured_image.url
+            # Fallback: build absolute URL from settings when no request context
+            from django.conf import settings
+            site_url = getattr(settings, 'SITE_URL', 'https://flo-1m00.onrender.com')
+            return f"{site_url.rstrip('/')}{obj.featured_image.url}"
         return None
 
     def get_video_file_url(self, obj):
