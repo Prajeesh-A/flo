@@ -784,11 +784,22 @@ def debug_storage(request):
     """Temporary debug endpoint — remove after confirming Cloudinary works."""
     cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME', 'NOT SET')
     api_key = os.getenv('CLOUDINARY_API_KEY', 'NOT SET')
-    storage_backend = getattr(django_settings, 'DEFAULT_FILE_STORAGE', 'django.core.files.storage.FileSystemStorage')
+
+    # Check both old and new style storage config
+    default_storage_old = getattr(django_settings, 'DEFAULT_FILE_STORAGE', 'not set')
+    storages_dict = getattr(django_settings, 'STORAGES', {})
+    default_backend_new = storages_dict.get('default', {}).get('BACKEND', 'not set')
+
+    # Check the actual storage class in use right now
+    from django.core.files.storage import default_storage
+    actual_class = f"{default_storage.__class__.__module__}.{default_storage.__class__.__name__}"
+
     return Response({
         'cloudinary_cloud_name': cloud_name[:8] + '...' if len(cloud_name) > 8 else cloud_name,
         'cloudinary_api_key_set': api_key != 'NOT SET',
-        'storage_backend': storage_backend,
+        'DEFAULT_FILE_STORAGE': default_storage_old,
+        'STORAGES_default_backend': default_backend_new,
+        'actual_storage_class': actual_class,
+        'cloudinary_active': 'cloudinary' in actual_class.lower(),
         'media_url': django_settings.MEDIA_URL,
-        'cloudinary_active': 'cloudinary' in storage_backend.lower(),
     })

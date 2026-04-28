@@ -207,20 +207,26 @@ CLOUDINARY_API_SECRET  = os.getenv('CLOUDINARY_API_SECRET', '')
 
 if CLOUDINARY_CLOUD_NAME:
     # Production: use Cloudinary CDN for all uploaded media
-    # NOTE: Do NOT set MEDIA_URL here — django-cloudinary-storage builds
-    #       the correct https://res.cloudinary.com/<cloud>/image/upload/... URLs itself
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Configure Cloudinary credentials
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
         'API_KEY':    CLOUDINARY_API_KEY,
         'API_SECRET': CLOUDINARY_API_SECRET,
     }
-    MEDIA_URL  = '/media/'   # Fallback; actual URLs come from cloudinary_storage
-    MEDIA_ROOT = BASE_DIR / 'media'
-else:
-    # Local development: store files on local disk
-    MEDIA_URL  = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
+    # Django 3.x style (kept for backwards compat)
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Django 4.2+ style (STORAGES dict takes priority over DEFAULT_FILE_STORAGE)
+    STORAGES = {
+        'default': {
+            'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
+
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Proxy headers (Render)
