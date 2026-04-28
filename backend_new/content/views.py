@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db import models
 from django.core.management import call_command
+from django.conf import settings as django_settings
+import os
 import io
 
 from .models import (
@@ -775,3 +777,18 @@ def newsletter_subscribe(request):
             'message': str(e),
             'success': False
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def debug_storage(request):
+    """Temporary debug endpoint — remove after confirming Cloudinary works."""
+    cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME', 'NOT SET')
+    api_key = os.getenv('CLOUDINARY_API_KEY', 'NOT SET')
+    storage_backend = getattr(django_settings, 'DEFAULT_FILE_STORAGE', 'django.core.files.storage.FileSystemStorage')
+    return Response({
+        'cloudinary_cloud_name': cloud_name[:8] + '...' if len(cloud_name) > 8 else cloud_name,
+        'cloudinary_api_key_set': api_key != 'NOT SET',
+        'storage_backend': storage_backend,
+        'media_url': django_settings.MEDIA_URL,
+        'cloudinary_active': 'cloudinary' in storage_backend.lower(),
+    })

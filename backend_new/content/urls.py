@@ -68,4 +68,7 @@ urlpatterns = [
 
     # Newsletter subscription
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter-subscribe'),
+
+    # Temporary: debug storage config (remove after confirming Cloudinary works)
+    path('debug-storage/', views.debug_storage, name='debug-storage'),
 ]
