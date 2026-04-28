@@ -437,15 +437,23 @@ class BlogPostListSerializer(serializers.ModelSerializer):
         ]
 
     def get_featured_image_url(self, obj):
-        """Get absolute URL for featured image — always returns full URL"""
+        """Get absolute URL for featured image.
+        With Cloudinary storage, obj.featured_image.url is already a full CDN URL.
+        With local storage, we use request.build_absolute_uri to get the full URL.
+        """
         if obj.featured_image:
+            url = obj.featured_image.url
+            # If it's already an absolute URL (Cloudinary CDN), return as-is
+            if url.startswith('http'):
+                return url
+            # Local storage: build absolute URL using request if available
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.featured_image.url)
-            # Fallback: build absolute URL from settings when no request context
+                return request.build_absolute_uri(url)
+            # Last-resort fallback for local storage without request context
             from django.conf import settings
             site_url = getattr(settings, 'SITE_URL', 'https://flo-1m00.onrender.com')
-            return f"{site_url.rstrip('/')}{obj.featured_image.url}"
+            return f"{site_url.rstrip('/')}{url}"
         return None
 
     def get_excerpt_text(self, obj):
@@ -476,15 +484,23 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_featured_image_url(self, obj):
-        """Get absolute URL for featured image — always returns full URL"""
+        """Get absolute URL for featured image.
+        With Cloudinary storage, obj.featured_image.url is already a full CDN URL.
+        With local storage, we use request.build_absolute_uri to get the full URL.
+        """
         if obj.featured_image:
+            url = obj.featured_image.url
+            # If it's already an absolute URL (Cloudinary CDN), return as-is
+            if url.startswith('http'):
+                return url
+            # Local storage: build absolute URL using request if available
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.featured_image.url)
-            # Fallback: build absolute URL from settings when no request context
+                return request.build_absolute_uri(url)
+            # Last-resort fallback for local storage without request context
             from django.conf import settings
             site_url = getattr(settings, 'SITE_URL', 'https://flo-1m00.onrender.com')
-            return f"{site_url.rstrip('/')}{obj.featured_image.url}"
+            return f"{site_url.rstrip('/')}{url}"
         return None
 
     def get_video_file_url(self, obj):
