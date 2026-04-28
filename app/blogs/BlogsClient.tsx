@@ -17,6 +17,7 @@ interface Blog {
   date: string;
   readTime: string;
   category: string;
+  featuredImage?: string | null;
 }
 
 interface BlogsClientProps {
@@ -206,63 +207,89 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Link href={`/blogs/${blog.slug || blog.id}`}>
-                  <div className="group h-full bg-white border border-gray-200 rounded-3xl overflow-hidden hover:border-blue-200 transition-all duration-300 cursor-pointer">
-                    {/* Colored Header */}
-                    <div
-                      className="h-2"
-                      style={{
-                        background: `linear-gradient(90deg, ${index % 3 === 0
-                          ? "#0066ff, #00d4ff"
-                          : index % 3 === 1
-                            ? "#2ecc71, #00d4ff"
-                            : "#ffc107, #ff6b6b"
-                          })`,
-                      }}
-                    ></div>
+                  <div className="group h-full bg-white border border-gray-200 rounded-3xl overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col">
 
-                    <div className="p-8">
-                      <span
-                        className="inline-block px-3 py-1 bg-gray-50 rounded-full text-xs font-medium mb-4"
+                    {/* Featured Image OR Gradient Strip */}
+                    {blog.featuredImage ? (
+                      <div className="relative w-full h-48 overflow-hidden flex-shrink-0">
+                        <Image
+                          src={blog.featuredImage}
+                          alt={blog.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          onError={(e) => {
+                            // Hide broken image, show gradient fallback
+                            const target = e.currentTarget as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.style.height = '8px';
+                              parent.style.background = `linear-gradient(90deg, ${
+                                index % 3 === 0 ? '#0066ff, #00d4ff'
+                                : index % 3 === 1 ? '#2ecc71, #00d4ff'
+                                : '#ffc107, #ff6b6b'
+                              })`;
+                            }
+                          }}
+                        />
+                        {/* Category badge overlay on image */}
+                        <div className="absolute top-3 left-3">
+                          <span
+                            className="inline-block px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium shadow-sm"
+                            style={{ color: '#6b7280', fontFamily: "'Poppins', sans-serif" }}
+                          >
+                            {blog.category}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className="h-2 flex-shrink-0"
                         style={{
-                          color: "#6b7280",
-                          fontFamily: "'Poppins', sans-serif",
+                          background: `linear-gradient(90deg, ${
+                            index % 3 === 0 ? '#0066ff, #00d4ff'
+                            : index % 3 === 1 ? '#2ecc71, #00d4ff'
+                            : '#ffc107, #ff6b6b'
+                          })`,
                         }}
-                      >
-                        {blog.category}
-                      </span>
+                      />
+                    )}
 
+                    <div className="p-8 flex flex-col flex-1">
+                      {/* Category tag (only shown when no image) */}
+                      {!blog.featuredImage && (
+                        <span
+                          className="inline-block px-3 py-1 bg-gray-50 rounded-full text-xs font-medium mb-4"
+                          style={{ color: '#6b7280', fontFamily: "'Poppins', sans-serif" }}
+                        >
+                          {blog.category}
+                        </span>
+                      )}
+
+                      {/* Title */}
                       <h3
                         className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors"
-                        style={{
-                          color: "#0a0e27",
-                          fontFamily: "'Poppins', sans-serif",
-                        }}
+                        style={{ color: '#0a0e27', fontFamily: "'Poppins', sans-serif" }}
                       >
                         {blog.title}
                       </h3>
 
+                      {/* Excerpt */}
                       <p
-                        className="mb-6 line-clamp-3 text-sm leading-relaxed"
-                        style={{
-                          color: "#6b7280",
-                          fontFamily: "'Poppins', sans-serif",
-                        }}
+                        className="mb-6 line-clamp-3 text-sm leading-relaxed flex-1"
+                        style={{ color: '#6b7280', fontFamily: "'Poppins', sans-serif" }}
                       >
                         {blog.excerpt}
                       </p>
 
+                      {/* Author + Read time */}
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
                             {blog.createdBy.charAt(0).toUpperCase()}
                           </div>
-                          <span
-                            className="text-xs font-medium"
-                            style={{
-                              color: "#6b7280",
-                              fontFamily: "'Poppins', sans-serif",
-                            }}
-                          >
+                          <span className="text-xs font-medium" style={{ color: '#6b7280', fontFamily: "'Poppins', sans-serif" }}>
                             {blog.createdBy}
                           </span>
                         </div>
@@ -272,17 +299,17 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                         </div>
                       </div>
 
+                      {/* Date */}
                       <div className="flex items-center gap-2 mt-4 text-xs text-gray-500">
                         <Calendar className="w-3 h-3" />
                         <span>
-                          {new Date(blog.date).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
+                          {new Date(blog.date).toLocaleDateString('en-US', {
+                            month: 'short', day: 'numeric', year: 'numeric',
                           })}
                         </span>
                       </div>
 
+                      {/* Read Article CTA */}
                       <div className="mt-6 inline-flex items-center gap-2 text-blue-600 font-medium text-sm group-hover:gap-3 transition-all">
                         <span>Read Article</span>
                         <ArrowRight className="w-4 h-4" />
