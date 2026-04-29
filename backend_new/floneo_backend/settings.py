@@ -285,20 +285,33 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-# Email Configuration - SendGrid
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
-EMAIL_BACKEND = 'content.sendgrid_backend.SendGridBackend'
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'prajeep6@gmail.com')
+# ── Email Configuration — Resend ─────────────────────────────────────────────
+# MIGRATION: Switched from SendGrid → Resend (2026-04-29)
+# Resend docs: https://resend.com/docs/send-with-python
 
-# Email recipient for contact form notifications
+RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
+EMAIL_BACKEND = 'content.resend_backend.ResendBackend'
+
+# IMPORTANT: Must be a sender address verified in your Resend dashboard.
+# e.g. "Floneo <hello@floneo.co>" or "noreply@floneo.co"
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'onboarding@resend.dev')
+
+# Email recipient for contact form notifications (unchanged)
 CONTACT_EMAIL_RECIPIENT = os.getenv('CONTACT_EMAIL_RECIPIENT', 'admin@floneo.co')
 
-# Fallback SMTP Configuration (for development or backup)
+# ── ROLLBACK: To revert to SendGrid, comment the Resend block above and
+# uncomment the three lines below, then redeploy:
+# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
+# EMAIL_BACKEND = 'content.sendgrid_backend.SendGridBackend'
+# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'prajeep6@gmail.com')
+
+# Fallback SMTP Configuration (kept for reference, not active)
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+
 
 # Create logs directory if it doesn't exist (for local development)
 LOGS_DIR = BASE_DIR / 'logs'

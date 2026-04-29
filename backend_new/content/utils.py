@@ -289,17 +289,18 @@ def send_contact_confirmation_email(submission):
 
 def test_email_connection():
     """
-    Test the email connection and configuration (SendGrid)
+    Test the email connection and configuration (Resend).
+    Run via: python manage.py test_email
     """
     try:
-        # Check if SendGrid API key is configured
-        if hasattr(settings, 'SENDGRID_API_KEY') and settings.SENDGRID_API_KEY:
-            logger.info("Testing SendGrid email configuration...")
+        # Check if Resend API key is configured
+        if hasattr(settings, 'RESEND_API_KEY') and settings.RESEND_API_KEY:
+            logger.info("Testing Resend email configuration...")
 
-            # Send a test email using SendGrid
+            # Send a test email — routed through ResendBackend automatically
             email = EmailMultiAlternatives(
                 subject='🧪 Test Email from floneo.co',
-                body='This is a test email to verify SendGrid configuration.\n\nIf you receive this email, your SendGrid setup is working correctly!',
+                body='This is a test email to verify Resend configuration.\n\nIf you receive this email, your Resend setup is working correctly!',
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[getattr(settings, 'CONTACT_EMAIL_RECIPIENT', 'admin@floneo.co')],
             )
@@ -308,13 +309,13 @@ def test_email_connection():
             html_content = """
             <html>
                 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                    <h2 style="color: #4CAF50;">🧪 SendGrid Test Email</h2>
-                    <p>This is a test email to verify your SendGrid configuration.</p>
-                    <p><strong>If you receive this email, your SendGrid setup is working correctly!</strong></p>
+                    <h2 style="color: #4CAF50;">🧪 Resend Test Email</h2>
+                    <p>This is a test email to verify your Resend configuration.</p>
+                    <p><strong>If you receive this email, your Resend setup is working correctly!</strong></p>
                     <hr style="border: 1px solid #eee; margin: 20px 0;">
                     <p style="color: #666; font-size: 12px;">
                         Sent from floneo.co contact system<br>
-                        Powered by SendGrid
+                        Powered by Resend
                     </p>
                 </body>
             </html>
@@ -322,16 +323,17 @@ def test_email_connection():
             email.attach_alternative(html_content, "text/html")
             email.send(fail_silently=False)
 
-            logger.info("✅ SendGrid test email sent successfully!")
+            logger.info("✅ Resend test email sent successfully!")
             return True
         else:
-            logger.error("❌ SENDGRID_API_KEY not configured")
+            logger.error("❌ RESEND_API_KEY not configured")
             return False
 
     except Exception as e:
-        logger.error(f"❌ SendGrid email test failed: {str(e)}")
-        logger.error(f"Settings - API_KEY: {'SET' if getattr(settings, 'SENDGRID_API_KEY', None) else 'NOT SET'}, FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+        logger.error(f"❌ Resend email test failed: {str(e)}")
+        logger.error(f"Settings - API_KEY: {'SET' if getattr(settings, 'RESEND_API_KEY', None) else 'NOT SET'}, FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
         return False
+
 
 
 def send_newsletter_notification_email(subscription):
