@@ -27,7 +27,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key-change-in-pro
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else ["*"]
 
 # The public URL of the backend server — used to build absolute media URLs in serializers
-SITE_URL = os.getenv("SITE_URL", "https://flo-1m00.onrender.com")
+# MUST be set as an environment variable in Railway (e.g. https://your-app.up.railway.app)
+# BEFORE: was hardcoded to "https://flo-1m00.onrender.com" — Render-specific, now removed
+SITE_URL = os.getenv("SITE_URL", "")
+
 
 # CSRF / CORS
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
@@ -130,17 +133,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'floneo_backend.wsgi.application'
 
 
-# Database — compatible with Render, DigitalOcean, Supabase, or any PostgreSQL provider
+# Database — compatible with Render, Railway, Supabase, or any PostgreSQL provider
 DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
-            conn_max_age=60,           # 60s — releases connections faster, safe for all providers
-            ssl_require=True,
-            conn_health_checks=True    # Auto-reconnect on stale/dropped connections
+            conn_max_age=60,
+            # ssl_require: True for Render/Supabase, set DB_SSL_REQUIRE=false for Railway
+            # (Railway includes sslmode in the DATABASE_URL itself)
+            ssl_require=os.getenv("DB_SSL_REQUIRE", "true").lower() == "true",
+            conn_health_checks=True,
         )
     }
+
 else:
     # Local development fallback (SQLite)
     DATABASES = {

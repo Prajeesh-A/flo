@@ -1,0 +1,15 @@
+# Floneo Backend — Railway Deployment
+# Railway auto-detects Python + Gunicorn.
+# This file tells Railway exactly how to build and start the app.
+# It replaces the Render build.sh for Railway's build system.
+
+[build]
+builder = "nixpacks"
+buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+
+[deploy]
+startCommand = "gunicorn floneo_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+healthcheckPath = "/health/"
+healthcheckTimeout = 60
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
