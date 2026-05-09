@@ -36,7 +36,7 @@ export default async function BlogDetailPage({
     const blogId = resolvedParams.id;
 
     {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://floneo-backend-production.up.railway.app/api";
 
       // Try to fetch by slug first, then by ID
       let res = await fetch(`${apiUrl}/blogs/${blogId}/`, {
@@ -104,7 +104,7 @@ export async function generateMetadata({
 }) {
   try {
     const resolvedParams = await params;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://floneo-backend-production.up.railway.app/api";
     const blogId = resolvedParams.id;
 
     // Try to fetch by slug first, then by ID

@@ -205,7 +205,7 @@ export default function ServicesScrollSection() {
       try {
         const API_BASE_URL =
           process.env.NEXT_PUBLIC_API_URL ||
-          "https://flo-1m00.onrender.com/api";
+          "https://floneo-backend-production.up.railway.app/api";
         const res = await fetch(`${API_BASE_URL}/services/`, {
           signal: AbortSignal.timeout(5000),
         });

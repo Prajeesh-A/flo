@@ -71,7 +71,7 @@ export function debugCacheStatus() {
  * Test API connectivity with cache busting
  */
 export async function testAPIConnectivity() {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://flo-1m00.onrender.com/api'
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://floneo-backend-production.up.railway.app/api'
   const endpoints = ['/hero/', '/faq/', '/faq-items/', '/metrics/']
   
   console.log('🧪 Testing API connectivity...')

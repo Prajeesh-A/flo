@@ -14,6 +14,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'floneo-backend-production.up.railway.app',
+      },
+      {
+        protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
       {
@@ -27,7 +31,7 @@ const nextConfig = {
         port: '8000',
       },
     ],
-    domains: ["flo-1m00.onrender.com", "res.cloudinary.com", "localhost", "127.0.0.1"],
+    domains: ["flo-1m00.onrender.com", "floneo-backend-production.up.railway.app", "res.cloudinary.com", "localhost", "127.0.0.1"],
 
   },
   compress: true,

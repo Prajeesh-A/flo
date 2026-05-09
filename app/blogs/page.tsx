@@ -10,7 +10,7 @@ export default async function BlogsPage() {
 
   try {
     // Fetch blogs from backend API
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://floneo-backend-production.up.railway.app/api";
     const res = await fetch(`${apiUrl}/blogs/`, {
       cache: "no-store",
     });

@@ -34,7 +34,7 @@ export default function BlogDetailClient({
   // Fix relative image paths in content (works for both local dev and production)
   const processedContent = React.useMemo(() => {
     if (!initialBlog?.content) return "";
-    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://flo-1m00.onrender.com/api";
+    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://floneo-backend-production.up.railway.app/api";
     const apiBase = rawApiUrl.replace(/\/api$/, '');
     // Replace all src="/media/..." with full base URL
     return initialBlog.content
