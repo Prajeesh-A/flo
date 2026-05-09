@@ -9,7 +9,10 @@ buildCommand = "pip install -r requirements.txt && python manage.py collectstati
 
 [deploy]
 startCommand = "gunicorn floneo_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+# Runs BEFORE gunicorn starts — ensures DB tables exist before first request
+releaseCommand = "python manage.py migrate --noinput"
 healthcheckPath = "/health/"
-healthcheckTimeout = 60
+healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
+
