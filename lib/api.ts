@@ -89,6 +89,9 @@ export interface NavigationItem {
   href: string;
   order: number;
   is_active: boolean;
+  nav_type: 'normal' | 'blog' | 'cta';
+  open_in_new_tab: boolean;
+  badge_text: string;
 }
 
 // New types for enhanced models
