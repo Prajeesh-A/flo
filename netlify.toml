@@ -5,7 +5,7 @@
 [build.environment]
   NODE_VERSION = "20"
   PNPM_VERSION = "9"
-  NEXT_PUBLIC_API_URL = "https://flo-1m00.onrender.com/api"
+  NEXT_PUBLIC_API_URL = "https://floneo-backend-production.up.railway.app/api"
 
 # Enable Next.js SSR Runtime
 [[plugins]]
