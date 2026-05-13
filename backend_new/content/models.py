@@ -180,11 +180,33 @@ class FooterSection(models.Model):
 
 
 class NavigationItem(models.Model):
-    """Navigation menu items"""
-    label = models.CharField(max_length=50)
-    href = models.CharField(max_length=100, help_text="URL or anchor link (e.g., '#features', '/about')")
+    """Navigation menu items - controls the website navbar"""
+
+    NAV_TYPE_CHOICES = [
+        ('normal', 'Normal Link'),
+        ('blog', 'Blog / Secondary Button'),
+        ('cta', 'CTA Primary Button'),
+    ]
+
+    label = models.CharField(max_length=50, help_text="Text displayed in the navbar")
+    href = models.CharField(max_length=200, help_text="URL or anchor link (e.g., '#features', '/about', '/blogs')")
     order = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     is_active = models.BooleanField(default=True)
+
+    # Nav item type controls rendering style
+    nav_type = models.CharField(
+        max_length=10,
+        choices=NAV_TYPE_CHOICES,
+        default='normal',
+        help_text="'normal' = plain link in center, 'blog' = secondary button on right, 'cta' = NOT USED (Contact Sales is hardcoded)"
+    )
+
+    # Extra options
+    open_in_new_tab = models.BooleanField(default=False, help_text="Open link in a new browser tab")
+    badge_text = models.CharField(max_length=20, blank=True, help_text="Optional badge label (e.g., 'New')")
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         ordering = ['order', 'id']
@@ -192,7 +214,7 @@ class NavigationItem(models.Model):
         verbose_name_plural = "Navigation Items"
 
     def __str__(self):
-        return self.label
+        return f"{self.label} ({self.get_nav_type_display()})"
 
 
 # New comprehensive models for all sections

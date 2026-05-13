@@ -74,7 +74,7 @@ class FooterSectionSerializer(serializers.ModelSerializer):
 class NavigationItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = NavigationItem
-        fields = ['id', 'label', 'href', 'order', 'is_active']
+        fields = ['id', 'label', 'href', 'order', 'is_active', 'nav_type', 'open_in_new_tab', 'badge_text']
         
     def to_representation(self, instance):
         # Only return active navigation items

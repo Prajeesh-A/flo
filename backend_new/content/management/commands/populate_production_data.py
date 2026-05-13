@@ -560,17 +560,15 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'[OK] FAQItem: created {len(items)}'))
 
     def _populate_navigation(self):
-        if NavigationItem.objects.count() >= 6:
-            self.stdout.write('[OK] NavigationItem: already has data')
-            return
+        # Always recreate navigation to ensure correct data
         NavigationItem.objects.all().delete()
         items = [
-            {'label': 'Home', 'href': '#', 'order': 1, 'is_active': True},
-            {'label': 'About Us', 'href': '#about-us', 'order': 2, 'is_active': True},
-            {'label': 'Features', 'href': '#features', 'order': 3, 'is_active': True},
-            {'label': 'Blogs', 'href': '/blogs', 'order': 4, 'is_active': True},
-            {'label': 'Help', 'href': '#help', 'order': 5, 'is_active': True},
-            {'label': 'Contact', 'href': '#contact', 'order': 6, 'is_active': True},
+            {'label': 'Home',     'href': '#',        'order': 1, 'is_active': True, 'nav_type': 'normal', 'open_in_new_tab': False, 'badge_text': ''},
+            {'label': 'About Us', 'href': '#about-us','order': 2, 'is_active': True, 'nav_type': 'normal', 'open_in_new_tab': False, 'badge_text': ''},
+            {'label': 'Features', 'href': '#features','order': 3, 'is_active': True, 'nav_type': 'normal', 'open_in_new_tab': False, 'badge_text': ''},
+            {'label': 'Blogs',    'href': '/blogs',   'order': 4, 'is_active': True, 'nav_type': 'blog',   'open_in_new_tab': False, 'badge_text': ''},
+            {'label': 'Help',     'href': '#help',    'order': 5, 'is_active': True, 'nav_type': 'normal', 'open_in_new_tab': False, 'badge_text': ''},
+            {'label': 'Contact',  'href': '#contact', 'order': 6, 'is_active': True, 'nav_type': 'normal', 'open_in_new_tab': False, 'badge_text': ''},
         ]
         for item in items:
             NavigationItem.objects.create(**item)

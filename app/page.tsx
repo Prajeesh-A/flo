@@ -12,6 +12,7 @@ import BenefitsSection from "@/components/BenefitsSection";
 import ServicesScrollSection from "@/components/ServicesScrollSection";
 import MetricsSection from "@/components/MetricsSection";
 import WhyChooseUsSection from "@/components/WhyChooseUsSection";
+import ComparisonTableSection from "@/components/ComparisonTableSection";
 import AnalyticsSection from "@/components/AnalyticsSection";
 import AIPoweredAnalytics from "@/components/AIPoweredAnalytics";
 import Testimonials from "@/components/Testimonials";
@@ -238,43 +239,57 @@ function HomePageContent() {
       </Link>
     </div>
 
-    {/* Navigation Links - Centered */}
+    {/* Navigation Links - Centered (nav_type === 'normal') */}
     <div className="flex-1 flex items-center justify-center gap-8">
       {navItems
         .filter((item: any) => item.is_active)
-        // ✅ FIXED: Remove both "blog" and "blogs" from center
-        .filter((item: any) => !["blog", "blogs"].includes(item.label.toLowerCase()))
+        .filter((item: any) => (item.nav_type ?? 'normal') === 'normal')
         .map((item: any, index: number) => {
           const isPageLink =
             item.href.startsWith("/") && !item.href.startsWith("/#");
+          const target = item.open_in_new_tab ? "_blank" : undefined;
+          const rel = item.open_in_new_tab ? "noopener noreferrer" : undefined;
 
           return isPageLink ? (
             <Link
               key={index}
               href={item.href}
+              target={target}
+              rel={rel}
               className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
             >
               {item.label}
+              {item.badge_text && (
+                <span className="ml-1 text-[10px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold">
+                  {item.badge_text}
+                </span>
+              )}
             </Link>
           ) : (
             <a
               key={index}
               href={item.href}
+              target={target}
+              rel={rel}
               className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
             >
               {item.label}
+              {item.badge_text && (
+                <span className="ml-1 text-[10px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold">
+                  {item.badge_text}
+                </span>
+              )}
             </a>
           );
         })}
     </div>
 
-    {/* Right Side Button Group - Blog + Contact Sales */}
+    {/* Right Side Button Group - Blog (nav_type==='blog') + Contact Sales */}
     <div className="flex items-center gap-3">
-      {/* Blog Button - Secondary */}
+      {/* Blog-type nav items rendered as secondary pill buttons */}
       {navItems
         .filter((item: any) => item.is_active)
-        // ✅ FIXED: Check for both "blog" and "blogs" (case-insensitive)
-        .filter((item: any) => ["blog", "blogs"].includes(item.label.toLowerCase()))
+        .filter((item: any) => item.nav_type === 'blog')
         .map((item: any, index: number) => (
           <Link
             key={index}
@@ -559,6 +574,8 @@ function HomePageContent() {
       <MetricsSection />
       {/* Why Choose Us Section - AI Analytics & Country Flags Ticker */}
       <WhyChooseUsSection />
+      {/* Comparison Table Section - Floneo vs Traditional LCNC */}
+      <ComparisonTableSection />
       {/* Analytics Section - Dynamic Donut Chart with Floating Elements */}
       <AnalyticsSection />
       {/* AI-Powered Analytics Section - Circular Metrics & AI Capabilities */}

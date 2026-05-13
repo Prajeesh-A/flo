@@ -144,20 +144,32 @@ class FooterSectionAdmin(admin.ModelAdmin):
 
 @admin.register(NavigationItem)
 class NavigationItemAdmin(admin.ModelAdmin):
-    list_display = ['label', 'href', 'order', 'is_active']
-    list_editable = ['order', 'is_active']
-    list_filter = ['is_active']
+    list_display = ['label', 'href', 'nav_type', 'order', 'is_active', 'badge_text']
+    list_editable = ['order', 'is_active', 'nav_type']
+    list_filter = ['is_active', 'nav_type']
     search_fields = ['label', 'href']
     ordering = ['order', 'id']
 
     fieldsets = (
         ('Navigation Item', {
-            'fields': ('label', 'href', 'is_active')
+            'fields': ('label', 'href', 'is_active'),
+            'description': 'Core link fields. href can be an anchor (#section-id) or a full path (/blogs).'
         }),
-        ('Display Settings', {
-            'fields': ('order',)
+        ('Display Type', {
+            'fields': ('nav_type', 'badge_text'),
+            'description': (
+                'normal = plain text link in center of navbar | '
+                'blog = secondary button (shows on right side) | '
+                'cta = Contact Sales is hardcoded, no need to set this'
+            )
+        }),
+        ('Advanced', {
+            'fields': ('order', 'open_in_new_tab'),
+            'classes': ('collapse',),
         }),
     )
+
+
 
 
 # New comprehensive admin classes
