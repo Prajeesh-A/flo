@@ -118,8 +118,13 @@ class Command(BaseCommand):
         if not author:
             author = User.objects.first()
         if not author:
-            self.stdout.write(self.style.ERROR('No users found. Skipping blog creation.'))
-            return
+            # Create a system author so blogs can always be created
+            import os
+            username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'floneo_admin')
+            email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@floneo.co')
+            password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'floneo@2025!')
+            author = User.objects.create_superuser(username=username, email=email, password=password)
+            self.stdout.write(self.style.SUCCESS(f'Created system author: {username}'))
 
         # ── 3. Ensure categories exist ────────────────────────────────────────
         lcnc_cat, _ = BlogCategory.objects.get_or_create(
