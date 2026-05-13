@@ -62,7 +62,7 @@ export default function PerformanceMonitor() {
           .filter(
             (entry) =>
               entry.name.includes("/api/") ||
-              entry.name.includes("flo-1m00.onrender.com")
+              entry.name.includes("railway.app")
           ) as PerformanceResourceTiming[];
 
         if (apiCalls.length > 0) {

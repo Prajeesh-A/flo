@@ -104,54 +104,42 @@ const FAQCard = ({ faq, index }: { faq: FAQItem; index: number }) => {
 };
 
 export default function FAQSection() {
-  // URGENT FIX: Use correct API endpoint that exists
-  // FAQ Section metadata - using hardcoded for now since /api/faq/ doesn't exist
-  const faqSectionData = {
-    title: "Architecting Excellence",
-    subtitle: "HELP CENTER",
-    description:
-      "Together, we're creating a seamless experience that puts you in charge of your operations without bottlenecks.",
-    is_visible: true,
-  };
-  const faqSectionError = null;
+  // FAQ Section metadata from API
+  const [faqSectionData, setFaqSectionData] = useState<FAQSection | null>(null);
 
   // DIRECT API FETCH - Simple solution that works
   const [faqItems, setFaqItems] = useState<any[]>([]);
   const [faqItemsLoading, setFaqItemsLoading] = useState(true);
-  const [faqItemsError, setFaqItemsError] = useState<string | null>(null);
 
   useEffect(() => {
+    const API_BASE_URL =
+      process.env.NEXT_PUBLIC_API_URL ||
+      "https://floneo-backend-production.up.railway.app/api";
+
+    // Fetch section header data
+    fetch(`${API_BASE_URL}/faq/`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data) setFaqSectionData(data); })
+      .catch(() => {});
+
+    // Fetch FAQ items
     const fetchFAQs = async () => {
       try {
-        setFaqItemsLoading(true);
-        const API_BASE_URL =
-          process.env.NEXT_PUBLIC_API_URL ||
-          "https://floneo-backend-production.up.railway.app/api";
         const response = await fetch(`${API_BASE_URL}/faq-items/`, {
-          signal: AbortSignal.timeout(5000), // Add timeout
+          signal: AbortSignal.timeout(5000),
         });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        console.log("🎯 DIRECT API RESPONSE:", data);
         setFaqItems(data.results || []);
-        setFaqItemsError("");
-      } catch (error) {
-        console.error("❌ FAQ API Error:", error);
-        setFaqItemsError(
-          error instanceof Error ? error.message : "Unknown error"
-        );
-        setFaqItems([]); // This triggers fallback
+      } catch {
+        setFaqItems([]);
       } finally {
-        setFaqItemsLoading(false); // This MUST run
+        setFaqItemsLoading(false);
       }
     };
 
     fetchFAQs();
-  }, []); // Empty dependency array
+  }, []);
 
   // Fallback data for FAQ section
   const defaultFaqSection = {
@@ -213,8 +201,13 @@ export default function FAQSection() {
     },
   ];
 
-  // SIMPLE LOGIC - Use API data if available, otherwise fallback
-  const sectionData = faqSectionData;
+  // Merge API data with fallback defaults
+  const sectionData = {
+    title: faqSectionData?.title || defaultFaqSection.title,
+    subtitle: faqSectionData?.subtitle || defaultFaqSection.subtitle,
+    description: faqSectionData?.description || defaultFaqSection.description,
+    is_visible: faqSectionData?.is_visible ?? true,
+  };
   const shouldUseApiData = faqItems && faqItems.length > 0;
   const finalFaqItems = shouldUseApiData ? faqItems : defaultFaqItems;
 
