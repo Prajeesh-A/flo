@@ -5,7 +5,9 @@
 
 [build]
 builder = "nixpacks"
-buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+# nixpacks automatically runs: pip install -r requirements.txt (install phase)
+# DO NOT repeat pip install here — it doubles build time (was 25+ min)
+buildCommand = "python manage.py collectstatic --noinput"
 
 [deploy]
 startCommand = "gunicorn floneo_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
