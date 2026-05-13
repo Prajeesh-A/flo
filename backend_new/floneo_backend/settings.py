@@ -24,7 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Env helpers
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key-change-in-production-immediately")
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else ["*"]
+# Railway's internal healthcheck uses 'healthcheck.railway.app' as the Host header.
+# It MUST always be in ALLOWED_HOSTS or Django raises DisallowedHost → health check fails → deploy killed.
+_RAILWAY_HOSTS = ["healthcheck.railway.app", ".railway.app", "localhost", "127.0.0.1"]
+_ENV_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else ["*"]
+ALLOWED_HOSTS = list(set(_ENV_HOSTS + _RAILWAY_HOSTS))
 
 # The public URL of the backend server — used to build absolute media URLs in serializers
 # MUST be set as an environment variable in Railway (e.g. https://your-app.up.railway.app)
