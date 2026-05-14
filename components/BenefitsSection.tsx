@@ -151,9 +151,12 @@ export default function BenefitsSection() {
   const getIconColorClass = (color: string) => {
     const colorMap: Record<string, string> = {
       yellow: "bg-yellow-400",
-      green: "bg-green-400",
-      blue: "bg-blue-500",
+      green:  "bg-green-400",
+      blue:   "bg-blue-500",
       orange: "bg-orange-400",
+      purple: "bg-purple-500",
+      cyan:   "bg-cyan-400",
+      red:    "bg-red-500",
     };
     
     return colorMap[color?.toLowerCase()] || "bg-yellow-400";
