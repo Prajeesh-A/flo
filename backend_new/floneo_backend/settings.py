@@ -295,32 +295,44 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-# ── Email Configuration — Resend ─────────────────────────────────────────────
-# MIGRATION: Switched from SendGrid → Resend (2026-04-29)
-# Resend docs: https://resend.com/docs/send-with-python
+# ── Email Configuration — Auto-detecting backend ─────────────────────────────
+# Priority: Resend API → Gmail SMTP → Console (dev only)
 
 RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
-EMAIL_BACKEND = 'content.resend_backend.ResendBackend'
+GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD', '')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', os.getenv('GMAIL_USER', ''))
 
-# IMPORTANT: Must be a sender address verified in your Resend dashboard.
-# e.g. "Floneo <hello@floneo.co>" or "noreply@floneo.co"
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'onboarding@resend.dev')
+if RESEND_API_KEY:
+    # ── Option 1: Resend (preferred for production) ──────────────────────────
+    EMAIL_BACKEND = 'content.resend_backend.ResendBackend'
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'onboarding@resend.dev')
 
-# Email recipient for contact form notifications (unchanged)
+elif EMAIL_HOST_USER and GMAIL_APP_PASSWORD:
+    # ── Option 2: Gmail SMTP (good free fallback) ─────────────────────────────
+    # Setup: Enable 2FA on Gmail → Settings → Security → App passwords → generate one
+    # Set Railway env vars: EMAIL_HOST_USER=yourname@gmail.com, GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_PASSWORD = GMAIL_APP_PASSWORD
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', f'Floneo <{EMAIL_HOST_USER}>')
+
+else:
+    # ── Option 3: Console backend (dev/fallback — emails logged to Railway logs) ─
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@floneo.co')
+
+# Email recipient for contact form notifications
 CONTACT_EMAIL_RECIPIENT = os.getenv('CONTACT_EMAIL_RECIPIENT', 'admin@floneo.co')
 
-# ── ROLLBACK: To revert to SendGrid, comment the Resend block above and
-# uncomment the three lines below, then redeploy:
-# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
-# EMAIL_BACKEND = 'content.sendgrid_backend.SendGridBackend'
-# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'prajeep6@gmail.com')
-
-# Fallback SMTP Configuration (kept for reference, not active)
+# Kept for legacy reference / settings logging
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', GMAIL_APP_PASSWORD)
+
+
 
 
 # Create logs directory if it doesn't exist (for local development)

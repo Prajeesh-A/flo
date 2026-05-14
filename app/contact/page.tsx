@@ -23,6 +23,7 @@ export default function ContactPage() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [selectedCountry, setSelectedCountry] =
     useState<Country>(defaultCountry);
 
@@ -58,11 +59,16 @@ export default function ContactPage() {
         phone: "",
         message: "",
       });
+      setErrorMessage("");
       setSubmitStatus("success");
-      
-      setTimeout(() => setSubmitStatus("idle"), 5000);
+      // No auto-reset — user stays on success screen until they click "Send another message"
     } catch (error) {
       console.error("Form submission error:", error);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again or email us at admin@floneo.co"
+      );
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -71,6 +77,54 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
+      {/* ── SUCCESS STATE ─────────────────────────────────── */}
+      {submitStatus === "success" && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative min-h-screen flex items-center justify-center px-4"
+        >
+          <div className="text-center max-w-lg mx-auto">
+            {/* Animated checkmark */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+              className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
+            >
+              <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </motion.div>
+
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Message sent!</h2>
+            <p className="text-gray-600 text-base sm:text-lg mb-2">
+              Thank you for reaching out. We&apos;ll get back to you within 24 hours.
+            </p>
+            <p className="text-gray-500 text-sm mb-8">
+              A copy of your message has been saved. Check your inbox for a confirmation.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => setSubmitStatus("idle")}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl transition-colors"
+              >
+                Send another message
+              </button>
+              <Link
+                href="/"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 px-8 rounded-xl transition-colors"
+              >
+                Back to home
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {submitStatus !== "success" && (
+      <>
       {/* Subtle Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white">
         <div className="absolute inset-0" style={{
@@ -231,7 +285,7 @@ export default function ContactPage() {
                 >
                   <p className="text-red-900 font-medium mb-1 text-sm sm:text-base">Something went wrong</p>
                   <p className="text-red-700 text-xs sm:text-sm">
-                    Please try again or email us directly at admin@floneo.co
+                    {errorMessage || "Please try again or email us directly at admin@floneo.co"}
                   </p>
                 </motion.div>
               )}
@@ -374,6 +428,9 @@ export default function ContactPage() {
           </motion.div>
         </div>
       </div>
+    </div>
+    </>
+    )}
     </div>
   );
 }
