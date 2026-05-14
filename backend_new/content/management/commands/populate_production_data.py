@@ -113,6 +113,16 @@ class Command(BaseCommand):
             section = AIPoweredAnalyticsSection()
         section.title = 'AI-Powered Analytics'
         section.description = 'Harness the power of AI to transform your data into actionable insights'
+        # Circular metric cards
+        section.metric_1_value = '40\u201360%'
+        section.metric_1_description = 'Faster Application Development'
+        section.metric_2_value = '70%'
+        section.metric_2_description = 'Lower Learning Curve'
+        section.metric_3_value = 'Enterprise-Ready'
+        section.metric_3_description = 'by Design'
+        section.metric_4_value = 'Up to 50%'
+        section.metric_4_description = 'Reduction in Development Costs'
+        # Feature text blocks
         section.feature_1_title = 'Development Speed'
         section.feature_1_description = 'Accelerate delivery by replacing repetitive coding with visual workflows and reusable components.'
         section.feature_2_title = 'Scalability & Governance'
@@ -579,21 +589,21 @@ class Command(BaseCommand):
         if not section:
             self.stdout.write('[SKIP] BenefitItem: no BenefitsSection')
             return
-        # Clear and recreate to match frontend exactly
+        # Always clear and recreate to match frontend exactly (including colors)
         section.benefits.all().delete()
         items = [
-            {'title': 'Top Security', 'icon': '\U0001f512', 'position': 'top-left', 'order': 1},
-            {'title': 'Cloud Sync', 'icon': '\u2601\ufe0f', 'position': 'top-center', 'order': 2},
-            {'title': 'Fast Transactions', 'icon': '\u26a1', 'position': 'top-right', 'order': 3},
-            {'title': 'AI Analytics', 'icon': '\U0001f4ca', 'position': 'middle-left', 'order': 4},
-            {'title': 'Real-time Monitoring', 'icon': '\U0001f4e1', 'position': 'middle-right', 'order': 5},
-            {'title': 'Smart Alerts', 'icon': '\U0001f514', 'position': 'bottom-left', 'order': 6},
-            {'title': 'Workflow Builder', 'icon': '\U0001f527', 'position': 'bottom-right', 'order': 7},
-            {'title': 'Customizable Dashboards', 'icon': '\U0001f4bb', 'position': 'bottom-center', 'order': 8},
+            {'title': 'Top Security',            'icon': '\U0001f512', 'color': 'green',  'position': 'top-left',     'order': 1},
+            {'title': 'Cloud Sync',              'icon': '\u2601\ufe0f', 'color': 'yellow', 'position': 'top-center',  'order': 2},
+            {'title': 'Fast Transactions',       'icon': '\u26a1',      'color': 'green',  'position': 'top-right',    'order': 3},
+            {'title': 'AI Analytics',            'icon': '\U0001f4ca',  'color': 'blue',   'position': 'middle-left',  'order': 4},
+            {'title': 'Real-time Monitoring',    'icon': '\U0001f4e1',  'color': 'purple', 'position': 'middle-right', 'order': 5},
+            {'title': 'Smart Alerts',            'icon': '\U0001f514',  'color': 'orange', 'position': 'bottom-left',  'order': 6},
+            {'title': 'Workflow Builder',        'icon': '\U0001f527',  'color': 'cyan',   'position': 'bottom-right', 'order': 7},
+            {'title': 'Customizable Dashboards', 'icon': '\U0001f4bb',  'color': 'blue',   'position': 'bottom-center','order': 8},
         ]
         for item in items:
             BenefitItem.objects.create(section=section, is_active=True, **item)
-        self.stdout.write(self.style.SUCCESS(f'[OK] BenefitItem: created {len(items)}'))
+        self.stdout.write(self.style.SUCCESS(f'[OK] BenefitItem: created {len(items)} with colors'))
 
     def _populate_service_cards(self):
         if ServiceCard.objects.exists():

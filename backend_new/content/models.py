@@ -598,13 +598,23 @@ class AIPoweredAnalyticsSection(models.Model):
     subtitle = models.CharField(max_length=100, default="Smart Insights", blank=True)
     description = RichTextField(default="Harness the power of AI to transform your data into actionable insights")
 
-    # Features
-    feature_1_title = models.CharField(max_length=100, default="Real-time Analysis")
-    feature_1_description = models.TextField(default="Get instant insights from your data")
-    feature_2_title = models.CharField(max_length=100, default="Predictive Modeling")
-    feature_2_description = models.TextField(default="Forecast trends and outcomes")
-    feature_3_title = models.CharField(max_length=100, default="Automated Reports")
-    feature_3_description = models.TextField(default="Generate reports automatically")
+    # Circular metric cards (displayed as large coloured circles)
+    metric_1_value = models.CharField(max_length=50, default="40–60%", help_text="e.g. 40–60% or Enterprise-Ready")
+    metric_1_description = models.CharField(max_length=200, default="Faster Application Development")
+    metric_2_value = models.CharField(max_length=50, default="70%", help_text="e.g. 70% or 2.3x")
+    metric_2_description = models.CharField(max_length=200, default="Lower Learning Curve")
+    metric_3_value = models.CharField(max_length=50, default="Enterprise-Ready", help_text="e.g. 24/7 or Enterprise-Ready")
+    metric_3_description = models.CharField(max_length=200, default="by Design")
+    metric_4_value = models.CharField(max_length=50, default="Up to 50%", help_text="e.g. Up to 50% or 99.9%")
+    metric_4_description = models.CharField(max_length=200, default="Reduction in Development Costs")
+
+    # Feature text blocks (displayed between circles)
+    feature_1_title = models.CharField(max_length=100, default="Development Speed")
+    feature_1_description = models.TextField(default="Accelerate delivery by replacing repetitive coding with visual workflows and reusable components.")
+    feature_2_title = models.CharField(max_length=100, default="Scalability & Governance")
+    feature_2_description = models.TextField(default="Build applications that scale securely without re-architecture or system rewrites.")
+    feature_3_title = models.CharField(max_length=100, default="Cost Efficiency")
+    feature_3_description = models.TextField(default="Reduce engineering overhead, maintenance effort, and long-term technical debt.")
 
     # Visual settings
     background_color = ColorField(default='#F8F9FA', help_text="Background color for the section")
@@ -1039,9 +1049,20 @@ class BenefitItem(models.Model):
         ('bottom-center', 'Bottom Center'),
     ]
 
+    COLOR_CHOICES = [
+        ('green', 'Green'),
+        ('yellow', 'Yellow'),
+        ('blue', 'Blue'),
+        ('orange', 'Orange'),
+        ('purple', 'Purple'),
+        ('cyan', 'Cyan'),
+        ('red', 'Red'),
+    ]
+
     section = models.ForeignKey(BenefitsSection, related_name='benefits', on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     icon = models.CharField(max_length=10, default="🔒", help_text="Emoji icon for the benefit")
+    color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='green', help_text="Icon background color")
     position = models.CharField(max_length=20, choices=POSITION_CHOICES, default='top-center')
     is_active = models.BooleanField(default=True)
     order = models.IntegerField(default=0)

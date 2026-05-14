@@ -317,7 +317,7 @@ class DemoTabSerializer(serializers.ModelSerializer):
 class BenefitItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BenefitItem
-        fields = ['id', 'title', 'icon', 'position', 'is_active', 'order', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'icon', 'color', 'position', 'is_active', 'order', 'created_at', 'updated_at']
 
 
 class BenefitsSectionSerializer(serializers.ModelSerializer):
