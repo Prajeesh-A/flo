@@ -68,4 +68,7 @@ urlpatterns = [
 
     # Newsletter subscription
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter-subscribe'),
+
+    # Email test (diagnose Resend config) — requires key
+    path('test-email/', views.test_email_trigger, name='test-email'),
 ]

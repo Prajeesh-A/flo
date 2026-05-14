@@ -777,3 +777,60 @@ def newsletter_subscribe(request):
             'message': str(e),
             'success': False
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def test_email_trigger(request):
+    """
+    Send a test email to diagnose Resend configuration.
+    Usage: GET /api/test-email/?key=FloNeo2025Populate&to=your@email.com
+    Returns exact success/failure details in the response body.
+    """
+    secret_key = request.query_params.get('key', '')
+    if secret_key != 'FloNeo2025Populate':
+        return Response({'error': 'Invalid key'}, status=status.HTTP_403_FORBIDDEN)
+
+    to_email = request.query_params.get('to', django_settings.CONTACT_EMAIL_RECIPIENT)
+
+    try:
+        from django.core.mail import send_mail
+        from django.conf import settings as s
+
+        result = send_mail(
+            subject='[Floneo] Test Email — Resend Configuration Check',
+            message=(
+                'This is a test email sent from floneo-backend on Railway.\n\n'
+                'If you see this, Resend is configured correctly!\n\n'
+                f'FROM: {s.DEFAULT_FROM_EMAIL}\n'
+                f'TO:   {to_email}\n'
+                f'BACKEND: {s.EMAIL_BACKEND}\n'
+            ),
+            from_email=s.DEFAULT_FROM_EMAIL,
+            recipient_list=[to_email],
+            fail_silently=False,
+        )
+        return Response({
+            'success': True,
+            'sent': result,
+            'from': s.DEFAULT_FROM_EMAIL,
+            'to': to_email,
+            'backend': s.EMAIL_BACKEND,
+            'message': f'Test email sent successfully ({result} message(s))'
+        })
+
+    except Exception as e:
+        from django.conf import settings as s
+        return Response({
+            'success': False,
+            'error': str(e),
+            'error_type': type(e).__name__,
+            'from': getattr(s, 'DEFAULT_FROM_EMAIL', 'NOT SET'),
+            'to': to_email,
+            'backend': getattr(s, 'EMAIL_BACKEND', 'NOT SET'),
+            'resend_api_key_set': bool(getattr(s, 'RESEND_API_KEY', '')),
+            'fix_hint': (
+                'Common fix: verify your sender domain at resend.com/domains, '
+                'OR set DEFAULT_FROM_EMAIL=onboarding@resend.dev in Railway env vars '
+                'and set CONTACT_EMAIL_RECIPIENT to your Resend account email.'
+            )
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
