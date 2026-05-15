@@ -19,7 +19,7 @@ from .models import (
     WhyChooseUsSection, HumanTouchSection, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
     BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
-    BlogCategory, BlogTag, BlogPost, NewsletterSubscription
+    BlogCategory, BlogTag, BlogPost, NewsletterSubscription, Client
 )
 from .serializers import (
     HeroSectionSerializer, AboutSectionSerializer, ServiceCardSerializer,
@@ -34,7 +34,7 @@ from .serializers import (
     PricingFeaturesSectionSerializer, VideoTabsDemoSectionSerializer, DemoTabSerializer,
     BenefitsSectionSerializer, ContactSubmissionSerializer, PrivacyPolicySerializer,
     BlogCategorySerializer, BlogTagSerializer, BlogPostListSerializer, BlogPostDetailSerializer,
-    NewsletterSubscriptionSerializer
+    NewsletterSubscriptionSerializer, ClientSerializer
 )
 
 
@@ -361,6 +361,12 @@ class DemoTabViewSet(viewsets.ModelViewSet):
     """API endpoint for demo tabs"""
     queryset = DemoTab.objects.filter(is_active=True)
     serializer_class = DemoTabSerializer
+
+
+class ClientViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for clients (read-only, active only)"""
+    queryset = Client.objects.filter(is_active=True).order_by('order', 'name')
+    serializer_class = ClientSerializer
 
 
 # New single instance endpoints
@@ -744,6 +750,13 @@ def newsletter_subscribe(request):
             existing.is_active = True
             existing.unsubscribed_at = None
             existing.save()
+            # Send welcome back email
+            try:
+                from .utils import send_newsletter_welcome_email
+                send_newsletter_welcome_email(existing)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f'Welcome-back email failed: {e}')
             return Response({
                 'message': 'Welcome back! Your subscription has been reactivated.',
                 'success': True
@@ -759,13 +772,21 @@ def newsletter_subscribe(request):
             source='blog_page'
         )
 
-        # Send notification email to admin
+        # 1. Send admin notification
         try:
-            from .utils import send_newsletter_notification_email
+            from .utils import send_newsletter_notification_email, send_newsletter_welcome_email
             send_newsletter_notification_email(subscription)
         except Exception as email_err:
             import logging
-            logging.getLogger(__name__).warning(f'Newsletter notification email failed: {email_err}')
+            logging.getLogger(__name__).warning(f'Admin newsletter notification failed: {email_err}')
+
+        # 2. Send welcome/confirmation email to the subscriber
+        try:
+            from .utils import send_newsletter_welcome_email
+            send_newsletter_welcome_email(subscription)
+        except Exception as email_err:
+            import logging
+            logging.getLogger(__name__).warning(f'Welcome email to subscriber failed: {email_err}')
 
         return Response({
             'message': 'Successfully subscribed! You will receive our latest articles.',

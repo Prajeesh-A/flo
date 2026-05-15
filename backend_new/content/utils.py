@@ -399,6 +399,108 @@ This notification was sent from floneo.co
         return False
 
 
+def send_newsletter_welcome_email(subscription):
+    """Send a welcome/confirmation email to the person who just subscribed to the newsletter"""
+    try:
+        site_url = getattr(settings, 'SITE_URL', 'https://floneo.co')
+        from_email = settings.DEFAULT_FROM_EMAIL
+        subject = "🎉 You're subscribed to floneo blog updates!"
+
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+        <body style="margin:0;padding:0;background-color:#f4f4f8;font-family:'Arial',sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f8;padding:40px 20px;">
+                <tr><td align="center">
+                    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+                        <!-- Header -->
+                        <tr>
+                            <td style="background:linear-gradient(135deg,#0a0e27 0%,#1a1f3a 100%);padding:32px 40px;border-radius:16px 16px 0 0;text-align:center;">
+                                <p style="color:#ffffff;font-size:28px;font-weight:800;margin:0;letter-spacing:-0.5px;">floneo</p>
+                                <p style="color:rgba(255,255,255,0.6);font-size:13px;margin:6px 0 0 0;text-transform:uppercase;letter-spacing:2px;">Blog Newsletter</p>
+                            </td>
+                        </tr>
+
+                        <!-- Body -->
+                        <tr>
+                            <td style="background:#ffffff;padding:40px;border-radius:0 0 16px 16px;">
+                                <h1 style="color:#0a0e27;font-size:24px;font-weight:800;margin:0 0 16px 0;">You're in! 🎉</h1>
+                                <p style="color:#4b5563;font-size:16px;line-height:1.7;margin:0 0 24px 0;">
+                                    Thanks for subscribing to <strong>floneo blog</strong>. You'll now receive an email every time we publish a new article — no spam, only real content.
+                                </p>
+
+                                <div style="background:#f0f4ff;border-radius:12px;padding:20px 24px;margin:0 0 28px 0;border-left:4px solid #3b5bdb;">
+                                    <p style="color:#1e3a5f;font-size:14px;font-weight:700;margin:0 0 6px 0;">What to expect:</p>
+                                    <ul style="color:#4b5563;font-size:14px;line-height:1.8;margin:0;padding-left:20px;">
+                                        <li>In-depth articles on automation &amp; low-code</li>
+                                        <li>Product updates and new feature guides</li>
+                                        <li>Business workflow tips and best practices</li>
+                                    </ul>
+                                </div>
+
+                                <!-- CTA -->
+                                <table cellpadding="0" cellspacing="0" width="100%">
+                                    <tr><td align="center">
+                                        <a href="{site_url}/blogs"
+                                           style="display:inline-block;background:linear-gradient(135deg,#0a0e27 0%,#1a1f3a 100%);color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:16px 40px;border-radius:12px;">
+                                            Read Our Latest Articles →
+                                        </a>
+                                    </td></tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                            <td style="padding:24px 0;text-align:center;">
+                                <p style="color:#9ca3af;font-size:12px;margin:0 0 4px 0;">
+                                    You subscribed with: <strong>{subscription.email}</strong>
+                                </p>
+                                <p style="color:#9ca3af;font-size:12px;margin:0;">
+                                    <a href="{site_url}" style="color:#6b7280;text-decoration:underline;">floneo.co</a>
+                                    &nbsp;·&nbsp; No spam. We only email when we publish.
+                                </p>
+                            </td>
+                        </tr>
+
+                    </table>
+                </td></tr>
+            </table>
+        </body>
+        </html>
+        """
+
+        plain_content = f"""You're subscribed to floneo blog updates!
+
+Thanks for subscribing. You'll receive an email every time we publish a new article.
+
+Read our latest articles: {site_url}/blogs
+
+---
+You subscribed with: {subscription.email}
+floneo.co — No spam. We only email when we publish.
+"""
+
+        from django.core.mail import EmailMultiAlternatives
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=plain_content,
+            from_email=from_email,
+            to=[subscription.email],
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send(fail_silently=False)
+
+        logger.info(f"✅ Welcome email sent to new subscriber {subscription.email}")
+        return True
+
+    except Exception as e:
+        logger.error(f"❌ Welcome email to subscriber failed: {str(e)}")
+        return False
+
+
 def send_blog_published_notification(blog_post, subscriber_emails: list):
     """
     Send a blog publish notification to all active newsletter subscribers.
