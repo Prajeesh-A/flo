@@ -9,7 +9,7 @@ from .models import (
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
     BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
-    BlogCategory, BlogTag, BlogPost
+    BlogCategory, BlogTag, BlogPost, Client
 )
 
 
@@ -528,3 +528,23 @@ class NewsletterSubscriptionSerializer(serializers.Serializer):
     def validate_email(self, value):
         """Normalize email to lowercase"""
         return value.lower().strip()
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    """Serializer for client companies"""
+    logo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Client
+        fields = ['id', 'name', 'website', 'industry', 'description', 'logo', 'logo_url', 'accent_color', 'is_active', 'order']
+
+    def get_logo_url(self, obj):
+        if obj.logo:
+            request = self.context.get('request')
+            url = obj.logo.url
+            if url.startswith('http'):
+                return url
+            if request:
+                return request.build_absolute_uri(url)
+            return url
+        return None

@@ -19,6 +19,7 @@ router.register(r'demo-tabs', views.DemoTabViewSet)
 router.register(r'blog-categories', views.BlogCategoryViewSet)
 router.register(r'blog-tags', views.BlogTagViewSet)
 router.register(r'blogs', views.BlogPostViewSet)
+router.register(r'clients', views.ClientViewSet)
 
 # The API URLs are now determined automatically by the router
 urlpatterns = [

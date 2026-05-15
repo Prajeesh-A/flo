@@ -1399,3 +1399,25 @@ class BlogPost(models.Model):
         import re
         clean_content = re.sub(r'<[^>]+>', '', self.content)
         return clean_content[:150] + "..." if len(clean_content) > 150 else clean_content
+
+
+class Client(models.Model):
+    """Client companies shown on the website — manageable via Django admin"""
+    name = models.CharField(max_length=200, help_text="Company name displayed on the site")
+    website = models.URLField(help_text="Full URL (e.g., https://example.com)")
+    industry = models.CharField(max_length=100, default="Technology", help_text="e.g., Technology Solutions, Finance, Manufacturing")
+    description = models.TextField(blank=True, help_text="Short description of the client (1-2 sentences)")
+    logo = models.ImageField(upload_to='clients/', blank=True, null=True, help_text="Upload the client logo image")
+    accent_color = models.CharField(max_length=20, default="#0066FF", help_text="Hex colour used for card accent (e.g., #0066FF)")
+    is_active = models.BooleanField(default=True, help_text="Show/hide this client on the website")
+    order = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], help_text="Display order (lower = shown first)")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['order', 'name']
+        verbose_name = "Client"
+        verbose_name_plural = "Clients"
+
+    def __str__(self):
+        return self.name

@@ -465,6 +465,19 @@ export interface BenefitsSection {
   updated_at: string;
 }
 
+export interface Client {
+  id: number;
+  name: string;
+  website: string;
+  industry: string;
+  description: string;
+  logo: string | null;
+  logo_url: string | null;
+  accent_color: string;
+  is_active: boolean;
+  order: number;
+}
+
 export interface WebsiteData {
   hero_section: HeroSection;
   about_section: AboutSection;
@@ -660,6 +673,11 @@ export const api = {
 
   getDemoTabs: async (): Promise<DemoTab[]> => {
     const response = await apiFetch<{ results: DemoTab[] }>("/demo-tabs/");
+    return response.results;
+  },
+
+  getClients: async (): Promise<Client[]> => {
+    const response = await apiFetch<{ results: Client[] }>("/clients/");
     return response.results;
   },
 

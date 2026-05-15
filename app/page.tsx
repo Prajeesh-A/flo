@@ -19,6 +19,7 @@ import Testimonials from "@/components/Testimonials";
 import PricingSection from "@/components/PricingSection";
 import PricingFeaturesSection from "@/components/PricingFeaturesSection";
 import FAQSection from "@/components/FAQSection";
+import ClientsSection from "@/components/ClientsSection";
 import ContactSection from "@/components/ContactSection";
 import SocialSection from "@/components/SocialSection";
 import FooterSection from "@/components/FooterSection";
@@ -586,6 +587,8 @@ function HomePageContent() {
       {/* <PricingSection /> */}
       {/* Pricing Features Section */}
       {/* <PricingFeaturesSection /> */}
+      {/* Clients Section */}
+      <ClientsSection />
       {/* FAQ Section */}
       <FAQSection />
       {/* Contact Section */}

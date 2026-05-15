@@ -10,7 +10,7 @@ from .models import (
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
     BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
-    BlogCategory, BlogTag, BlogPost, NewsletterSubscription
+    BlogCategory, BlogTag, BlogPost, NewsletterSubscription, Client
 )
 
 
@@ -1003,6 +1003,46 @@ class NewsletterSubscriptionAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False  # Subscriptions come from the frontend only
+
+
+@admin.register(Client)
+class ClientAdmin(admin.ModelAdmin):
+    list_display = ['name', 'industry', 'website_link', 'color_preview', 'is_active', 'order']
+    list_editable = ['is_active', 'order']
+    list_filter = ['is_active', 'industry']
+    search_fields = ['name', 'industry', 'description']
+    ordering = ['order', 'name']
+
+    fieldsets = (
+        ('Client Information', {
+            'fields': ('name', 'website', 'industry', 'description'),
+            'description': 'Core details shown on the website clients section.'
+        }),
+        ('Branding', {
+            'fields': ('logo', 'accent_color'),
+            'description': (
+                'Upload a logo image (PNG/SVG preferred, transparent background). '
+                'accent_color is the hex colour used for the card border/glow (e.g. #0066FF).'
+            )
+        }),
+        ('Display Settings', {
+            'fields': ('is_active', 'order'),
+        }),
+    )
+
+    readonly_fields = ['created_at', 'updated_at']
+
+    def website_link(self, obj):
+        return format_html('<a href="{}" target="_blank">{}</a>', obj.website, obj.website[:40])
+    website_link.short_description = 'Website'
+
+    def color_preview(self, obj):
+        return format_html(
+            '<span style="display:inline-block;width:18px;height:18px;border-radius:4px;'
+            'background:{};border:1px solid #ccc;vertical-align:middle;margin-right:6px;"></span>{}',
+            obj.accent_color, obj.accent_color
+        )
+    color_preview.short_description = 'Accent Colour'
 
 
 # Customize admin site header and title
