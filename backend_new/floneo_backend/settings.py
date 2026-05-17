@@ -290,6 +290,11 @@ REST_FRAMEWORK = {
 
 # CORS settings
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = (
+    "GET",
+    "POST",
+    "OPTIONS",
+)
 
 # CKEditor Configuration
 CKEDITOR_UPLOAD_PATH = "uploads/"

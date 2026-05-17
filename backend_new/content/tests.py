@@ -94,3 +94,15 @@ class PublicApiRegressionTests(TestCase):
             untrusted.headers.get("Access-Control-Allow-Origin"),
             "https://evil.example",
         )
+
+        preflight = self.client.options(
+            "/api/country-data/",
+            HTTP_ORIGIN="https://floneo.co",
+            HTTP_ACCESS_CONTROL_REQUEST_METHOD="POST",
+        )
+        methods = preflight.headers.get("Access-Control-Allow-Methods", "")
+        self.assertIn("GET", methods)
+        self.assertIn("OPTIONS", methods)
+        self.assertNotIn("PUT", methods)
+        self.assertNotIn("PATCH", methods)
+        self.assertNotIn("DELETE", methods)
