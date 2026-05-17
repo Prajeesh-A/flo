@@ -314,10 +314,12 @@ function HomePageContent() {
 
 
           {/* Mobile Navigation Bar - Closed State */}
-          <nav className="lg:hidden mx-auto mt-4 bg-gray-800/40 backdrop-blur-xl rounded-full px-4 py-2.5 shadow-2xl border border-white/20 max-w-[600px]">
-            <div className="flex items-center justify-between">
+          <nav
+            className="lg:hidden mx-auto mt-4 bg-gray-800/40 backdrop-blur-xl rounded-full px-3 py-2.5 shadow-2xl border border-white/20 w-[358px] max-w-[calc(100vw-2rem)] sm:w-[600px]"
+          >
+            <div className="grid grid-cols-[36px_36px] items-center justify-between">
               {/* Logo */}
-              <div className="flex items-center">
+              <div className="flex items-center flex-shrink-0">
                 <Link href="/">
                   <div
                     className="w-9 h-9 logo-rotate"
@@ -334,18 +336,10 @@ function HomePageContent() {
                 </Link>
               </div>
 
-              {/* Contact Sales Button - Mobile */}
-              <button
-                className="bg-[#1a2332] text-white px-5 py-2 rounded-full text-[13px] font-medium hover:bg-[#0f1621] transition-all duration-300"
-                onClick={() => router.push("/contact")}
-              >
-                Contact Sales
-              </button>
-
               {/* Hamburger Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="w-9 h-9 bg-[#FFC107] rounded-full flex flex-col items-center justify-center gap-1 hover:bg-[#FFB300] transition-all duration-300 shadow-md"
+                className="justify-self-end w-9 h-9 bg-[#FFC107] rounded-full flex flex-col items-center justify-center gap-1 hover:bg-[#FFB300] transition-all duration-300 shadow-md"
                 aria-label="Toggle menu"
               >
                 <span
@@ -512,7 +506,7 @@ function HomePageContent() {
             </div>
 
             {/* CTA Buttons - Using your custom CSS classes for consistent colors */}
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 px-4 sm:px-0">
+            <div className="hero-cta-group flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 px-4 sm:px-0">
               <button
                 className="hero-cta-primary w-full sm:w-auto"
                 onClick={openModal}

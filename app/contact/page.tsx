@@ -150,7 +150,7 @@ export default function ContactPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 sm:mb-12 lg:hidden text-center"
+          className="mb-8 sm:mb-12 lg:hidden text-center max-w-full overflow-hidden"
         >
           {/* Logo & Brand */}
           <div className="w-12 h-12 sm:w-14 sm:h-14 mb-4 mx-auto">
@@ -165,7 +165,7 @@ export default function ContactPage() {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
             Let's talk
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 leading-relaxed px-4">
+          <p className="text-sm sm:text-base text-gray-600 leading-relaxed px-4 max-w-xs sm:max-w-md mx-auto">
             Ready to transform your business? Our team is here to help you get started.
           </p>
 
@@ -250,7 +250,7 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 shadow-xl border border-gray-200 mx-auto" style={{ maxWidth: '600px' }}>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 shadow-xl border border-gray-200 mx-auto w-full max-w-[600px]">
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                   Send us a message
@@ -260,22 +260,6 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              {/* Success/Error Messages */}
-              {submitStatus === "success" && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mb-6 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-2 sm:gap-3"
-                >
-                  <div className="text-green-600 mt-0.5">✓</div>
-                  <div>
-                    <p className="font-semibold text-green-900 mb-1 text-sm sm:text-base">Message sent!</p>
-                    <p className="text-green-700 text-xs sm:text-sm">
-                      Thank you for reaching out. We'll get back to you within 24 hours.
-                    </p>
-                  </div>
-                </motion.div>
-              )}
 
               {submitStatus === "error" && (
                 <motion.div

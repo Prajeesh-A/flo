@@ -1072,7 +1072,7 @@ html {
   }
 
   /* Add more spacing between CTA buttons and rating */
-  .hero-section .flex.flex-col.sm\\:flex-row.gap-4 {
+  .hero-section .hero-cta-group {
     margin-bottom: 3rem !important; /* More space below CTA buttons */
   }
 
@@ -1129,7 +1129,7 @@ html {
   }
 
   /* Adjust Human Touch section mobile text sizing */
-  #features .md\\:hidden .text-5xl {
+  #features [class~="md:hidden"] .text-5xl {
     font-size: 3rem !important; /* Smaller text on mobile */
     line-height: 1.1 !important;
   }

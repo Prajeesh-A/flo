@@ -1,8 +1,24 @@
 import React from "react";
+import type { Metadata } from "next";
 import BlogsClient from "./BlogsClient";
 
 // Force dynamic rendering - fetch data at request time, not build time
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Insights & Stories",
+  description:
+    "Read Floneo insights on low-code/no-code automation, AI workflows, business operations, and digital transformation.",
+  alternates: {
+    canonical: "/blogs",
+  },
+  openGraph: {
+    title: "Insights & Stories | Floneo",
+    description:
+      "Read Floneo insights on low-code/no-code automation, AI workflows, business operations, and digital transformation.",
+    url: "/blogs",
+  },
+};
 
 // ✅ Server Component - Fetches data at request time
 export default async function BlogsPage() {

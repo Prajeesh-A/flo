@@ -1,79 +1,81 @@
-# FloNeo Website - URGENT DEPLOYMENT FIX - FAQ CACHE ISSUE
+# Floneo Website
 
-A modern business automation website built with Next.js (frontend) and Django (backend).
+A production Next.js frontend and Django backend for the Floneo platform.
 
-## 🏗️ Project Structure
+## Project Structure
 
-```
+```text
 repo/
-├─ app/                # Next.js frontend (Vercel deployment)
+├─ app/                # Next.js frontend deployed on Netlify
 ├─ components/         # React components
-├─ public/            # Static assets
-├─ package.json       # Frontend dependencies
-├─ next.config.mjs    # Next.js configuration
-└─ backend_new/       # Django backend (Render deployment)
+├─ public/             # Static assets
+├─ package.json        # Frontend dependencies
+├─ netlify.toml        # Active frontend deployment config
+├─ next.config.mjs     # Next.js configuration
+└─ backend_new/        # Django backend deployed on Railway
    ├─ manage.py
+   ├─ railway.toml
    ├─ floneo_backend/
-   ├─ content/        # Django app
-   ├─ requirements.txt
-   └─ runtime.txt
+   ├─ content/
+   └─ requirements.txt
 ```
 
-## 🚀 Deployment Instructions
+## Production Stack
 
-### Backend (Render - Django + PostgreSQL)
+- Frontend: Netlify at `https://floneo.co/`
+- Backend: Railway at `https://floneo-backend-production.up.railway.app/`
+- API base URL: `https://floneo-backend-production.up.railway.app/api`
 
-1. **Create PostgreSQL Database**
+## Frontend Deployment - Netlify
 
-   - Go to Render Dashboard → "New" → "PostgreSQL"
-   - Copy the External Connection string
+Netlify uses `netlify.toml`.
 
-2. **Create Web Service**
+```toml
+[build]
+  command = "pnpm install --no-frozen-lockfile && pnpm run build"
+  publish = ".next"
 
-   - "New" → "Web Service" → Connect GitHub repo
-   - **Root Directory**: `backend_new/`
-   - **Environment**: Python
-   - **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-   - **Start Command**: `gunicorn floneo_backend.wsgi:application`
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "9"
+  NEXT_PUBLIC_API_URL = "https://floneo-backend-production.up.railway.app/api"
 
-3. **Environment Variables** (Render → Web Service → Environment):
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+```
 
-   ```
-   SECRET_KEY=<generate-random-string>
-   DEBUG=False
-   DATABASE_URL=<postgres-connection-string>
-   ALLOWED_HOSTS=<your-backend-slug>.onrender.com
-   CSRF_TRUSTED_ORIGINS=https://<your-backend-slug>.onrender.com,https://<your-frontend>.vercel.app
-   CORS_ALLOWED_ORIGINS=https://<your-frontend>.vercel.app,http://localhost:3000
-   ```
+Confirm the Netlify UI environment variable `NEXT_PUBLIC_API_URL` matches the Railway API URL if it is configured in the dashboard.
 
-4. **Run Migrations** (after first deploy):
-   ```bash
-   python manage.py migrate
-   python manage.py createsuperuser
-   ```
+## Backend Deployment - Railway
 
-### Frontend (Vercel - Next.js)
+Railway uses `backend_new/railway.toml`.
 
-1. **Connect Repository**
+Required environment variables:
 
-   - Vercel Dashboard → "New Project" → Import repo
-   - **Framework**: Next.js (auto-detected)
-   - **Root Directory**: repo root
+```bash
+DEBUG=False
+SECRET_KEY=<strong-random-secret>
+DATABASE_URL=<railway-postgres-url>
+ALLOWED_HOSTS=floneo-backend-production.up.railway.app,.railway.app
+CSRF_TRUSTED_ORIGINS=https://floneo.co,https://www.floneo.co
+CORS_ALLOWED_ORIGINS=https://floneo.co,https://www.floneo.co
+CORS_ALLOW_ALL_ORIGINS=False
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
+```
 
-2. **Environment Variables** (Project → Settings → Environment Variables):
+Optional HTTPS hardening after confirming proxy behavior:
 
-   ```
-   NEXT_PUBLIC_API_URL=https://<your-backend-slug>.onrender.com/api
-   ```
+```bash
+SECURE_SSL_REDIRECT=True
+SECURE_HSTS_SECONDS=31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+SECURE_HSTS_PRELOAD=True
+```
 
-3. **Deploy**
-   - Click Deploy
-   - Your site will be available at `https://<your-frontend>.vercel.app`
+## Local Development
 
-## 🔧 Local Development
-
-### Backend Setup
+Backend:
 
 ```bash
 cd backend_new
@@ -82,46 +84,36 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-### Frontend Setup
+Frontend:
 
 ```bash
 npm install
 npm run dev
 ```
 
-### Environment Files
+Create `.env.local` for local frontend work:
 
-- Frontend: Create `.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:8000/api`
-- Backend: Create `.env` based on `.env.example`
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+```
 
-## 📝 Features
+## Verification
 
-- **Content Management**: Django admin for all website content
-- **Responsive Design**: Mobile-first approach with Tailwind CSS
-- **Modern UI**: shadcn/ui components with Framer Motion animations
-- **API Integration**: RESTful API with Django REST Framework
-- **Production Ready**: Configured for Render (backend) and Vercel (frontend)
+Before launch:
 
-## 🛠️ Tech Stack
+```bash
+npm run build
+cd backend_new
+python manage.py check
+python manage.py test content
+```
 
-**Frontend:**
+After deployment, verify:
 
-- Next.js 15.2.4
-- React 19
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- shadcn/ui
-
-**Backend:**
-
-- Django 5.0.1
-- Django REST Framework
-- PostgreSQL (production)
-- Gunicorn
-- Whitenoise
-- CORS Headers
-
-## 📞 Support
-
-For deployment issues or questions, refer to the deployment guides above or check the respective platform documentation.
+- `https://floneo.co/robots.txt`
+- `https://floneo.co/sitemap.xml`
+- Mobile homepage hamburger navigation
+- Contact form save and email notification
+- Newsletter subscribe and duplicate handling
+- Public CMS write endpoints reject unauthenticated POST
+- Admin content changes reflect on the frontend

@@ -132,12 +132,16 @@ export async function generateMetadata({
           blog.excerpt_text ||
           blog.content?.substring(0, 160),
         keywords: blog.meta_keywords,
+        alternates: {
+          canonical: `/blogs/${blog.slug || blogId}`,
+        },
         openGraph: {
           title: blog.meta_title || blog.title,
           description:
             blog.meta_description ||
             blog.excerpt_text ||
             blog.content?.substring(0, 160),
+          url: `/blogs/${blog.slug || blogId}`,
           images: blog.featured_image_url ? [blog.featured_image_url] : [],
         },
       };

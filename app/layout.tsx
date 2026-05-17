@@ -34,10 +34,39 @@ const surgena = localFont({
 // });
 
 export const metadata: Metadata = {
-  title: " floneo - Build. Automate. Scale.",
+  metadataBase: new URL("https://floneo.co"),
+  title: {
+    default: "Floneo - Build. Automate. Scale.",
+    template: "%s | Floneo",
+  },
   description:
     "Low-Code/No-Code platform that turns manual processes into instant, powerful applications",
-  generator: "v0.app",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://floneo.co/",
+    siteName: "Floneo",
+    title: "Floneo - Build. Automate. Scale.",
+    description:
+      "Low-Code/No-Code platform that turns manual processes into instant, powerful applications",
+    images: [
+      {
+        url: "/android-chrome-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "Floneo logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Floneo - Build. Automate. Scale.",
+    description:
+      "Low-Code/No-Code platform that turns manual processes into instant, powerful applications",
+    images: ["/android-chrome-512x512.png"],
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -62,7 +91,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: " floneo",
+    title: "Floneo",
   },
 };
 

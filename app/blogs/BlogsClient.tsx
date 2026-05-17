@@ -77,7 +77,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
   const displayBlogs = filteredBlogs;
 
   return (
-    <div className="min-h-screen bg-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-white relative w-full max-w-full overflow-x-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white">
         <div
@@ -106,7 +106,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
       </Link>
 
       {/* Hero Section */}
-      <section className="relative pt-12 pb-24 px-4 sm:px-6 overflow-hidden">
+      <section className="relative pt-12 pb-16 sm:pb-24 px-4 sm:px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -114,9 +114,9 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <div className="flex justify-center items-center mb-5">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-5 mb-5 max-w-full">
               {/* Logo */}
-              <div className="w-14 h-14 sm:w-16 sm:h-16 mr-5">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
                 <Image
                   src="/logo.png"
                   alt="Floneo Logo"
@@ -128,19 +128,20 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
 
               {/* Main Heading */}
               <h1
-                className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight"
+                className="text-3xl min-[420px]:text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight text-center max-w-full break-words"
                 style={{
                   color: "#0a0e27",
                   fontFamily: "'Poppins', sans-serif",
                 }}
               >
-                Insights & Stories
+                <span className="block sm:inline">Insights &</span>
+                <span className="block sm:inline sm:ml-2">Stories</span>
               </h1>
             </div>
 
             {/* Subtitle */}
             <p
-              className="text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto"
+              className="text-base sm:text-xl leading-relaxed max-w-[22rem] sm:max-w-3xl mx-auto px-4 sm:px-0"
               style={{
                 color: "#6b7280",
                 fontFamily: "'Poppins', sans-serif",
@@ -157,7 +158,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-16 max-w-4xl mx-auto"
           >
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-4 min-w-0">
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -173,7 +174,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                 />
               </div>
 
-              <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+              <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide w-full md:w-auto min-w-0">
                 {categories.map((category) => (
                   <button
                     key={category}
@@ -196,7 +197,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
       </section>
 
       {/* Blogs Grid */}
-      <section className="pb-24 px-4 sm:px-6 relative">
+      <section className="pb-24 px-4 sm:px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayBlogs.map((blog, index) => (
@@ -207,7 +208,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Link href={`/blogs/${blog.slug || blog.id}`}>
-                  <div className="group h-full bg-white border border-gray-200 rounded-3xl overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col">
+                  <div className="group h-full bg-white border border-gray-200 rounded-3xl overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col min-w-0">
 
                     {/* Featured Image OR Gradient Strip */}
                     {blog.featuredImage ? (
@@ -256,7 +257,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                       />
                     )}
 
-                    <div className="p-8 flex flex-col flex-1">
+                    <div className="p-6 sm:p-8 flex flex-col flex-1">
                       {/* Category tag (only shown when no image) */}
                       {!blog.featuredImage && (
                         <span
@@ -269,7 +270,7 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
 
                       {/* Title */}
                       <h3
-                        className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors"
+                        className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors break-words"
                         style={{ color: '#0a0e27', fontFamily: "'Poppins', sans-serif" }}
                       >
                         {blog.title}
@@ -284,16 +285,16 @@ export default function BlogsClient({ initialBlogs }: BlogsClientProps) {
                       </p>
 
                       {/* Author + Read time */}
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between gap-3 pt-4 border-t border-gray-100 min-w-0">
+                        <div className="flex items-center gap-2 min-w-0">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
                             {blog.createdBy.charAt(0).toUpperCase()}
                           </div>
-                          <span className="text-xs font-medium" style={{ color: '#6b7280', fontFamily: "'Poppins', sans-serif" }}>
+                          <span className="text-xs font-medium truncate" style={{ color: '#6b7280', fontFamily: "'Poppins', sans-serif" }}>
                             {blog.createdBy}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <div className="flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
                           <Clock className="w-3 h-3" />
                           <span>{blog.readTime}</span>
                         </div>

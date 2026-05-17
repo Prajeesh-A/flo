@@ -22,12 +22,25 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env helpers
-DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key-change-in-production-immediately")
+
+
+def env_list(name):
+    value = os.getenv(name, "")
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 # Railway's internal healthcheck uses 'healthcheck.railway.app' as the Host header.
 # It MUST always be in ALLOWED_HOSTS or Django raises DisallowedHost → health check fails → deploy killed.
-_RAILWAY_HOSTS = ["healthcheck.railway.app", ".railway.app", "localhost", "127.0.0.1"]
-_ENV_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else ["*"]
+_RAILWAY_HOSTS = [
+    "healthcheck.railway.app",
+    ".railway.app",
+    "floneo-backend-production.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
+_ENV_HOSTS = env_list("ALLOWED_HOSTS")
 ALLOWED_HOSTS = list(set(_ENV_HOSTS + _RAILWAY_HOSTS))
 
 # The public URL of the backend server — used to build absolute media URLs in serializers
@@ -37,8 +50,9 @@ SITE_URL = os.getenv("SITE_URL", "")
 
 
 # CSRF / CORS
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if os.getenv("CORS_ALLOWED_ORIGINS") else []
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
+CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS")
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "False").lower() == "true"
 
 # Add common frontend domains for development
 if not CSRF_TRUSTED_ORIGINS:
@@ -73,8 +87,8 @@ if not CORS_ALLOWED_ORIGINS:
         'http://127.0.0.1:3003'
     ]
 
-# Security: Only allow specific origins (removed CORS_ALLOW_ALL_ORIGINS for security)
-# CORS_ALLOW_ALL_ORIGINS = True  # Disabled for security - use CORS_ALLOWED_ORIGINS instead
+# Security: allow only configured origins by default. Set CORS_ALLOW_ALL_ORIGINS=True
+# intentionally in a disposable development environment only.
 
 
 # Application definition
@@ -242,6 +256,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Proxy headers (Render)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", str(not DEBUG)).lower() == "true"
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", str(not DEBUG)).lower() == "true"
+SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
+SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "0"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv("SECURE_HSTS_INCLUDE_SUBDOMAINS", "False").lower() == "true"
+SECURE_HSTS_PRELOAD = os.getenv("SECURE_HSTS_PRELOAD", "False").lower() == "true"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -251,7 +271,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # TODO: Implement proper authentication
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
@@ -270,10 +290,6 @@ REST_FRAMEWORK = {
 
 # CORS settings
 CORS_ALLOW_CREDENTIALS = True
-
-# Allow all origins during development (remove in production)
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
 
 # CKEditor Configuration
 CKEDITOR_UPLOAD_PATH = "uploads/"

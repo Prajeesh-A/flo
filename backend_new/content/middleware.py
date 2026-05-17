@@ -1,6 +1,7 @@
 # Cache headers middleware for Django API responses
 import hashlib
 import json
+from django.conf import settings
 from django.utils.cache import patch_cache_control, patch_response_headers
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
@@ -144,7 +145,7 @@ class APICacheMiddleware(MiddlewareMixin):
 
 class CORSCacheMiddleware(MiddlewareMixin):
     """
-    Enhanced CORS middleware with caching considerations.
+    Add cache-friendly CORS headers without weakening production origin policy.
     """
     
     def process_response(self, request, response):
@@ -155,14 +156,32 @@ class CORSCacheMiddleware(MiddlewareMixin):
         if not request.path.startswith('/api/'):
             return response
         
-        # Add CORS headers
-        response['Access-Control-Allow-Origin'] = '*'
-        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        origin = request.headers.get('Origin')
+        allowed_origins = set(getattr(settings, 'CORS_ALLOWED_ORIGINS', []))
+        allow_all = getattr(settings, 'CORS_ALLOW_ALL_ORIGINS', False)
+
+        if origin and (allow_all or origin in allowed_origins):
+            response['Access-Control-Allow-Origin'] = origin
+            response['Vary'] = self._append_vary(response.get('Vary'), 'Origin')
+
+        allowed_methods = response.get('Allow')
+        if allowed_methods:
+            response['Access-Control-Allow-Methods'] = allowed_methods
+        else:
+            response['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
         response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
         response['Access-Control-Expose-Headers'] = 'ETag, Last-Modified, Cache-Control'
         response['Access-Control-Max-Age'] = '86400'  # 24 hours for preflight cache
         
         return response
+
+    def _append_vary(self, current, value):
+        if not current:
+            return value
+        values = [item.strip() for item in current.split(',')]
+        if value not in values:
+            values.append(value)
+        return ', '.join(values)
 
 
 class PerformanceHeadersMiddleware(MiddlewareMixin):

@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.mixins import CreateModelMixin
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db import models
@@ -90,6 +91,7 @@ class ContactFormSubmissionViewSet(viewsets.ModelViewSet):
     """API endpoint for contact form submissions — saves to ContactSubmission and sends email"""
     queryset = ContactSubmission.objects.all()
     serializer_class = ContactSubmissionSerializer
+    permission_classes = [AllowAny]
     http_method_names = ['post']  # Only allow POST requests
 
     def create(self, request, *args, **kwargs):
@@ -345,20 +347,20 @@ def website_data(request):
 
 # New viewsets for additional sections
 
-class VideoTabViewSet(viewsets.ModelViewSet):
-    """API endpoint for video tabs"""
+class VideoTabViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only API endpoint for active video tabs."""
     queryset = VideoTab.objects.filter(is_active=True)
     serializer_class = VideoTabSerializer
 
 
-class CountryDataViewSet(viewsets.ModelViewSet):
-    """API endpoint for country data"""
+class CountryDataViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only API endpoint for active country data."""
     queryset = CountryData.objects.filter(is_active=True)
     serializer_class = CountryDataSerializer
 
 
-class DemoTabViewSet(viewsets.ModelViewSet):
-    """API endpoint for demo tabs"""
+class DemoTabViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only API endpoint for active demo tabs."""
     queryset = DemoTab.objects.filter(is_active=True)
     serializer_class = DemoTabSerializer
 
@@ -688,14 +690,9 @@ def recent_blogs_list(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def populate_data_trigger(request):
-    """HTTP trigger to run populate_production_data command.
-    Usage: GET /api/populate-data/?key=FloNeo2025Populate
-    """
-    secret_key = request.query_params.get('key', '')
-    if secret_key != 'FloNeo2025Populate':
-        return Response({'error': 'Invalid key'}, status=status.HTTP_403_FORBIDDEN)
-
+    """Staff-only trigger to run populate_production_data command."""
     try:
         output = io.StringIO()
         call_command('populate_production_data', stdout=output)
@@ -706,14 +703,9 @@ def populate_data_trigger(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def setup_blogs_trigger(request):
-    """HTTP trigger to delete demo blogs and create real blog posts.
-    Usage: GET /api/setup-blogs/?key=FloNeo2025Populate
-    """
-    secret_key = request.query_params.get('key', '')
-    if secret_key != 'FloNeo2025Populate':
-        return Response({'error': 'Invalid key'}, status=status.HTTP_403_FORBIDDEN)
-
+    """Staff-only trigger to delete demo blogs and create real blog posts."""
     try:
         output = io.StringIO()
         call_command('setup_blogs', stdout=output)
@@ -724,6 +716,7 @@ def setup_blogs_trigger(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def newsletter_subscribe(request):
     """Subscribe to the blog newsletter"""
     serializer = NewsletterSubscriptionSerializer(data=request.data)
@@ -801,16 +794,13 @@ def newsletter_subscribe(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def test_email_trigger(request):
     """
     Send a test email to diagnose Resend configuration.
-    Usage: GET /api/test-email/?key=FloNeo2025Populate&to=your@email.com
+    Usage: GET /api/test-email/?to=your@email.com while authenticated as staff.
     Returns exact success/failure details in the response body.
     """
-    secret_key = request.query_params.get('key', '')
-    if secret_key != 'FloNeo2025Populate':
-        return Response({'error': 'Invalid key'}, status=status.HTTP_403_FORBIDDEN)
-
     to_email = request.query_params.get('to', django_settings.CONTACT_EMAIL_RECIPIENT)
 
     try:
