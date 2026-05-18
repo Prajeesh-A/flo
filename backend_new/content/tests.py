@@ -1,6 +1,13 @@
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
+from django.urls import reverse
 from rest_framework.test import APIClient
+
+import tempfile
+
+from content.admin import BlogPostAdmin, BlogPostImageInline
+from content.models import BlogCategory, BlogPost, BlogPostImage
 
 
 @override_settings(
@@ -106,3 +113,68 @@ class PublicApiRegressionTests(TestCase):
         self.assertNotIn("PUT", methods)
         self.assertNotIn("PATCH", methods)
         self.assertNotIn("DELETE", methods)
+
+    def test_blog_detail_returns_ordered_active_gallery_images(self):
+        with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            author = User.objects.create_user(username="blog-admin", password="password")
+            category = BlogCategory.objects.create(name="QA", slug="qa", is_active=True)
+            blog = BlogPost.objects.create(
+                title="QA Multi Image Blog",
+                slug="qa-multi-image-blog",
+                excerpt="Testing multiple image support.",
+                content="<p>Gallery regression content.</p>",
+                author=author,
+                category=category,
+                status="published",
+            )
+
+            png = (
+                b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01"
+                b"\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00"
+                b"\x00\x00\x0cIDATx\x9cc\xf8\xff\xff?\x00\x05\xfe\x02"
+                b"\xfeA\xe2e\x9a\x00\x00\x00\x00IEND\xaeB`\x82"
+            )
+            BlogPostImage.objects.create(
+                blog_post=blog,
+                image=SimpleUploadedFile("second.png", png, content_type="image/png"),
+                alt_text="Second image",
+                caption="Second caption",
+                order=2,
+            )
+            BlogPostImage.objects.create(
+                blog_post=blog,
+                image=SimpleUploadedFile("first.png", png, content_type="image/png"),
+                alt_text="First image",
+                caption="First caption",
+                order=1,
+            )
+            BlogPostImage.objects.create(
+                blog_post=blog,
+                image=SimpleUploadedFile("hidden.png", png, content_type="image/png"),
+                alt_text="Hidden image",
+                order=0,
+                is_active=False,
+            )
+
+            response = self.client.get(f"/api/blogs/{blog.slug}/")
+
+        self.assertEqual(response.status_code, 200, response.content)
+        images = response.json()["images"]
+        self.assertEqual(len(images), 2)
+        self.assertEqual([image["alt_text"] for image in images], ["First image", "Second image"])
+        self.assertTrue(images[0]["image_url"].startswith("http://testserver/media/blog/gallery/"))
+
+    def test_blog_admin_exposes_multiple_image_inline(self):
+        self.assertIn(BlogPostImageInline, BlogPostAdmin.inlines)
+
+        staff = User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="password",
+        )
+        self.client.force_login(staff)
+        response = self.client.get(reverse("admin:content_blogpost_add"))
+
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertContains(response, "Blog Post Images")
+        self.assertContains(response, "name=\"gallery_images-TOTAL_FORMS\"")

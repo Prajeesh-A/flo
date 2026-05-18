@@ -10,7 +10,7 @@ from .models import (
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
     BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
-    BlogCategory, BlogTag, BlogPost, NewsletterSubscription, Client
+    BlogCategory, BlogTag, BlogPost, BlogPostImage, NewsletterSubscription, Client
 )
 
 
@@ -892,6 +892,23 @@ class BlogTagAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
 
 
+class BlogPostImageInline(admin.TabularInline):
+    model = BlogPostImage
+    extra = 2
+    fields = ['image', 'image_preview', 'alt_text', 'caption', 'order', 'is_active']
+    readonly_fields = ['image_preview']
+    ordering = ['order', 'id']
+
+    def image_preview(self, obj):
+        if obj and obj.image:
+            return format_html(
+                '<img src="{}" style="max-height: 60px; max-width: 120px; object-fit: cover;" />',
+                obj.image.url
+            )
+        return "No image"
+    image_preview.short_description = "Preview"
+
+
 class BlogPostAdmin(admin.ModelAdmin):
     list_display = [
         'title', 'author', 'category', 'status', 'is_featured',
@@ -905,6 +922,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     search_fields = ['title', 'content', 'excerpt', 'meta_keywords']
     prepopulated_fields = {'slug': ('title',)}
     filter_horizontal = ['tags']
+    inlines = [BlogPostImageInline]
     date_hierarchy = 'published_at'
     ordering = ['-created_at']
 

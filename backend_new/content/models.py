@@ -1401,6 +1401,52 @@ class BlogPost(models.Model):
         return clean_content[:150] + "..." if len(clean_content) > 150 else clean_content
 
 
+class BlogPostImage(models.Model):
+    """Additional images for a blog post, managed from the blog admin page."""
+
+    blog_post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name='gallery_images',
+        help_text="Blog post this image belongs to"
+    )
+    image = models.ImageField(
+        upload_to='blog/gallery/',
+        help_text="Additional image shown inside the blog post"
+    )
+    alt_text = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Alt text for accessibility"
+    )
+    caption = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Optional caption displayed below the image"
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        help_text="Display order inside the blog post"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Show/hide this image on the frontend"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Blog Post Image"
+        verbose_name_plural = "Blog Post Images"
+        ordering = ['order', 'id']
+        indexes = [
+            models.Index(fields=['blog_post', 'is_active', 'order']),
+        ]
+
+    def __str__(self):
+        return f"{self.blog_post.title} image {self.order}"
+
+
 class Client(models.Model):
     """Client companies shown on the website — manageable via Django admin"""
     name = models.CharField(max_length=200, help_text="Company name displayed on the site")

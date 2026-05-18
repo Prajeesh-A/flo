@@ -569,7 +569,7 @@ class BlogTagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for blog posts with different serializers for list and detail views"""
-    queryset = BlogPost.objects.filter(status='published').select_related('author', 'category').prefetch_related('tags').order_by('-published_at', '-created_at')
+    queryset = BlogPost.objects.filter(status='published').select_related('author', 'category').prefetch_related('tags', 'gallery_images').order_by('-published_at', '-created_at')
 
     def get_queryset(self):
         """Get published blog posts with optimized queries"""
@@ -578,7 +578,7 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
         ).select_related(
             'author', 'category'
         ).prefetch_related(
-            'tags'
+            'tags', 'gallery_images'
         ).order_by('-published_at', '-created_at')
 
         # Filter by category if provided

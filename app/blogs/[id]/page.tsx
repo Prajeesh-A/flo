@@ -2,6 +2,14 @@ import React from "react";
 import BlogDetailClient from "./BlogDetailClient";
 
 // Blog interface to match BlogDetailClient
+interface BlogImage {
+  id: number;
+  imageUrl: string;
+  altText?: string;
+  caption?: string;
+  order?: number;
+}
+
 interface Blog {
   id: string;
   title: string;
@@ -11,6 +19,7 @@ interface Blog {
   readTime: string;
   category: string;
   featuredImage?: string;
+  images?: BlogImage[];
   videoUrl?: string;
   videoFile?: string;
   tags?: any[];
@@ -76,6 +85,13 @@ export default async function BlogDetailPage({
               )} min read`,
           category: data.category?.name || data.category_name || "Technology",
           featuredImage: data.featured_image_url,
+          images: (data.images || []).map((image: any) => ({
+            id: image.id,
+            imageUrl: image.image_url,
+            altText: image.alt_text,
+            caption: image.caption,
+            order: image.order,
+          })).filter((image: BlogImage) => Boolean(image.imageUrl)),
           videoUrl: data.video_url,
           videoFile: data.video_file_url,
           tags: data.tags || [],
@@ -125,6 +141,11 @@ export async function generateMetadata({
 
     if (res.ok) {
       const blog = await res.json();
+      const imageUrls = [
+        blog.featured_image_url,
+        ...(blog.images || []).map((image: any) => image.image_url),
+      ].filter(Boolean);
+
       return {
         title: blog.meta_title || blog.title,
         description:
@@ -142,7 +163,7 @@ export async function generateMetadata({
             blog.excerpt_text ||
             blog.content?.substring(0, 160),
           url: `/blogs/${blog.slug || blogId}`,
-          images: blog.featured_image_url ? [blog.featured_image_url] : [],
+          images: imageUrls,
         },
       };
     }

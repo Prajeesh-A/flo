@@ -6,6 +6,14 @@ import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
+interface BlogImage {
+  id: number;
+  imageUrl: string;
+  altText?: string;
+  caption?: string;
+  order?: number;
+}
+
 interface Blog {
   id: string;
   title: string;
@@ -15,6 +23,7 @@ interface Blog {
   readTime: string;
   category: string;
   featuredImage?: string;
+  images?: BlogImage[];
   videoUrl?: string;
   videoFile?: string;
   tags?: any[];
@@ -185,6 +194,44 @@ export default function BlogDetailClient({
                     (e.target as HTMLImageElement).parentElement!.style.display = 'none';
                   }}
                 />
+              </div>
+            )}
+
+            {/* Additional Blog Images */}
+            {initialBlog.images && initialBlog.images.length > 0 && (
+              <div
+                className={`mb-12 grid gap-5 ${
+                  initialBlog.images.length === 1 ? "" : "sm:grid-cols-2"
+                }`}
+                aria-label="Blog image gallery"
+              >
+                {initialBlog.images.map((image) => (
+                  <figure
+                    key={image.id}
+                    className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+                  >
+                    <img
+                      src={image.imageUrl}
+                      alt={image.altText || initialBlog.title}
+                      className="h-72 w-full object-cover"
+                      loading="lazy"
+                      onError={(e) => {
+                        const figure = e.currentTarget.closest("figure") as HTMLElement | null;
+                        if (figure) {
+                          figure.style.display = "none";
+                        }
+                      }}
+                    />
+                    {image.caption && (
+                      <figcaption
+                        className="px-4 py-3 text-sm text-gray-500"
+                        style={{ fontFamily: "'Poppins', sans-serif" }}
+                      >
+                        {image.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                ))}
               </div>
             )}
 

@@ -9,7 +9,7 @@ from .models import (
     WhyChooseUsSection, HumanTouchSection, ChatMessage, VideoTabsSection, VideoTab, CountryData,
     MetricsDisplaySection, PricingFeaturesSection, VideoTabsDemoSection, DemoTab,
     BenefitsSection, BenefitItem, ContactSubmission, PrivacyPolicy,
-    BlogCategory, BlogTag, BlogPost, Client
+    BlogCategory, BlogTag, BlogPost, BlogPostImage, Client
 )
 
 
@@ -416,6 +416,34 @@ class BlogTagSerializer(serializers.ModelSerializer):
         return obj.blogpost_set.filter(status='published').count()
 
 
+class BlogPostImageSerializer(serializers.ModelSerializer):
+    """Serializer for additional images attached to a blog post."""
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogPostImage
+        fields = [
+            'id', 'image_url', 'alt_text', 'caption',
+            'order', 'is_active', 'created_at', 'updated_at'
+        ]
+
+    def get_image_url(self, obj):
+        if not obj.image:
+            return None
+
+        url = obj.image.url
+        if url.startswith('http'):
+            return url
+
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(url)
+
+        from django.conf import settings
+        site_url = getattr(settings, 'SITE_URL', 'https://flo-1m00.onrender.com')
+        return f"{site_url.rstrip('/')}{url}"
+
+
 class BlogPostListSerializer(serializers.ModelSerializer):
     """Serializer for blog post list view (lighter data)"""
     author_name = serializers.CharField(source='author.get_full_name', read_only=True)
@@ -471,12 +499,14 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
     video_file_url = serializers.SerializerMethodField()
     excerpt_text = serializers.SerializerMethodField()
     absolute_url = serializers.SerializerMethodField()
+    images = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPost
         fields = [
             'id', 'title', 'slug', 'excerpt_text', 'content',
             'featured_image_url', 'featured_image_alt', 'video_url', 'video_file_url',
+            'images',
             'author_name', 'author_username', 'category', 'tags',
             'status', 'published_at', 'view_count', 'reading_time',
             'is_featured', 'allow_comments', 'meta_title', 'meta_description',
@@ -519,6 +549,11 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
     def get_absolute_url(self, obj):
         """Get the absolute URL for this blog post"""
         return obj.get_absolute_url
+
+    def get_images(self, obj):
+        """Return active additional images in display order."""
+        images = obj.gallery_images.filter(is_active=True).order_by('order', 'id')
+        return BlogPostImageSerializer(images, many=True, context=self.context).data
 
 
 class NewsletterSubscriptionSerializer(serializers.Serializer):
