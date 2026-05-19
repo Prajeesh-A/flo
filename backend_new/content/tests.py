@@ -119,6 +119,20 @@ class PublicApiRegressionTests(TestCase):
         self.assertNotIn("PATCH", methods)
         self.assertNotIn("DELETE", methods)
 
+        for path in ("/api/contact-submissions/", "/api/newsletter/subscribe/"):
+            form_preflight = self.client.options(
+                path,
+                HTTP_ORIGIN="https://floneo.co",
+                HTTP_ACCESS_CONTROL_REQUEST_METHOD="POST",
+            )
+            form_methods = form_preflight.headers.get("Access-Control-Allow-Methods", "")
+            self.assertIn("POST", form_methods)
+            self.assertIn("OPTIONS", form_methods)
+            self.assertNotIn("GET", form_methods)
+            self.assertNotIn("PUT", form_methods)
+            self.assertNotIn("PATCH", form_methods)
+            self.assertNotIn("DELETE", form_methods)
+
     def test_blog_detail_returns_ordered_active_gallery_images(self):
         with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
             author = User.objects.create_user(username="blog-admin", password="password")

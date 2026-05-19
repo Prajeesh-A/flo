@@ -147,6 +147,10 @@ class CORSCacheMiddleware(MiddlewareMixin):
     """
     Add cache-friendly CORS headers without weakening production origin policy.
     """
+    POST_ONLY_API_ENDPOINTS = {
+        '/api/contact-submissions/',
+        '/api/newsletter/subscribe/',
+    }
     
     def process_response(self, request, response):
         """
@@ -164,11 +168,15 @@ class CORSCacheMiddleware(MiddlewareMixin):
             response['Access-Control-Allow-Origin'] = origin
             response['Vary'] = self._append_vary(response.get('Vary'), 'Origin')
 
-        allowed_methods = response.get('Allow')
-        if allowed_methods:
-            response['Access-Control-Allow-Methods'] = allowed_methods
+        request_path = request.path if request.path.endswith('/') else f'{request.path}/'
+        if request_path in self.POST_ONLY_API_ENDPOINTS:
+            response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         else:
-            response['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+            allowed_methods = response.get('Allow')
+            if allowed_methods:
+                response['Access-Control-Allow-Methods'] = allowed_methods
+            else:
+                response['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
         response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
         response['Access-Control-Expose-Headers'] = 'ETag, Last-Modified, Cache-Control'
         response['Access-Control-Max-Age'] = '86400'  # 24 hours for preflight cache
