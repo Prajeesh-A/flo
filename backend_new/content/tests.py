@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -52,6 +53,10 @@ class PublicApiRegressionTests(TestCase):
             format="json",
         )
         self.assertEqual(contact.status_code, 201, contact.content)
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertIn("New Contact Form Submission", mail.outbox[0].subject)
+        self.assertIn("Thank you for contacting", mail.outbox[1].subject)
+        self.assertEqual(mail.outbox[1].to, ["qa@example.com"])
 
         newsletter = self.client.post(
             "/api/newsletter/subscribe/",

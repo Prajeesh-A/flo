@@ -99,13 +99,18 @@ class ContactFormSubmissionViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             try:
                 submission = serializer.save()
-                # Send email notification
-                from .utils import send_contact_notification_email
-                try:
-                    send_contact_notification_email(submission)
-                except Exception as email_err:
-                    import logging
-                    logging.getLogger(__name__).warning(f'Email notification failed: {email_err}')
+                # Send admin notification and user confirmation. Email failures
+                # should never prevent a valid submission from being saved.
+                from .utils import send_contact_notification_email, send_contact_confirmation_email
+                for email_sender, label in (
+                    (send_contact_notification_email, 'admin notification'),
+                    (send_contact_confirmation_email, 'user confirmation'),
+                ):
+                    try:
+                        email_sender(submission)
+                    except Exception as email_err:
+                        import logging
+                        logging.getLogger(__name__).warning(f'Contact {label} email failed: {email_err}')
                 return Response({
                     'message': 'Contact form submitted successfully',
                     'success': True
@@ -513,9 +518,18 @@ def contact_submissions(request):
                 # Save the contact submission
                 submission = serializer.save()
 
-                # Send email notification
-                from .utils import send_contact_notification_email
-                send_contact_notification_email(submission)
+                # Send admin notification and user confirmation. Email failures
+                # should never prevent a valid submission from being saved.
+                from .utils import send_contact_notification_email, send_contact_confirmation_email
+                for email_sender, label in (
+                    (send_contact_notification_email, 'admin notification'),
+                    (send_contact_confirmation_email, 'user confirmation'),
+                ):
+                    try:
+                        email_sender(submission)
+                    except Exception as email_err:
+                        import logging
+                        logging.getLogger(__name__).warning(f'Contact {label} email failed: {email_err}')
 
                 return Response({
                     'message': 'Contact form submitted successfully',
