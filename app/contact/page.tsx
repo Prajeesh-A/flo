@@ -403,9 +403,9 @@ export default function ContactPage() {
 
                 <p className="text-center text-xs sm:text-sm text-gray-500 mt-3 sm:mt-4">
                   By submitting this form, you agree to our{" "}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+                  <Link href="/privacy-policy" className="text-blue-600 hover:text-blue-700 font-medium">
                     privacy policy
-                  </a>
+                  </Link>
                 </p>
               </form>
             </div>
