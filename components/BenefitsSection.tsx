@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { Urbanist, Poppins } from "next/font/google";
 
+const DEFAULT_LINKEDIN_URL = "https://www.linkedin.com/company/floneo-tech/";
+
 // Font configurations
 const urbanist = Urbanist({ 
   subsets: ["latin"],
@@ -130,7 +132,11 @@ export default function BenefitsSection() {
       link.platform.toLowerCase() === "linkedin" ||
       link.platform_name?.toLowerCase().includes("linkedin")
   );
-  const linkedInUrl = linkedInLink?.url || "#";
+  const linkedInUrl = linkedInLink?.url || DEFAULT_LINKEDIN_URL;
+  const secondaryCtaUrl =
+    data.cta_secondary_url && data.cta_secondary_url !== "#"
+      ? data.cta_secondary_url
+      : linkedInUrl;
 
   // Icon mapping by index
   const getIconByIndex = (index: number) => {
@@ -316,7 +322,7 @@ const getPositionClasses = (position: string) => {
             </button>
 
             <a
-              href={data.cta_secondary_url || linkedInUrl}
+              href={secondaryCtaUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`w-full sm:w-auto bg-gray-900 hover:bg-black text-white px-8 sm:px-10 py-3 sm:py-3.5 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base ${poppins.className}`}

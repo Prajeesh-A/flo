@@ -59,7 +59,7 @@ function HomePageContent() {
 
   // Fallback navigation items
   const fallbackNavItems = [
-    { label: "Home", href: "#", is_active: true },
+    { label: "Home", href: "/", is_active: true },
     { label: "About Us", href: "#about-us", is_active: true },
     { label: "Features", href: "#features", is_active: true },
     { label: "Blogs", href: "/blogs", is_active: true },
@@ -69,6 +69,18 @@ function HomePageContent() {
 
   // Use API data or fallback
   const navItems = navigationItems || fallbackNavItems;
+  const getNavigationHref = (item: any) => {
+    const href = typeof item.href === "string" ? item.href.trim() : "";
+    const label = typeof item.label === "string" ? item.label.toLowerCase() : "";
+
+    if (href && href !== "#") {
+      return href;
+    }
+    if (item.nav_type === "blog" || label.includes("blog")) {
+      return "/blogs";
+    }
+    return "/";
+  };
 
   const [customCursor, setCustomCursor] = useState({
     x: 0,
@@ -246,15 +258,16 @@ function HomePageContent() {
         .filter((item: any) => item.is_active)
         .filter((item: any) => (item.nav_type ?? 'normal') === 'normal')
         .map((item: any, index: number) => {
+          const href = getNavigationHref(item);
           const isPageLink =
-            item.href.startsWith("/") && !item.href.startsWith("/#");
+            href.startsWith("/") && !href.startsWith("/#");
           const target = item.open_in_new_tab ? "_blank" : undefined;
           const rel = item.open_in_new_tab ? "noopener noreferrer" : undefined;
 
           return isPageLink ? (
             <Link
               key={index}
-              href={item.href}
+              href={href}
               target={target}
               rel={rel}
               className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
@@ -269,7 +282,7 @@ function HomePageContent() {
           ) : (
             <a
               key={index}
-              href={item.href}
+              href={href}
               target={target}
               rel={rel}
               className="text-white/90 hover:text-white transition-all duration-300 text-[15px] font-normal"
@@ -294,7 +307,7 @@ function HomePageContent() {
         .map((item: any, index: number) => (
           <Link
             key={index}
-            href={item.href}
+            href={getNavigationHref(item)}
             className="text-white/90 hover:text-white bg-white/10 hover:bg-white/15 px-5 py-2.5 rounded-full transition-all duration-300 text-[14px] font-medium border border-white/20"
           >
             {item.label}
@@ -372,7 +385,7 @@ function HomePageContent() {
                   .map((item: any, index: number) => (
                     <a
                       key={index}
-                      href={item.href}
+                      href={getNavigationHref(item)}
                       className="mobile-nav-link text-gray-800 hover:text-[#FFC107] transition-all duration-300 text-[15px] font-medium py-3 px-4 rounded-xl hover:bg-gray-50/80 active:bg-gray-100"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >

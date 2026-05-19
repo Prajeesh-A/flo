@@ -11,6 +11,8 @@ import CountryCodeSelector, {
 } from "@/components/CountryCodeSelector";
 import MobileCountryMenu from "@/components/MobileCountryMenu";
 
+const DEFAULT_LINKEDIN_URL = "https://www.linkedin.com/company/floneo-tech/";
+
 export default function ContactSection() {
   const { openModal } = useCTAModal();
   const { showDemoToast } = useToast();
@@ -24,7 +26,7 @@ export default function ContactSection() {
       link.platform.toLowerCase() === "linkedin" ||
       link.platform_name.toLowerCase().includes("linkedin")
   );
-  const linkedInUrl = linkedInLink?.url || "#";
+  const linkedInUrl = linkedInLink?.url || DEFAULT_LINKEDIN_URL;
 
   // Fetch section data from API
   const {
