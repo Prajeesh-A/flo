@@ -283,7 +283,6 @@ export default function SocialSection() {
               </div>
             </div>
 
-            {/* Features section - now managed through navigation items */}
             <div>
               <h3
                 className="text-2xl text-black mb-8 font-semibold"
@@ -293,7 +292,7 @@ export default function SocialSection() {
               </h3>
               <div className="flex flex-col space-y-5">
                 <motion.a
-                  href="#"
+                  href="/blogs"
                   className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
                   style={{
                     color: "#666666",
@@ -302,37 +301,11 @@ export default function SocialSection() {
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  Documentation
-                </motion.a>
-
-                {/* <motion.a
-                  href="#"
-                  className="text-sm font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
-                  style={{
-                    color: "#666666",
-                    fontFamily: "'Poppins', sans-serif",
-                  }}
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  API Reference
-                </motion.a> */}
-
-                <motion.a
-                  href="#"
-                  className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
-                  style={{
-                    color: "#666666",
-                    fontFamily: "'Poppins', sans-serif",
-                  }}
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Tutorials
+                  Blogs
                 </motion.a>
 
                 <motion.a
-                  href="#"
+                  href="/contact"
                   className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
                   style={{
                     color: "#666666",
@@ -341,7 +314,20 @@ export default function SocialSection() {
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  Community
+                  Contact Sales
+                </motion.a>
+
+                <motion.a
+                  href="/terms"
+                  className="text-lg font-light transition-colors duration-200 hover:opacity-80 block cursor-pointer"
+                  style={{
+                    color: "#666666",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Terms
                 </motion.a>
 
                 <motion.a
